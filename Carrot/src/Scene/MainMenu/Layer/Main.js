@@ -11,7 +11,6 @@ let MMMainLayer = cc.Layer.extend({
 
         // 加载"设置"按钮
 
-
         // 加载怪物
         this.loadForeMonster();
 
@@ -44,7 +43,9 @@ let MMMainLayer = cc.Layer.extend({
             startPress,
             startDisabled,
             function () {
+                cc.audioEngine.playEffect("res/Sound/MainMenu/Select.mp3");
                 cc.log("点击开始冒险按钮");
+                cc.director.runScene(new ChooseLevelScene());
             }.bind(this));
         start.setPosition(cc.winSize.width / 2 - 8, cc.winSize.height / 2 + 75);
 
@@ -57,6 +58,7 @@ let MMMainLayer = cc.Layer.extend({
             floorPress,
             floorDisabled,
             function () {
+                cc.audioEngine.playEffect("res/Sound/MainMenu/Select.mp3");
                 cc.log("点击天天向上按钮");
             }.bind(this));
         floor.setPosition(cc.winSize.width / 2 - 8, cc.winSize.height / 2 - 50);
@@ -135,7 +137,13 @@ let MMMainLayer = cc.Layer.extend({
         let numSixAction = numSixSeq.repeatForever();
         numSixMonster.runAction(numSixAction);
 
-        numSixHandMonster.setPosition(cc.p(cc.winSize.width / 2 + 256, 270));
+        numSixHandMonster.setPosition(cc.p(cc.winSize.width / 2 + 275, 270));
+        numSixHandMonster.setRotation(20);
+        let numSixHandRotateBy1 = cc.rotateBy(this.actionDuration * 0.55, -30, 0);
+        let numSixHandRotateBy2 = cc.rotateBy(this.actionDuration * 0.55, 30, 0);
+        let numSixHandSeq = cc.sequence(numSixHandRotateBy1, numSixHandRotateBy2);
+        let numSixHandAction = numSixHandSeq.repeatForever();
+        numSixHandMonster.runAction(numSixHandAction);
 
         // 左右移动
         numOneMonster.setPosition(cc.p(cc.winSize.width / 2 - 300, 170));
@@ -172,6 +180,12 @@ let MMMainLayer = cc.Layer.extend({
 });
 
 let MMMainScene = cc.Scene.extend({
+    backgroundLayer: null,
+    mainLayer: null,
+    ctor: function () {
+        this._super();
+        cc.audioEngine.playMusic("res/Sound/MainMenu/BGMusic.mp3", true);
+    },
     onEnter: function () {
         this._super();
         let layer = new MMMainLayer();
