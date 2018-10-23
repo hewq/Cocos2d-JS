@@ -13,6 +13,12 @@ let LevelData = [
                 team: [
                     { name: "L11", count: 5, blood: 5.0, speed: 180}
                 ]
+            },
+            {   // 第 2 组
+                index: 2,
+                team: [
+                    { name: "L12", count: 8, blood: 5.1, speed: 190}
+                ]
             }
         ]
     }

@@ -45,7 +45,7 @@ let GameManager = {
         this._teamIndex = 0;
         this._teamCount = this.monsterGroup[0].team.length - 1;
         this._teamMonsterIndex = 0;
-        this._teamMonsterCount = this.monsterGroup[0].team[0],count - 1;
+        this._teamMonsterCount = this.monsterGroup[0].team[0].count - 1;
         this.isMonsterGetFinish = false;
 
         this._monsterDataArray = [];
@@ -73,5 +73,70 @@ let GameManager = {
                 }
             }
         }
+    },
+    // 获取下一个怪物数据
+    _getNextMonsterData: function () {
+        if (this.isMonsterGetFinish == true) {
+            cc.warn("GameManager._getNextMonsterData(): 所有怪物数据已经获取完毕！");
+            return;
+        }
+
+        let teamData = this.monsterGroup[this._groupIndex].team[this._teamIndex];
+        let monsterData = [];
+        monsterData.group = this._groupIndex;
+        monsterData.name = teamData.name;
+        monsterData.blood = teamData.blood;
+        monsterData.speed = teamData.speed;
+        monsterData.index = this._teamMonsterIndex;
+
+        this._teamMonsterIndex++;
+        // 是否进入到下一队
+        if (this._teamMonsterIndex > this._teamMonsterCount) {
+            this._enterNextTeam();
+        }
+
+        return monsterData;
+    },
+    // 进入到下一队
+    _enterNextTeam: function () {
+        this._teamMonsterIndex = 0;
+        this._teamIndex++;
+        if (this._teamIndex > this._teamCount) { // 进入下一组
+            this._enterNextGroup();
+        } else { // 进入到下一队
+            this._teamMonsterCount = this.monsterGroup[this._groupIndex].team[this._teamIndex].count - 1;
+        }
+    },
+    // 进入到下一组
+    _enterNextGroup: function () {
+        this._groupIndex++;
+        // 添加完毕
+        if (this._groupIndex > this.maxGroup) {
+            this.isMonsterGetFinish = true;
+            return;
+        }
+        this._teamIndex = 0;
+        this._teamCount = this.monsterGroup[this._groupIndex].team.length - 1;
+        this._teamMonsterIndex = 0;
+        this._teamMonsterCount = this.monsterGroup[this._groupIndex].team[this._teamIndex].count - 1;
+    },
+    // 弹出下一组怪物数据
+    popNextMonsterGroupData: function () {
+        let groupData = [];
+        if (this.group <= this.maxGroup) {
+            this.group++;
+            groupData = this._monsterDataArray[0];
+            this._monsterDataArray.splice(0, 1);
+
+            // (抛出事件)组别更新
+            // let event = new cc.EventCustom(jf.EventName.GP_UPDATE_GROUP);
+            // event.setUserData({
+            //     group: this.group
+            // });
+            // cc.eventManager.dispatchEvent(event);
+        } else {
+            groupData = [];
+        }
+        return groupData;
     }
 };

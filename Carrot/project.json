@@ -20,6 +20,8 @@
         "src/Scene/MainMenu/MainMenu.js",
         "src/Scene/ChooseLevel/Background.js",
         "src/Scene/ChooseLevel/UI.js",
-        "src/Scene/ChooseLevel/ChooseLevel.js"
+        "src/Scene/ChooseLevel/ChooseLevel.js",
+        "src/Data/LevelData.js",
+        "src/Manager/GameManager.js"
     ]
 }
