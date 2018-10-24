@@ -24,5 +24,34 @@ let GPMainLayer = cc.Layer.extend({
     currGroupCreatedMonsterSum: 0, // 当前组怪物总数量
     onEnter: function () {
         this._super();
+    },
+    // 加载路径背景
+    loadPath: function () {
+        let themeID = GameManager.getThemeID();
+        let level = GameManager.getLevel() + 1;
+        let node = new cc.Sprite("res/GamePlay/Theme/Theme" + themeID + "/BG" + level + "/Path" + level + ".png");
+        this.addChild(node);
+        node.setPosition(cc.winSize.width / 2, cc.winSize.height / 2);
+    },
+    // 加载 瓦片地图
+    loadTiledMap: function () {
+        let themeID = GameManager.getThemeID();
+        let level = GameManager.getLevel() + 1;
+        let node = new cc.TMXTiledMap("res/GamePlay/Theme/Theme" + themeID + "/BG" + level + "/Level" + level + ".tmx");
+        this.addChild(node);
+        this.tiledMap = node;
+        this.tileSize = node.getTileSize();
+        node.x = (cc.winSize.width - node.width) / 2;
+        node.y = (cc.winSize.height - node.height) / 2;
+        node.setVisible(false);
+
+        // 设置所有对象组坐标偏移量
+        let groups = this.tiledMap.getObjectGroups();
+        let group = null;
+        let offsetX = (cc.winSize.width - this.tiledMap.width) / 2;
+        let offsetY = (cc.winSize.height - this.tiledMap.height) / 2;
+        let finalOffsetX = 0;
+        let finalOffsetY = 0;
+        let groupName = "";
     }
 });
