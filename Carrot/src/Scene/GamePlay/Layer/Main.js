@@ -56,7 +56,15 @@ let GPMainLayer = cc.Layer.extend({
         for (let i = 0; i < groups.length; i++) {
             group = groups[i];
             groupName = group.getGroupName();
-            if (groupName == 'road' || groupName == "start_end") {
+
+            // 大障碍物（占4格）
+            if (groupName == 'big') {
+                finalOffsetX = offsetX;
+                finalOffsetY = offsetY;
+            } else if (groupName == "little") { // 中等障碍物（占用左右 2 格）
+                finalOffsetX = offsetX;
+                finalOffsetY = offsetY + this.tileSize.height / 2;
+            } else if (groupName == 'small' || groupName == 'road' || groupName == "start_end" || groupName =="invalid") {
                 finalOffsetX = offsetX + this.tileSize.width / 2;
                 finalOffsetY = offsetY + this.tileSize.height / 2;
             } else {
@@ -141,6 +149,56 @@ let GPMainLayer = cc.Layer.extend({
         });
 
         cc.eventManager.addListener(onUpdateCarrotBloodListener, this);
+
+        // （事件监听）创建炮塔的事件
+        let onCreateTowerListener = cc.EventListener.create({
+            event: cc.EventListener.CUSTOM,
+            target: this,
+            eventName: jf.EventName.GP_CREATE_TOWER,
+            callback: this.onCreateTower
+        });
+        cc.eventManager.addListener(onCreateTowerListener, this);
+    },
+    // (事件)创建炮塔
+    onCreateTower: function (event) {
+        let self = event.getCurrentTarget();
+        let data = event.getUserData();
+        // 根据数据创建出炮塔
+        let node = self.createTower(data);
+        self.addChild(node);
+        // 移除创建炮塔的面板
+        self.removeChild(self.towerPanel);
+        self.towerPanel = null;
+    },
+    // 创建炮塔
+    createTower: function () {
+        cc.assert(data.name, "GPMainLayer.createTower(): 名字无效！");
+        cc.assert(data.x, "GPMainLayer.createTower(): x 轴坐标无效！");
+        cc.assert(data.y, "GPMainLayer.createTower(): y 轴坐标无效！");
+
+        let towerData = {};
+        towerData.name = data.name;
+        towerData.x = data.x;
+        towerData.y = data.y;
+
+        let node = null;
+        switch (data.name) {
+            case "Bottle":
+                towerData.scope = 300;
+                towerData.bulletSpeed = 20;
+                node = new Bottle(towerData);
+                break;
+            default:
+                cc.warn("GPMainLayer.createTower(): 异常");
+                break;
+        }
+
+        if (node != null) {
+            // 标记当前位置有炮塔
+            this.tiledMapRectArrayMap[data.row][data.cel] = this.tiledMapRectMapEnum.TOWER;
+        }
+
+        return node;
     },
     // 怪物吃到萝卜
     onMonsterEatCarrot: function (event) {
@@ -204,5 +262,153 @@ let GPMainLayer = cc.Layer.extend({
             isNeed = true;
         }
         return isNeed;
+    },
+    // 加载瓦片区域
+    loadTileRect: function () {
+        let mapSize = this.tiledMap.getMapSize();
+        let nextPosX = (cc.winSize.width - this.tiledMap.width) / 2 + this.tileSize.width / 2;
+        let nextPosY = (cc.winSize.height - this.tiledMap.height) / 2 + this.tileSize.height / 2;
+        for (let i = 0; i < mapSize.height; i++) {
+            this.tiledMapRectArray[i][j] = cc.rect(nextPosX - this.tileSize.width / 2,
+                                                    nextPosY - this.tileSize.height / 2,
+                                                    this.tileSize.width,
+                                                    this.tileSize.height);
+            // 测试节点
+            let node = new cc.Sprite();
+            this.addChild(node, 100);
+            node.setTextureRect(cc.rect(0, 0, this.tileSize.width - 3, this.tileSize.height - 3));
+            node.setPosition(nextPosX, nextPosY);
+            node.setColor(cc.color(255, 0, 255));
+            node.setOpacity(100);
+
+            nextPosX += this.tileSize.width;
+        }
+        nextPosX = (cc.winSize.width - this.tiledMap.width) / 2 + this.tileSize.width / 2;
+        nextPosY += this.tileSize.height;
+    },
+    // 加载瓦片地图区域映射
+    loadTiledMapRectArrayMap: function () {
+        let i;
+        let mapSize = this.tiledMap.getMapSize();
+        for (i = 0; i < mapSize.height; i++) {
+            this.tiledMapRectArrayMap[i][j] = this.tiledMapRectMapEnum.NONE;
+        }
+    },
+    // 加载属性
+    loadProperty: function () {
+        this.tiledMapRectMapEnum.NONE = 0; // 无
+        this.tiledMapRectMapEnum.ROAD = 1; // 道路
+        this.tiledMapRectMapEnum.SMALL = 1; // 小障碍物（占 1 格）
+        this.tiledMapRectMapEnum.LITTLE = 1; // 中障碍物（占 2 格）
+        this.tiledMapRectMapEnum.BIG = 1; // 大障碍物（占 4 格）
+        this.tiledMapRectMapEnum.INVALID = 1; // 无效区域
+        this.tiledMapRectMapEnum.TOWER = 1; // 塔
+    },
+    // 根据坐标获取在地图格子区域中的信息
+    getInfoFromMapByPos: function (x, y) {
+        cc.assert(y !== undefined, "GPMainLayer.getInfoFromMapByPos(): Y坐标不能为空！");
+        let isInMap = false; // 是否在地图中
+        let index = {x: -1, y: -1};
+        let rect = null;
+        for (let i = 0; i < this.tiledMapRectArray.length; i++) {
+            for (let j = 0; j < this.tiledMapRectArray[i].length; j++) {
+                rect = this.tiledMapRectArray[i][j];
+                if (cc.rectContainsPoint(rect, cc.p(x, y))) {
+                    index.row = i;
+                    index.cel = j;
+                    index.x = rect.x;
+                    index.y = rect.y;
+                    isInMap = true;
+                }
+            }
+        }
+
+        return {
+            isInMap: isInMap,
+            row: index.row, // 行
+            cel: index.cel, // 列
+            x: index.x,
+            y: index.y
+        };
+    },
+    // 加载最小的障碍物
+    loadSmallObstacle: function () {
+        let smallGroup = this.tiledMap.getObjectGroup("small");
+        let smalls = smallGroup.getObjects();
+        let node = null;
+        let info = null;
+        for (let i = 0; i < smalls.length; i++) {
+            node = new cc.Sprite("res/GamePlay/Object/Theme" + GameManager.getThemeID() +"/Object/" + smalls[i].name + ".png");
+            this.addChild(node);
+            node.x = smalls[i].x + smallGroup.getPositionOffset().x;
+            node.y = smalls[i].y + smallGroup.getPositionOffset().y;
+            info = this.getInfoFromMapByPos(node.x, node.y);
+            this.tiledMapRectArrayMap[info.row][info.cel] = this.tiledMapRectMapEnum.SMALL;
+        }
+    },
+    // 加载大障碍物
+    loadBigObstacle: function () {
+        let bigGroup = this.tiledMap.getObjectGroup("big");
+        let bigs = bigGroup.getObjects();
+        let node = null;
+        let info = null;
+        for (let i = 0; i < bigs.length; i++) {
+            node = new cc.Sprite("res/GamePlay/Object/Theme" + GameManager.getThemeID() +"/Object/" + bigs[i].name + ".png");
+            this.addChild(node);
+            node.x = bigs[i].x + bigGroup.getPositionOffset().x;
+            node.y = bigs[i].y + bigGroup.getPositionOffset().y;
+            info = this.getInfoFromMapByPos(node.x, node.y);
+            this.tiledMapRectArrayMap[info.row][info.cel] = this.tiledMapRectMapEnum.BIG;
+            this.tiledMapRectArrayMap[info.row][info.cel - 1] = this.tiledMapRectMapEnum.BIG;
+            this.tiledMapRectArrayMap[info.row - 1][info.cel] = this.tiledMapRectMapEnum.BIG;
+            this.tiledMapRectArrayMap[info.row - 1][info.cel - 1] = this.tiledMapRectMapEnum.BIG;
+        }
+    },
+    onTouchEnded: function (touch, event) {
+        let self = event.getCurrentTarget();
+        let info = self.getInfoFromMapByPos(touch.getLocation().x, touch.getLocation().y);
+        // 没有触摸到地图区域内
+        if (!info.isInMap) {
+            self.loadTouchWarning(touch.getLocation().x, touchgetLocation().y);
+        } else {
+            // 已经有炮塔或者障碍物
+            if (self.tiledMapRectArrayMap[info.row][info.cel] != self.tiledMapRectMapEnum.NONE) {
+                self.loadTouchWarning(info.x + self.tileSize.width / 2, info.y + self.tileSize.height / 2);
+            } else {
+                // 当前位置没有炮塔和障碍物
+                if (self.towerPanel == null) {
+                    let data = {};
+                    data.row = info.row;
+                    data.cel = info.cel;
+                    data.x = info.x;
+                    data.y = info.y;
+                    self.loadTowerPanel(data);
+                } else {
+                    self.removeChild(self.towerPanel);
+                    self.towerPanel = null;
+                }
+            }
+        }
+
+        // target 指向对应炮塔的图标
+        let target = event.getCurrentTarget();
+        // 创建炮塔事件分发
+        let createTowerEvent = new cc.EventCustom(jf.EventName.GP_CREATE_TOWER);
+        createTowerEvent.setUserData({
+            name: target.getName(),
+            // target.getParent() 指向 TowerPanel
+            x: target.getParent().getPositionX(),
+            y: target.getParent().getPositionY(),
+            cel: target.getParent().cel,
+            row: target.getParent().row
+        });
+        cc.eventManager.dispatchEvent(createTowerEvent);
+    },
+    // 加载创建炮塔到面板
+    loadTowerPanel: function (args) {
+        // 接受行号和列号
+        let node = new TowerPanel(args);
+        this.addChild(node, this.ZOrderEnum.TOWER_PANEL);
+        this.towerPanel = node;
     }
 });
