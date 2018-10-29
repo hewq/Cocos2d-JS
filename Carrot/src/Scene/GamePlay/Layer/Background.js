@@ -6,7 +6,7 @@ let GPBackgroundLayer = cc.Layer.extend({
     },
     loadBackground: function () {
         let themeID = GameManager.getThemeID();
-        let node = new cc.Sprite("res/GamePlay/Theme/Theme" + themeID + "BG0/BG" + themeID + ".png");
+        let node = new cc.Sprite("res/GamePlay/Theme/Theme" + themeID + "/BG0/BG" + themeID + ".png");
         this.addChild(node);
         node.setPosition(cc.winSize / 2, cc.winSize.height / 2);
     }

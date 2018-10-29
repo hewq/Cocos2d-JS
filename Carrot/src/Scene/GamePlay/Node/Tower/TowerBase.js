@@ -39,5 +39,13 @@ let TowerBase = cc.Sprite.extend({
        }
        this.nearestEnemy = nearestEnemy;
        return nearestEnemy;
+    },
+    // 加载武器
+    loadWeapon: function () {
+       cc.warn("TowerBase.loadWeapon(): 请重写此方法！");
+    },
+    // 开火
+    onFire: function () {
+       cc.warn("TowerBase.onFire(): 请重写此方法！");
     }
 });

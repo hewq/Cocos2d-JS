@@ -22,7 +22,10 @@ let res = {
     stage_map_13_png: "res/ChooseLevel/Map/stage_map_13.png",
 
     route_plist: "res/ChooseLevel/route.plist",
-    route_png: "res/ChooseLevel/route.png"
+    route_png: "res/ChooseLevel/route.png",
+
+    level1_tmx: "res/GamePlay/Theme/Theme1/BG1/Level1.tmx",
+    level2_tmx: "res/GamePlay/Theme/Theme1/BG2/Level2.tmx"
 };
 
 let g_resources = [];

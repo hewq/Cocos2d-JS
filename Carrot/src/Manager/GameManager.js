@@ -129,14 +129,25 @@ let GameManager = {
             this._monsterDataArray.splice(0, 1);
 
             // (抛出事件)组别更新
-            // let event = new cc.EventCustom(jf.EventName.GP_UPDATE_GROUP);
-            // event.setUserData({
-            //     group: this.group
-            // });
-            // cc.eventManager.dispatchEvent(event);
+            let event = new cc.EventCustom(jf.EventName.GP_UPDATE_GROUP);
+            event.setUserData({
+                group: this.group
+            });
+            cc.eventManager.dispatchEvent(event);
         } else {
             groupData = [];
         }
         return groupData;
+    },
+
+    // getter && setter
+    setLevel: function (level) {
+        this.level = level;
+    },
+    getLevel: function () {
+        return this.level;
+    },
+    getThemeID: function () {
+        return this.themeID;
     }
 };

@@ -9,7 +9,7 @@ let GPUILayer = cc.Layer.extend({
         let onUpdateGroupListener = cc.EventListener.create({
             event: cc.EventListener.CUSTOM,
             target: this,
-            eventName: js.EventName.GP_UPDATE_GROUP,
+            eventName: jf.EventName.GP_UPDATE_GROUP,
             callback: this.onUpdateGroup
         })
     },

@@ -44,7 +44,6 @@ let MMMainLayer = cc.Layer.extend({
             startDisabled,
             function () {
                 cc.audioEngine.playEffect("res/Sound/MainMenu/Select.mp3");
-                cc.log("点击开始冒险按钮");
                 cc.director.runScene(new ChooseLevelScene());
             }.bind(this));
         start.setPosition(cc.winSize.width / 2 - 8, cc.winSize.height / 2 + 75);

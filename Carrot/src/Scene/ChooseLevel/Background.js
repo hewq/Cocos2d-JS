@@ -63,7 +63,6 @@ let CLBackgroundLayer = cc.Layer.extend({
             }
             button.loadTextures(texture, texture, "");
             button.setPosition(objs[i].x, objs[i].y);
-            cc.log(texture);
             button.setTag(i);
             button.addTouchEventListener(this.onLevelButtonEvent, this);
         }
@@ -72,7 +71,15 @@ let CLBackgroundLayer = cc.Layer.extend({
         switch (type) {
             case ccui.Widget.TOUCH_ENDED:
                 let level = sender.getTag(); // 当前等级
-                // TODO: 加载关卡数据，进入游戏
+                // 停止音乐
+                cc.audioEngine.stopMusic();
+                // 关卡设置
+                GameManager.setLevel(level);
+                // 加载资源，并进入游戏
+                cc.LoaderScene.preload(g_resources, function () {
+                    GameManager.loadLevelData(GameManager.getLevel());
+                    cc.director.runScene(new GamePlayScene());
+                }, this);
                 // TODO: 关卡按钮特效节点开发
                 break;
         }
