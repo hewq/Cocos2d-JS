@@ -202,7 +202,7 @@ let GPMainLayer = cc.Layer.extend({
             this.tiledMapRectArray[i] = [];
             for (let j = 0; j < mapSize.width; j++) {
                 // 空地
-                this.tiledMapRectArray[i][j] = cc.Rect(nextPosX - this.tileSize.width / 2, nextPosY - this.tileSize.height / 2, this.tileSize.width, this.tileSize.height);
+                this.tiledMapRectArray[i][j] = cc.rect(nextPosX - this.tileSize.width / 2, nextPosY - this.tileSize.height / 2, this.tileSize.width, this.tileSize.height);
 
                 // node = new cc.Sprite();
                 // this.addChild(node);
@@ -396,7 +396,7 @@ let GPMainLayer = cc.Layer.extend({
     // 加载萝卜血量
     loadBlood: function () {
         let node = new ccui.TextAtlas("10", "res/Font/num_blood.png", 16, 22, "0");
-        this.carrotHpBg = node;
+        this.carrotHpText = node;
         node.setPosition(this.carrotHpBg.width / 2 - 15, this.carrotHpBg.height / 2 - 3);
     },
     // 加载下一组怪物
@@ -618,32 +618,14 @@ let GPMainLayer = cc.Layer.extend({
     onUpdateCarrotBlood: function (event) {
         let self = event.getCurrentTarget();
         let blood = event.getUserData().blood;
+        cc.log(self.carrotHpText);
         self.carrotHpText.setString(blood + "");
-    },
-    // 萝卜每次扣一滴血
-    subtractCarrotBlood: function () {
-        this.carrotBlood = this.carrotBlood <= 0 ? 0 : this.carrotBlood - 1;
-        // 抛出血量更新事件
-        let event = new cc.EventCustom(jf.EventName.GP_UPDATE_CARROT_BLOOD);
-        event.setUserData({
-            blood: this.carrotBlood
-        });
-        cc.eventManager.dispatchEvent(event);
-
-        // 抛出游戏结束事件
-        if (this.carrotBlood == 0) {
-            let gameOverEvnet = new cc.EventCustom(jf.EventName.GP_GAME_OVER);
-            gameOverEvnet.setUserData({
-                isWin: false
-            });
-            cc.eventManager.dispatchEvent(gameOverEvnet);
-        }
     },
     // （事件）游戏结束
     onGameOver: function (event) {
         let self = event.getCurrentTarget();
         let data = event.getUserData();
-        GameManager.setInWin(data.isWin);
+        GameManager.setIsWin(data.isWin);
         cc.audioEngine.stopMusic();
 
         let scene = new GameResultScene();

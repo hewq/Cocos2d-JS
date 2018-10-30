@@ -9,6 +9,10 @@ let TowerBase = cc.Sprite.extend({
    cel: -1, // 列
    ctor: function (fileName, data) {
        this._super(fileName, data);
+       // 加载属性
+       this.loadProperty(data);
+       this.loadWeapon();
+       return true;
    },
     // 加载属性
     loadProperty: function (data) {
@@ -47,5 +51,20 @@ let TowerBase = cc.Sprite.extend({
     // 开火
     onFire: function () {
        cc.warn("TowerBase.onFire(): 请重写此方法！");
+    },
+    getCel: function () {
+       return this.cel;
+    },
+    setCel: function (cel) {
+       this.cel = cel;
+    },
+    getRow: function () {
+       return this.row;
+    },
+    setRow: function (row) {
+       this.row = row;
+    },
+    getWeapon: function () {
+       return this.weapon;
     }
 });

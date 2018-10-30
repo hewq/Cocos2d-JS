@@ -2,17 +2,29 @@ let CLBackgroundLayer = cc.Layer.extend({
     scrollView: null, // 滚动视图
     zOrderMap: {}, // 层级枚举
     routeButtonArray: [], // 关卡按钮数组
+    ctor: function () {
+        this._super();
+
+        return true;
+    },
     onEnter: function () {
         this._super();
-        this.loadScrollView();
         // 加载属性
         this.loadProperty();
+
+        // 加载滚动视图
+        this.loadScrollView();
 
         // 加载地图
         this.loadTiledMap();
 
-        // 加载 关卡道路
-        this.loadRoute(11);
+        // TODO 加载关卡，根据存储加载
+        let level = cc.sys.localStorage.getItem(Config.LEVEL);
+        if (level) {
+            this.loadLevel(level);
+        } else {
+            this.loadLevel(1);
+        }
     },
     loadScrollView: function () {
         let node = new ccui.ScrollView();
@@ -25,8 +37,7 @@ let CLBackgroundLayer = cc.Layer.extend({
         let nextPosX = 0;
         let imageView = null;
         for (let i = 0; i < 14; i++) {
-            let imageViewNum = 'stage_map_' + i + '_png';
-            imageView = new ccui.ImageView(res[imageViewNum]);
+            imageView = new ccui.ImageView("res/ChooseLevel/Map/stage_map_"  + i + ".png");
             node.addChild(imageView);
             imageView.setAnchorPoint(cc.p(0, 0.5));
             imageView.setPosition(nextPosX, cc.winSize.height / 2);
@@ -42,7 +53,7 @@ let CLBackgroundLayer = cc.Layer.extend({
         this.routeButtonArray = []; // 清空按钮数组
     },
     loadTiledMap: function () {
-        let node = new cc.TMXTiledMap(res.TiledMap_tmx);
+        let node = new cc.TMXTiledMap(res.cl_road_tiledMap_tmx);
         let objectGroup = node.getObjectGroup("point");
         let objs = objectGroup.getObjects();
         for (let i = 0; i < objs.length; i++) {
@@ -52,7 +63,7 @@ let CLBackgroundLayer = cc.Layer.extend({
             // 图片纹理
             let texture = "res/ChooseLevel/stagepoint_adv.png";
             // 编辑器中配置的属性
-            if (objs[i].isBoss == "YES") {
+            if (objs[i].isBoos == "YES") {
                 texture = "res/ChooseLevel/stagepoint_boss.png";
             } else if (objs[i].isTime == "YES") {
                 texture = "res/ChooseLevel/stagepoint_time.png";
@@ -64,8 +75,13 @@ let CLBackgroundLayer = cc.Layer.extend({
             button.loadTextures(texture, texture, "");
             button.setPosition(objs[i].x, objs[i].y);
             button.setTag(i);
+            button.setPressedActionEnabled(true);
             button.addTouchEventListener(this.onLevelButtonEvent, this);
         }
+    },
+    loadLevel: function (level) {
+        this.loadRoute(level);
+        this.loadLevelEffects(level);
     },
     onLevelButtonEvent: function (sender, type) {
         switch (type) {
@@ -76,11 +92,10 @@ let CLBackgroundLayer = cc.Layer.extend({
                 // 关卡设置
                 GameManager.setLevel(level);
                 // 加载资源，并进入游戏
-                cc.LoaderScene.preload(g_resources, function () {
+                cc.LoaderScene.preload(g_gamePlay_resources, function () {
                     GameManager.loadLevelData(GameManager.getLevel());
                     cc.director.runScene(new GamePlayScene());
                 }, this);
-                // TODO: 关卡按钮特效节点开发
                 break;
         }
     },
@@ -97,5 +112,14 @@ let CLBackgroundLayer = cc.Layer.extend({
             node.y = this.scrollView.getInnerContainerSize().height / 2;
             this.scrollView.addChild(node, this.zOrderMap.route);
         }
+    },
+    // 加载指定关卡按钮特效
+    loadLevelEffects: function (level) {
+        let index = level - 1;
+        let button = this.routeButtonArray[index];
+
+        let node = new RouteButtonEffect();
+        this.scrollView.addChild(node, this.zOrderMap.routeButtonEffect);
+        node.setPosition(button.getPosition);
     }
 });

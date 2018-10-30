@@ -32,7 +32,7 @@ let GamePlayScene = cc.Scene.extend({
         cc.spriteFrameCache.addSpriteFrames("res/GamePlay/Tower/Bottle.plist", "res/GamePlay/Tower/Bottle.png");
 
         let themeId = GameManager.getThemeID();
-        cc.spriteFrameCache.addSpriteFrames("res/GamePlay/Object/Theme" + themeId + "/Monster/theme_" + themeId + ".plist", "res/GamePlay/Object/Thee" + themeId + "/Monster/theme_" + themeId + ".png");
+        cc.spriteFrameCache.addSpriteFrames("res/GamePlay/Object/Theme" + themeId + "/Monster/theme_" + themeId + ".plist", "res/GamePlay/Object/Theme" + themeId + "/Monster/theme_" + themeId + ".png");
     },
     loadBackgroundLayer: function () {
         let node = new GPBackgroundLayer();

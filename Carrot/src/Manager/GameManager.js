@@ -139,6 +139,34 @@ let GameManager = {
         }
         return groupData;
     },
+    // 获取当前组怪物总数
+    getCurrGroupMonsterSum: function () {
+        let monsterCount = 0;
+        let team = this.monsterGroup[this.group - 1].team;
+        for (let i = 0; i < team.length; i++) {
+            monsterCount += team[i].count;
+        }
+        return monsterCount;
+    },
+    // 萝卜每次扣一滴血
+    subtractCarrotBlood: function () {
+        this.carrotBlood = this.carrotBlood <= 0 ? 0 : this.carrotBlood - 1;
+        // （抛出事件）血量更新
+        let event = new cc.EventCustom(jf.EventName.GP_UPDATE_CARROT_BLOOD);
+        event.setUserData({
+            blood: this.carrotBlood
+        });
+        cc.eventManager.dispatchEvent(event);
+
+        // （抛出事件）游戏结束
+        if (this.carrotBlood <= 0) {
+            let gameOverEvent = new cc.EventCustom(jf.EventName.GP_GAME_OVER);
+            gameOverEvent.setUserData({
+                isWin: false
+            });
+            cc.eventManager.dispatchEvent(gameOverEvent);
+        }
+    },
 
     // getter && setter
     setLevel: function (level) {
@@ -149,5 +177,50 @@ let GameManager = {
     },
     getThemeID: function () {
         return this.themeID;
+    },
+    getLevelData: function () {
+        return this.levelData;
+    },
+    getMonsterGroup: function () {
+        return this.monsterGroup;
+    },
+    getGroup: function () {
+        return this.group;
+    },
+    getMaxGroup: function () {
+        return this.maxGroup;
+    },
+    getGold: function () {
+        return this.gold;
+    },
+    getEnemyInterval: function () {
+        return this.enemyInterval;
+    },
+    getGroupInterval: function () {
+        return this.groupInterval;
+    },
+    getLevelName: function () {
+        return this.levelName;
+    },
+    getCarrotBlood: function () {
+        return this.carrotBlood;
+    },
+    setCarrotBlood: function (blood) {
+        this.carrotBlood = blood;
+    },
+    getCurrMonsterDataPool: function () {
+        return this.currMonsterDataPool;
+    },
+    getCurrMonsterPool: function () {
+        return this.currMonsterPool;
+    },
+    getCurrBulletPool: function () {
+        return this.currBulletPool;
+    },
+    getIsWin: function () {
+        return this.isWin;
+    },
+    setIsWin: function (isWin) {
+        this.isWin = isWin;
     }
 };

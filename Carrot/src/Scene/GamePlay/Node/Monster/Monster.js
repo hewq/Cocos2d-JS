@@ -3,10 +3,13 @@ let Monster = cc.Sprite.extend({
     data: {}, // 数据
     speed: 0, // 速度
     index: 0, // 索引
+    blood: 0, // 血量
     roadIndex: 0, // 当前移动路径的前缀
     fileNamePrefix: "", // 帧前缀
     ctor: function (fileName, data, fileNamePrefix) {
         this._super(fileName);
+        // 加载配置属性
+        this.loadProperty(data, fileNamePrefix);
     },
     // 加载属性配置
     loadProperty: function (data, fileNamePrefix) {
@@ -19,12 +22,18 @@ let Monster = cc.Sprite.extend({
         this.speed = data.speed;
         this.road = data.road;
         this.index = data.index;
+        this.blood = data.blood;
         this.fileNamePrefix = fileNamePrefix;
+    },
+    run: function () {
+        // 跑到下一个标记点上
+        this.runNextRoad();
+        this.playRunAnimation();
     },
     // 跑到下一个标记点上
     runNextRoad: function () {
         // 转方向
-        if (this.road[this.roadIndex].x <= this.load[this.roadIndex + 1].x) {
+        if (this.road[this.roadIndex].x <= this.road[this.roadIndex + 1].x) {
             this.setFlippedX(false);
         } else {
             this.setFlippedX(true);
@@ -48,5 +57,39 @@ let Monster = cc.Sprite.extend({
         let seq = cc.sequence(moveTo, callback);
         this.runAction(seq);
         this.roadIndex++;
+    },
+    playRunAnimation: function () {
+        let frames = [];
+        for (let i = 1; i < 4; i++) {
+            let str = this.fileNamePrefix + i + ".png"; // 注意：这里不需要加 # 号
+            let frame = cc.spriteFrameCache.getSpriteFrame(str);
+            frames.push(frame);
+        }
+        let animation = new cc.Animation(frames, 0.15);
+        animation.setRestoreOriginalFrame(true); // 设置 是否恢复到第一帧
+
+        let animate = cc.animate(animation);
+        this.runAction(animate.repeatForever());
+    },
+    getRoad: function () {
+        return this.road;
+    },
+    setRoad: function (road) {
+        this.road = road;
+    },
+    getData: function () {
+        return this.data;
+    },
+    getSpeed: function () {
+        return this.speed;
+    },
+    setSpeed: function () {
+        this.speed = speed;
+    },
+    getIndex: function () {
+        return this.index;
+    },
+    setIndex: function () {
+        this.index = index;
     }
 });
