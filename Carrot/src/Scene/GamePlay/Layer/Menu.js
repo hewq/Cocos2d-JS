@@ -72,7 +72,7 @@ let GPMenuLayer = ccui.Layout.extend({
         node.addTouchEventListener(function (sender, type) {
             switch (type) {
                 case ccui.Widget.TOUCH_ENDED:
-                    ccui.audioEngine.stopMusic();
+                    cc.audioEngine.stopMusic();
                     let level = GameManager.getLevel();
                     GameManager.loadLevelData(level);
                     let scene = new GamePlayScene();

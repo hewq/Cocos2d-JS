@@ -59,7 +59,7 @@ let Bottle = TowerBase.extend({
         node.setRotation(this.weapon.getRotation());
         return node;
     },
-    removeBullet: function () {
+    removeBullet: function (sender) {
         let event = new cc.EventCustom(jf.EventName.GP_REMOVE_BULLET);
         event.setUserData({
             target: sender

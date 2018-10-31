@@ -1,4 +1,4 @@
-let MMbackgroundLayer = cc.Layer.extend({
+let MMBackgroundLayer = cc.Layer.extend({
     ctor: function () {
         this._super();
         // 加载背景

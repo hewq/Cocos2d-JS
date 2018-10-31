@@ -50,7 +50,7 @@ let GamePlayScene = cc.Scene.extend({
         this.uiLayer = node;
     },
     loadMenuLayer: function () {
-        let node = new GPMainLayer();
+        let node = new GPMenuLayer();
         this.addChild(node);
         this.menuLayer = node;
     },

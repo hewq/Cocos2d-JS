@@ -8,6 +8,6 @@ let GPBackgroundLayer = cc.Layer.extend({
         let themeID = GameManager.getThemeID();
         let node = new cc.Sprite("res/GamePlay/Theme/Theme" + themeID + "/BG0/BG" + themeID + ".png");
         this.addChild(node);
-        node.setPosition(cc.winSize / 2, cc.winSize.height / 2);
+        node.setPosition(cc.winSize.width / 2, cc.winSize.height / 2);
     }
 });

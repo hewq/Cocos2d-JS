@@ -50,10 +50,10 @@ let TowerPanel = cc.Sprite.extend({
 
         return true;
     },
-    onTouchMoved: function () {
+    onTouchMoved: function (touch, event) {
         let target = event.getCurrentTarget();
     },
-    onTouchEnded: function () {
+    onTouchEnded: function (touch, event) {
         // target 指向对应塔到图标
         let target = event.getCurrentTarget();
         // 创建塔事件分发
@@ -62,7 +62,7 @@ let TowerPanel = cc.Sprite.extend({
             name: target.getName(),
             // target.getParent() 指向 TowerPanel
             x: target.getParent().getPositionX(),
-            Y: target.getParent().getPositionY(),
+            y: target.getParent().getPositionY(),
             cel: target.getParent().cel,
             row: target.getParent().row
         });

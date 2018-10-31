@@ -118,6 +118,7 @@ let GPMainLayer = cc.Layer.extend({
         });
         cc.eventManager.addListener(onCreateTowerListener, this);
 
+        // （事件监听）移除子弹
         let onRemoveBulletListener = cc.EventListener.create({
             event: cc.EventListener.CUSTOM,
             target: this,
@@ -130,7 +131,7 @@ let GPMainLayer = cc.Layer.extend({
     // 加载属性
     loadProperty: function () {
         this.ZOrderEnum.START = 10; // 起点标识
-        this.ZOrderEnum.CARROT = 0; // 萝卜
+        this.ZOrderEnum.CARROT = 20; // 萝卜
         this.ZOrderEnum.MONSTER = 20; // 怪物
         this.ZOrderEnum.WAMING = 30; //  警告提示
         this.ZOrderEnum.TOWER_PANEL = 50; // 创建塔面板
@@ -379,7 +380,7 @@ let GPMainLayer = cc.Layer.extend({
       let obj = group.getObjects()[1];
 
       node.x = obj.x + group.getPositionOffset().x;
-      node.y = obj.y + group.getPositionOffset.y + this.tileSize.height / 2 + 20;
+      node.y = obj.y + group.getPositionOffset().y + this.tileSize.height / 2 + 20;
     },
     // 加载血量
     loadCarrotHp: function () {
@@ -396,6 +397,7 @@ let GPMainLayer = cc.Layer.extend({
     // 加载萝卜血量
     loadBlood: function () {
         let node = new ccui.TextAtlas("10", "res/Font/num_blood.png", 16, 22, "0");
+        this.carrotHpBg.addChild(node);
         this.carrotHpText = node;
         node.setPosition(this.carrotHpBg.width / 2 - 15, this.carrotHpBg.height / 2 - 3);
     },
@@ -420,12 +422,12 @@ let GPMainLayer = cc.Layer.extend({
         // 延迟时间
         let enemyDelay = cc.delayTime(GameManager.getEnemyInterval());
         let callback = cc.callFunc(this.createMonster.bind(this));
-        let createMonsterAction = cc.sequence(enemyDelay.clone(), callback).repeat(this.currGroupCreatedMonsterSum);
-        let finalAction = cc.sequence(groupDelay, createMonsterAction);
+        let createMonsterAction = cc.sequence(enemyDelay.clone(), callback);
+        let finalAction = cc.sequence(groupDelay, createMonsterAction).repeat(this.currGroupCreatedMonsterSum);
         this.runAction(finalAction);
     },
     // 加载警告精灵节点
-    loadTouchWarning: function () {
+    loadTouchWarning: function (x, y) {
         let node = null;
         if (this.touchWarningNode != null) {
             node = this.touchWarningNode;
@@ -466,7 +468,7 @@ let GPMainLayer = cc.Layer.extend({
         };
 
         let namePrefix = data.name.substring(0, data.name.length - 1);
-        let fileNamePrefix = "Theme" + GameManager.getThemeID() + "/Monster" + namePrefix;
+        let fileNamePrefix = "Theme" + GameManager.getThemeID() + "/Monster/" + namePrefix;
         let fileName = "#" + fileNamePrefix + "1.png";
         let node = new Monster(fileName, monsterData, fileNamePrefix);
         this.addChild(node, this.ZOrderEnum.MONSTER);
@@ -481,7 +483,7 @@ let GPMainLayer = cc.Layer.extend({
     removeMonster: function (obj) {
         let monster = null;
         for (let i = 0; i < GameManager.currMonsterPool.length; i++) {
-            for (let j = 0; j < GameManager.currMonsterPool[i].length; i++) {
+            for (let j = 0; j < GameManager.currMonsterPool[i].length; j++) {
                 monster = GameManager.currMonsterPool[i][j];
                 if (monster == obj) {
                     this.removeMonsterByIndex(i, j);
@@ -517,7 +519,7 @@ let GPMainLayer = cc.Layer.extend({
         this.towerPanel = null;
     },
     // 创建炮塔
-    createTower: function () {
+    createTower: function (data) {
         cc.assert(data.name, "GPMainLayer.createTower(): 名字无效！");
         cc.assert(data.x, "GPMainLayer.createTower(): x 轴坐标无效！");
         cc.assert(data.y, "GPMainLayer.createTower(): y 轴坐标无效！");
@@ -574,13 +576,13 @@ let GPMainLayer = cc.Layer.extend({
                         } else {
                             if (GameManager.getGroup() > GameManager.getMaxGroup()) {
                                 let event = new cc.EventCustom(jf.EventName.GP_GAME_OVER);
-                                let nextlevel = GameManager.level + 1 + 1;
-                                let level = cc.sys.localStorage.getItem(config.LEVEL);
+                                let nextLevel = GameManager.level + 1 + 1;
+                                let level = cc.sys.localStorage.getItem(Config.LEVEL);
                                 if (!level) {
                                     level = 1;
                                 }
-                                if (nextlevel > level) {
-                                    cc.sys.localStorage.setItem(Config.LEVEL, nextlevel);
+                                if (nextLevel > level) {
+                                    cc.sys.localStorage.setItem(Config.LEVEL, nextLevel);
                                 }
                                 event.setUserData({
                                     isWin: true
@@ -618,7 +620,6 @@ let GPMainLayer = cc.Layer.extend({
     onUpdateCarrotBlood: function (event) {
         let self = event.getCurrentTarget();
         let blood = event.getUserData().blood;
-        cc.log(self.carrotHpText);
         self.carrotHpText.setString(blood + "");
     },
     // （事件）游戏结束
@@ -652,7 +653,7 @@ let GPMainLayer = cc.Layer.extend({
     },
     // （事件）触摸
     onTouchBegan: function (touch, event) {
-        let self = event.getCurrenttarget();
+        let self = event.getCurrentTarget();
         return true;
     },
     onTouchMoved: function (touch, event) {
@@ -683,20 +684,6 @@ let GPMainLayer = cc.Layer.extend({
                 }
             }
         }
-
-        // target 指向对应炮塔的图标
-        let target = event.getCurrentTarget();
-        // 创建炮塔事件分发
-        let createTowerEvent = new cc.EventCustom(jf.EventName.GP_CREATE_TOWER);
-        createTowerEvent.setUserData({
-            name: target.getName(),
-            // target.getParent() 指向 TowerPanel
-            x: target.getParent().getPositionX(),
-            y: target.getParent().getPositionY(),
-            cel: target.getParent().cel,
-            row: target.getParent().row
-        });
-        cc.eventManager.dispatchEvent(createTowerEvent);
     },
     // 根据坐标获取在地图中的信息
     getInfoFromMapByPos: function (x, y) {
