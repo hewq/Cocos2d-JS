@@ -77,7 +77,6 @@ let GPUILayer = cc.Layer.extend({
         node.setZoomScale(0.2);
         node.x = 700;
         node.y = this.topBar.height / 2;
-        // TODO 变速按钮监听器
     },
     // 加载暂停按钮
     loadPauseButton: function () {

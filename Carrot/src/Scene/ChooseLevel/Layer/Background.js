@@ -90,7 +90,10 @@ let CLBackgroundLayer = cc.Layer.extend({
                 let configLevel = cc.sys.localStorage.getItem(Config.LEVEL);
 
                 // 禁止跳级
-                if (+level >= +configLevel) return;
+                if (configLevel && level >= +configLevel) return;
+                if (!configLevel) {
+                    if (level != 0) return;
+                }
 
                 // 停止音乐
                 cc.audioEngine.stopMusic();
