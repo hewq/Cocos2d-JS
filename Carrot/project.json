@@ -13,7 +13,6 @@
 
     "jsList" : [
         "src/resource.js",
-        "src/config.js",
         "src/define.js",
 
         "src/Scene/MainMenu/Layer/Background.js",

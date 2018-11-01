@@ -1,37 +1,52 @@
 let MMMainLayer = cc.Layer.extend({
     actionDuration: 1,  // 时间基数，页面上所有节点运行的动作
+    upLock: null,
+    isUpUnlock: "",
+
     ctor: function () {
         this._super();
 
-        // 加载背景
-        this.loadBackground();
+        // 加载配置
+        this.loadConfig();
 
         // 加载"开始冒险"和"天天向上"菜单
         this.loadMenu();
 
         // 加载"设置"按钮
-
-        // 加载怪物
-        this.loadForeMonster();
-
-        // 加载云朵
-        this.loadCloud();
+        this.loadSet();
 
         // 加载"帮助"按钮
         this.loadHelp();
+
+        // 加载怪物（底部 1 号和3号怪）
+        this.loadBackMonster();
+
+        // 加载云朵（底部遮挡在 1 号、3 号以及 6 号怪之前的云朵）
+        this.loadBackSmoke();
+
+        // 加载怪物（前面 5 号怪）
+        this.loadForeMonster();
+
+        // 加载云朵（前面遮罩在 5 号怪身上）
+        this.loadForeSmoke();
 
         // 加载萝卜
         this.loadCarrot();
 
         // 加载前景
-        this.loadFront();
+        this.loadForeground();
+
+        // 注册事件
+        this.registerEvent();
 
         return true;
     },
-    loadBackground: function () {
-        let node = new cc.Sprite("res/MainMenu/zh/front_bg.png");
-        this.addChild(node);
-        node.setPosition(cc.winSize.width / 2, cc.winSize.height / 2);
+    loadConfig: function () {
+        // 测试用，启动游戏时，向保存文件写入 NO，开启加锁
+        // cc.sys.localStorage.setItem(Config.IS_UP_UNLOCK_KEY, "NO");
+
+        // 是否已经解锁了"天天向上"
+        this.isUpUnlock = cc.sys.localStorage.getItem(Config.IS_UP_UNLOCK_KEY) || "NO";
     },
     loadMenu: function () {
         // 开始冒险
@@ -62,9 +77,124 @@ let MMMainLayer = cc.Layer.extend({
             }.bind(this));
         floor.setPosition(cc.winSize.width / 2 - 8, cc.winSize.height / 2 - 50);
 
+        if (this.isUpUnlock == "NO") {
+            let upLock = new cc.Sprite(res.front_btn_floor_locked_png);
+            floor.addChild(upLock);
+            this.upLock = upLock;
+            upLock.setPosition(floor.width + 5, floor.height / 2 + 25);
+        }
+
         let menu = new cc.Menu(start, floor);
         this.addChild(menu);
         menu.setPosition(0, 0);
+    },
+    loadSet: function () {
+        let setBg = new cc.Sprite(res.front_monster4_png);
+        this.addChild(setBg);
+        setBg.setPosition(cc.winSize.width / 2 - 350, 490);
+
+        // 上下移动
+        let moveBy1 = cc.moveBy(this.actionDuration, cc.p(0, -10));
+        let moveBy2 = cc.moveBy(this.actionDuration, cc.p(0, 10));
+        let seq = cc.sequence(moveBy1, moveBy2);
+        let action = seq.repeatForever();
+        setBg.runAction(action);
+
+        let set = new cc.Sprite(res.front_btn_setting_normal_png);
+        setBg.addChild(set);
+        set.setPosition(157, 80);
+    },
+    loadHelp: function () {
+        let helpBg = new cc.Sprite(res.front_monster_6_hand_png);
+        this.addChild(helpBg);
+        helpBg.setPosition(cc.winSize.width / 2 + 270, 270);
+
+        // 左右摆动
+        let rotateBy1 = cc.rotateBy(this.actionDuration * 0.8, -5);
+        let rotateBy2 = cc.rotateBy(this.actionDuration * 0.8, 5);
+        let seq = cc.sequence(rotateBy1, rotateBy2);
+        let action = seq.repeatForever();
+        helpBg.runAction(action);
+
+        let help = new cc.Sprite(res.front_btn_help_normal_png);
+        helpBg.addChild(help);
+        help.setPosition(153, 365);
+
+        let helpBody = new cc.Sprite(res.front_monster6_png);
+        this.addChild(helpBody);
+        helpBody.setPosition(cc.winSize.width / 2 + 400, 280);
+
+        // 上下移动
+        let helpBodyMoveBy1 = cc.moveBy(this.actionDuration * 2, cc.p(0, 5));
+        let helpBodyMoveBy2 = cc.moveBy(this.actionDuration * 2, cc.p(0, -5));
+        let helpBodySeq = cc.sequence(helpBodyMoveBy1, helpBodyMoveBy2);
+        let helpBodyAction = helpBodySeq.repeatForever();
+        helpBody.runAction(helpBodyAction);
+    },
+    loadBackMonster: function () {
+        let leftYellow = new cc.Sprite(res.front_monster3_png);
+        this.addChild(leftYellow);
+        leftYellow.setPosition(cc.winSize.width / 2 - 360, 220);
+
+        // 上下移动
+        let yellowMoveBy1 = cc.moveBy(this.actionDuration * 0.8, cc.p(0, 5));
+        let yellowMoveBy2 = cc.moveBy(this.actionDuration * 0.8, cc.p(0, -5));
+        let yellowSeq = cc.sequence(yellowMoveBy1, yellowMoveBy2);
+        let yellowAction = yellowSeq.repeatForever();
+        leftYellow.runAction(yellowAction);
+
+        let leftGreen = new cc.Sprite(res.front_monster1_png);
+        this.addChild(leftGreen);
+        leftGreen.setPosition(cc.winSize.width / 2 - 300, 185);
+
+        // 左右移动
+        let greenMoveBy1 = cc.moveBy(this.actionDuration * 0.7, cc.p(-3, 0));
+        let greenMoveBy2 = cc.moveBy(this.actionDuration * 0.7, cc.p(3, 0));
+        let greenSeq = cc.sequence(greenMoveBy1, greenMoveBy2);
+        let greenAction = greenSeq.repeatForever();
+        leftGreen.runAction(greenAction);
+    },
+    loadBackSmoke: function () {
+        let left = new cc.Sprite(res.front_smoke1_png);
+        this.addChild(left);
+        left.setPosition(cc.winSize.width / 2 - 410, 188);
+
+        let right = new cc.Sprite(res.front_smoke3_png);
+        this.addChild(right);
+        right.setPosition(cc.winSize.width / 2 + 405, 190);
+    },
+    loadForeMonster: function () {
+        let rightYellow = new cc.Sprite(res.front_monster5_png);
+        this.addChild(rightYellow);
+        rightYellow.setPosition(cc.winSize.width / 2 + 290, 185);
+
+        // 左右移动
+        let yellowMoveBy1 = cc.moveBy(this.actionDuration * 0.85, cc.p(-3, 0));
+        let yellowMoveBy2 = cc.moveBy(this.actionDuration * 0.85, cc.p(3, 0));
+        let yellowSeq = cc.sequence(yellowMoveBy1, yellowMoveBy2);
+        let greenAction = yellowSeq.repeatForever();
+        rightYellow.runAction(greenAction);
+
+        let leftCambridgeBlue = new cc.Sprite(res.front_monster2_png);
+        this.addChild(leftCambridgeBlue);
+        leftCambridgeBlue.setPosition(cc.winSize.width / 2 - 300, 150);
+
+        // 上下移动
+        let action0 = cc.moveTo(this.actionDuration * 0.2, cc.p(cc.winSize.width /2 - 220, 170), null);
+        let action1 = cc.sequence(action0, cc.callFunc(function () {
+            let blueMoveBy1 = cc.moveBy(this.actionDuration * 0.55, cc.p(0, -5));
+            let blueMoveBy2 = cc.moveBy(this.actionDuration * 0.55, cc.p(0, 5));
+            let blueSeq = cc.sequence(blueMoveBy1, blueMoveBy2);
+            let blueAction = blueSeq.repeatForever();
+            leftCambridgeBlue.runAction(blueAction);
+        }, this));
+
+        leftCambridgeBlue.runAction(action1);
+    },
+    loadForeSmoke: function () {
+        let node = new cc.Sprite(res.front_smoke2_png);
+        this.addChild(node);
+        node.setPosition(cc.winSize.width / 2 + 320, 150);
     },
     loadCarrot: function () {
         let node = new cc.Sprite("res/MainMenu/front_carrot.png");
@@ -83,111 +213,30 @@ let MMMainLayer = cc.Layer.extend({
         let spawn = cc.spawn(bezierTo, scaleTo);
         node.runAction(spawn);
     },
-    loadHelp: function () {
-        let helpBody = new cc.Sprite("res/MainMenu/front_btn_help_normal.png");
-        helpBody.setPosition(cc.p(cc.winSize.width / 2 + 260, 425));
-        this.addChild(helpBody);
+    loadForeground: function () {
+        let node = new cc.Sprite(res.front_front_png);
+        this.addChild(node);
+        node.setPosition(cc.winSize.width / 2, cc.winSize.height / 2);
     },
-    loadForeMonster: function () {
-        let leftCambridgeBlue = new cc.Sprite("res/MainMenu/front_monster_2.png");
-        let numThreeMonster = new cc.Sprite("res/MainMenu/front_monster_3.png");
-        let numFiveMonster = new cc.Sprite("res/MainMenu/front_monster_5.png");
-        let numFourMonster = new cc.Sprite("res/MainMenu/front_monster_4.png");
-        let numSixMonster = new cc.Sprite("res/MainMenu/front_monster_6.png");
-        let numSixHandMonster = new cc.Sprite("res/MainMenu/front_monster_6_hand.png");
-        let numOneMonster = new cc.Sprite("res/MainMenu/front_monster_1.png");
-        this.addChild(leftCambridgeBlue);
-        this.addChild(numThreeMonster);
-        this.addChild(numOneMonster);
-        this.addChild(numFourMonster);
-        this.addChild(numSixHandMonster);
-        this.addChild(numSixMonster);
-        this.addChild(numFiveMonster);
+    registerEvent: function () {
+        let listener = cc.EventListener.create({
+            event: cc.EventListener.CUSTOM,
+            target: this,
+            eventName: jf.EventName.UNLOCK_UP,
+            callback: this.onUnLockUp
+        });
 
-        // 上下移动
-        let action0 = cc.moveTo(this.actionDuration * 0.2, cc.winSize.width / 2 - 220, 170);
-        let action1 = cc.sequence(action0, cc.callFunc(function () {
-            let blueMoveBy1 = cc.moveBy(this.actionDuration * 0.55, 0, -5);
-            let blueMoveBy2 = cc.moveBy(this.actionDuration * 0.55, 0, 5);
-            let blueSeq = cc.sequence(blueMoveBy1, blueMoveBy2);
-            let blueAction = blueSeq.repeatForever();
-            leftCambridgeBlue.runAction(blueAction);
-        }, this));
-        leftCambridgeBlue.runAction(action1);
-
-        numThreeMonster.setPosition(cc.p(cc.winSize.width / 2 - 380, 200));
-        let numThreeMoveBy1 = cc.moveBy(this.actionDuration * 0.55, 0, -5);
-        let numThreeMoveBy2 = cc.moveBy(this.actionDuration * 0.55, 0, 5);
-        let numThreeSeq = cc.sequence(numThreeMoveBy1, numThreeMoveBy2);
-        let numThreeAction = numThreeSeq.repeatForever();
-        numThreeMonster.runAction(numThreeAction);
-
-        numFourMonster.setPosition(cc.p(cc.winSize.width / 2 - 340, 480));
-        let numFourMoveBy1 = cc.moveBy(this.actionDuration * 0.55, 0, -5);
-        let numFourMoveBy2 = cc.moveBy(this.actionDuration * 0.55, 0, 5);
-        let numFourSeq = cc.sequence(numFourMoveBy1, numFourMoveBy2);
-        let numFourAction = numFourSeq.repeatForever();
-        numFourMonster.runAction(numFourAction);
-
-        numSixMonster.setPosition(cc.p(cc.winSize.width / 2 + 380, 270));
-        let numSixMoveBy1 = cc.moveBy(this.actionDuration * 0.55, 0, -5);
-        let numSixMoveBy2 = cc.moveBy(this.actionDuration * 0.55, 0, 5);
-        let numSixSeq = cc.sequence(numSixMoveBy1, numSixMoveBy2);
-        let numSixAction = numSixSeq.repeatForever();
-        numSixMonster.runAction(numSixAction);
-
-        numSixHandMonster.setPosition(cc.p(cc.winSize.width / 2 + 275, 270));
-        numSixHandMonster.setRotation(20);
-        let numSixHandRotateBy1 = cc.rotateBy(this.actionDuration * 0.55, -30, 0);
-        let numSixHandRotateBy2 = cc.rotateBy(this.actionDuration * 0.55, 30, 0);
-        let numSixHandSeq = cc.sequence(numSixHandRotateBy1, numSixHandRotateBy2);
-        let numSixHandAction = numSixHandSeq.repeatForever();
-        numSixHandMonster.runAction(numSixHandAction);
-
-        // 左右移动
-        numOneMonster.setPosition(cc.p(cc.winSize.width / 2 - 300, 170));
-        let numOneMoveBy1 = cc.moveBy(this.actionDuration * 0.55, cc.p(-5, 0));
-        let numOneMoveBy2 = cc.moveBy(this.actionDuration * 0.55, cc.p(5, 0));
-        let numOneSeq = cc.sequence(numOneMoveBy1, numOneMoveBy2);
-        let numOneAction = numOneSeq.repeatForever();
-        numOneMonster.runAction(numOneAction);
-
-        // 左右移动
-        numFiveMonster.setPosition(cc.p(cc.winSize.width / 2 + 300, 170));
-        let numFiveMoveBy1 = cc.moveBy(this.actionDuration * 0.55, cc.p(-5, 0));
-        let numFiveMoveBy2 = cc.moveBy(this.actionDuration * 0.55, cc.p(5, 0));
-        let numFiveSeq = cc.sequence(numFiveMoveBy1, numFiveMoveBy2);
-        let numFiveAction = numFiveSeq.repeatForever();
-        numFiveMonster.runAction(numFiveAction);
+        cc.eventManager.addListener(listener, this);
     },
-    loadCloud: function () {
-        let cloud1 = new cc.Sprite("res/MainMenu/front_smoke_1.png");
-        let cloud2 = new cc.Sprite("res/MainMenu/front_smoke_2.png");
-        let cloud3 = new cc.Sprite("res/MainMenu/front_smoke_3.png");
-        cloud1.setPosition(cc.p(150, 150));
-        cloud2.setPosition(cc.p(750, 350));
-        cloud3.setPosition(cc.p(980, 170));
-        this.addChild(cloud1);
-        this.addChild(cloud2);
-        this.addChild(cloud3);
-    },
-    loadFront: function () {
-        let front = new cc.Sprite("res/MainMenu/front_front.png");
-        front.setPosition(cc.p(cc.winSize.width / 2, cc.winSize.height / 2));
-        this.addChild(front);
-    }
-});
-
-let MMMainScene = cc.Scene.extend({
-    backgroundLayer: null,
-    mainLayer: null,
-    ctor: function () {
-        this._super();
-        cc.audioEngine.playMusic("res/Sound/MainMenu/BGMusic.mp3", true);
-    },
-    onEnter: function () {
-        this._super();
-        let layer = new MMMainLayer();
-        this.addChild(layer);
+    // 解锁天天向上
+    onUnLockUp: function () {
+        let target = event.getCurrentTarget();
+        let data = event.getUserData();
+        if (data.isSuccess !== undefined && data.isSuccess) {
+            // 数据保存（解锁成功）
+            cc.sys.localStorage.setItem(Config.IS_UP_UNLOCK_KEY, "YES");
+            target.isUpUnlock = "YES";
+            target.upLock.removeFromParent();
+        }
     }
 });

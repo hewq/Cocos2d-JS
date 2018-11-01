@@ -233,5 +233,4 @@ let LevelData = [
             }
         ]
     }
-
 ];

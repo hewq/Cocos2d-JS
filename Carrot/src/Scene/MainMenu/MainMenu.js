@@ -6,7 +6,6 @@ let MainMenuScene = cc.Scene.extend({
     ctor: function () {
         this._super();
         cc.audioEngine.playMusic(res.sd_mm_BGMusic_mp3, true);
-
         return true;
     },
 
@@ -30,7 +29,7 @@ let MainMenuScene = cc.Scene.extend({
 
     loadBackgroundLayer: function () {
         this.backgroundLayer = new MMBackgroundLayer();
-        this.addChild();
+        this.addChild(this.backgroundLayer);
     },
 
     loadMainLayer: function () {

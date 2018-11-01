@@ -18,7 +18,7 @@ let CLBackgroundLayer = cc.Layer.extend({
         // 加载地图
         this.loadTiledMap();
 
-        // TODO 加载关卡，根据存储加载
+        // 加载关卡，根据存储加载
         let level = cc.sys.localStorage.getItem(Config.LEVEL);
         if (level) {
             this.loadLevel(level);
@@ -87,6 +87,11 @@ let CLBackgroundLayer = cc.Layer.extend({
         switch (type) {
             case ccui.Widget.TOUCH_ENDED:
                 let level = sender.getTag(); // 当前等级
+                let configLevel = cc.sys.localStorage.getItem(Config.LEVEL);
+
+                // 禁止跳级
+                if (+level >= +configLevel) return;
+
                 // 停止音乐
                 cc.audioEngine.stopMusic();
                 // 关卡设置
