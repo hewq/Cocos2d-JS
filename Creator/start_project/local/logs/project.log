@@ -150,3 +150,4 @@
     at Parser.pp$3.parseMaybeAssign (/Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/babylon/lib/index.js:3344:19)
     at Parser.pp$3.parseExpression (/Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/babylon/lib/index.js:3306:19)
     at Parser.pp$1.parseStatement (/Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/babylon/lib/index.js:1906:19)
+2018-11-01T12:17:24.248Z - info: shutdown preview server
