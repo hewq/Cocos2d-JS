@@ -25,8 +25,8 @@
       "rawHeight": 42,
       "borderTop": 0,
       "borderBottom": 0,
-      "borderLeft": 0,
-      "borderRight": 0,
+      "borderLeft": 19,
+      "borderRight": 22,
       "spriteType": "normal",
       "subMetas": {}
     },
