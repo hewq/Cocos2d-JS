@@ -83,7 +83,7 @@ let Game = cc.Class({
 
     updateTotalChips: function () {
         this.totalChips.string = this.totalChipsNum;
-        this.player.renderer.updateTotalChips(this.totalChipsNum);
+        this.player.renderer.updateTotalStake(this.totalChipsNum);
     },
 
     createPlayers: function () {

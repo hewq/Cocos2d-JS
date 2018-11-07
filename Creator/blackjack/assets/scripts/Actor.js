@@ -70,7 +70,7 @@ cc.Class({
 
     init: function () {
         this.ready = true;
-        this.renderer = this.getComponent('ActorRenderer.js');
+        this.renderer = this.getComponent('ActorRenderer');
     },
 
     addCard: function (card) {

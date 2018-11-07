@@ -45,7 +45,7 @@ cc.Class({
         this.updateTotalStake(playerInfo.gold);
 
         let photoIdx = playerInfo.photoIdx % 5;
-        this.spPlayeerPhoto.spriteFrame = Game.instance.assetMng.playerPhotos[photoIdx];
+        this.spPlayerPhoto.spriteFrame = Game.instance.assetMng.playerPhotos[photoIdx];
 
         // fx
         this.animFX = this.animFX.getComponent('FXPlayer');
@@ -110,7 +110,7 @@ cc.Class({
     },
 
     onDeal: function (card, show) {
-        let newCard = cc.instaniate(this.cardPrefab).getComponent('Card');
+        let newCard = cc.instantiate(this.cardPrefab).getComponent('Card');
         this.anchorCards.addChild(newCard.node);
         newCard.init(card);
         newCard.reveal(show);
@@ -157,7 +157,7 @@ cc.Class({
                 this.animFX.show(true);
                 this.animFX.playFX('blackjack');
                 break;
-            case Type.Hand.FiveCard:
+            case Types.Hand.FiveCard:
                 // TODO
                 break;
         }

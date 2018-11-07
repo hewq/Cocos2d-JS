@@ -1,4 +1,4 @@
-let Types = require('Decks');
+let Types = require('Types');
 
 /**
  * 扑克管理类，用来管理一副或多副牌

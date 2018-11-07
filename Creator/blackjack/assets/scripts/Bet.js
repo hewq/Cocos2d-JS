@@ -23,7 +23,7 @@ cc.Class({
     _registerBtns: function () {
         let self = this;
         let registerBtn = function (index) {
-            self.btnChips[i].on('touchstart', function (event) {
+            self.btnChips[index].on('touchstart', function (event) {
                 if (Game.instance.addStake(self.chipValues[index])) {
                     self.playAddChip();
                 }

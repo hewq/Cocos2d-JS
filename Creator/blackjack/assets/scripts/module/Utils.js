@@ -11,19 +11,18 @@ function getMinMaxPoint (cards) {
         }
 
         min += Math.min(10, card.point);
-
-        let max = min;
-        // 如果有 1 个 A 可以当成 11
-        if (hasAce && min + 10 <= 21) {
-            // 如果两个 A 都当成 11，那么总分最小也是 22，爆了，所以最多只能有一个 A 当成 11
-            max += 10;
-        }
-
-        return {
-            min: min,
-            max: max
-        };
     }
+    let max = min;
+    // 如果有 1 个 A 可以当成 11
+    if (hasAce && min + 10 <= 21) {
+        // 如果两个 A 都当成 11，那么总分最小也是 22，爆了，所以最多只能有一个 A 当成 11
+        max += 10;
+    }
+    
+    return {
+        min: min,
+        max: max
+    };
 }
 
 function isBust(cards) {

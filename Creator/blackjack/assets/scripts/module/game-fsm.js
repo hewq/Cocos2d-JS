@@ -10,7 +10,7 @@ function on (message) {
     };
 }
 
-let evaluate = false;
+let evaluating = false;
 
 exports = {
     init: function (target) {
