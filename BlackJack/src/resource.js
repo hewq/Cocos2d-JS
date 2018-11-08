@@ -1,32 +1,37 @@
-/****************************************************************************
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
- 
- http://www.cocos2d-x.org
- 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- 
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
- ****************************************************************************/
+let res = {
+    // Sound
+    bgm_mp3: 'res/Sound/bgm2.mp3',
+    button_mp3: 'res/Sound/button.mp3',
+    card_mp3: 'res/Sound/card_deal.mp3',
+    chips_mp3: 'res/Sound/chips_place.mp3',
+    win_mp3: 'res/Sound/achievement_won.mp3',
+    fail_mp3: 'res/Sound/fail.mp3',
 
-var res = {
-    HelloWorld_png : "res/HelloWorld.png",
+    // MainMenu
+    bg_png: 'res/bg.png',
+
+    // Menu
+    menu_png: 'res/Menu/menu.png',
+    menu_plist: 'res/Menu/menu.plist',
+
+    // Share
+    share_png: 'res/Share/shared.png',
+    share_plist: 'res/Share/shared.plist',
+
+    // Table
+    table_png: 'res/Table/table.png',
+    table_plist: 'res/Table/table.plist',
+
+    // Card
+    card_png: 'res/Card/card.png',
+    card_plist: 'res/Card/card.plist',
+
+    // Animation
+    animation_png: 'res/Animation/fx_animation.png',
+    animation_plist: 'res/Animation/fx_animation.plist',
 };
 
-var g_resources = [];
-for (var i in res) {
+let g_resources = [];
+for (let i in res) {
     g_resources.push(res[i]);
 }
