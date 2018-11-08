@@ -4480,9 +4480,11 @@
   },
   {
     "__type__": "cc.ClickEvent",
-    "target": null,
-    "component": "",
-    "handler": "",
+    "target": {
+      "__id__": 78
+    },
+    "component": "Menu",
+    "handler": "playGame",
     "customEventData": ""
   },
   {
@@ -4683,9 +4685,11 @@
   },
   {
     "__type__": "cc.ClickEvent",
-    "target": null,
-    "component": "",
-    "handler": "",
+    "target": {
+      "__id__": 78
+    },
+    "component": "Menu",
+    "handler": "playGame",
     "customEventData": ""
   },
   {
