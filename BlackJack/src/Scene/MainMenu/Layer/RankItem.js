@@ -17,10 +17,22 @@ let RankItemLayer = cc.Layer.extend({
         bottomLine.setAnchorPoint(0.5, 0);
         bottomLine.setPosition(layout.getContentSize().width / 2, 0);
 
-        let rankList1 = new cc.Sprite('#rankinglist_1.png');
-        layout.addChild(rankList1);
-        rankList1.setAnchorPoint(0, 0.5);
-        rankList1.setPosition(30, layout.getContentSize().height / 2);
+        let rankList = null;
+        if (num > 3) {
+            let rankNumBg = new cc.Sprite('#rankinglist_bg.png');
+            layout.addChild(rankNumBg);
+            rankNumBg.setAnchorPoint(0, 0.5);
+            rankNumBg.setPosition(30, layout.getContentSize().height / 2);
+
+            let rankNum = new ccui.Text(num + '', "AmericanTypewriter", 30);
+            rankNumBg.addChild(rankNum);
+            rankNum.setPosition(rankNumBg.getContentSize().width / 2, rankNumBg.getContentSize().height / 2);
+        } else {
+            rankList = new cc.Sprite('#rankinglist_' + num + '.png');
+            layout.addChild(rankList);
+            rankList.setAnchorPoint(0, 0.5);
+            rankList.setPosition(30, layout.getContentSize().height / 2);
+        }
 
         let playerBorder = new cc.Sprite('#Stroke_photo.png');
         layout.addChild(playerBorder);
