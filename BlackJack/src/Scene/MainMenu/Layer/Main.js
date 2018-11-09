@@ -39,12 +39,29 @@ let MMMainLayer = cc.Layer.extend({
         let rankListBg = new cc.Scale9Sprite('res/bg_rankinglist.png', cc.rect(0, 0, 504, 144), cc.rect(0, 80, 504, 20));
         this.addChild(rankListBg);
         rankListBg.setContentSize(504, 500);
-        rankListBg.setPosition(cc.winSize.width / 4, cc.winSize.height / 2);
+        rankListBg.setPosition(cc.winSize.width / 4 + 50, cc.winSize.height / 2);
 
         let rankListTitle = new cc.Sprite('#rankinglist_title.png');
         rankListBg.addChild(rankListTitle);
         rankListTitle.setAnchorPoint(0, 1);
         rankListTitle.setPosition(20, rankListBg.getContentSize().height - 20);
+
+        let listView = new ccui.ScrollView();
+        rankListBg.addChild(listView);
+        listView.setDirection(ccui.ScrollView.DIR_VERTICAL);
+        listView.setTouchEnabled(true);
+        listView.setContentSize(504, 430);
+
+        let nextPosX = 750;
+        let imageView = null;
+        for (let i = 0; i < 6; i++) {
+            imageView = new RankItemLayer(1, 'user-image2', '敢朱来，来朱死', '50000');
+            listView.addChild(imageView);
+            imageView.setAnchorPoint(cc.p(0, 1));
+            imageView.setPosition(0, nextPosX);
+            nextPosX -= 100;
+        }
+        listView.setInnerContainerSize(cc.size(504, 750));
     },
     loadBtnMain: function () {
         let quickStartNormal = new cc.Sprite('#button_ksks.png');
