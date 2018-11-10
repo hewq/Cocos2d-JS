@@ -105,13 +105,15 @@ let MMMainLayer = cc.Layer.extend({
     loadBtnMain: function () {
         let quickStartNormal = new cc.Sprite('#button_ksks.png');
         let quickStart = new cc.MenuItemSprite(quickStartNormal, '', '', function () {
-            cc.log('dddd');
+            quickStart.setScale(0.9);
+            cc.director.runScene(new GamePlayScene());
         }.bind(this));
 
         quickStart.setPosition(cc.winSize.width * 3 / 5 + 30, cc.winSize.height * 3 / 4);
 
         let advanceNormal = new cc.Sprite('#button_jjc.png');
         let advance = new cc.MenuItemSprite(advanceNormal, '', '', function () {
+            advance.setScale(0.9);
             cc.log('advance');
         }.bind(this));
 
@@ -119,6 +121,7 @@ let MMMainLayer = cc.Layer.extend({
 
         let tournamentNormal = new cc.Sprite('#button_zbc.png');
         let tournament = new cc.MenuItemSprite(tournamentNormal, '', '', function () {
+            tournament.setScale(0.9);
             cc.log('dddd');
         }.bind(this));
 

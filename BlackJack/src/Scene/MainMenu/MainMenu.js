@@ -1,7 +1,7 @@
 let MainMenuScene = cc.Scene.extend({
     ctor: function () {
         this._super();
-        // cc.audioEngine.playMusic(res.bgm_mp3, true);
+        cc.audioEngine.playMusic(res.bgm_mp3, true);
 
         return true;
     },

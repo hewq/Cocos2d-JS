@@ -18,6 +18,12 @@
         "src/Scene/MainMenu/MainMenu.js",
         "src/Scene/MainMenu/Layer/Background.js",
         "src/Scene/MainMenu/Layer/Main.js",
-        "src/Scene/MainMenu/Layer/RankItem.js"
+        "src/Scene/MainMenu/Layer/RankItem.js",
+
+        "src/Scene/GamePlay/GamePlay.js",
+        "src/Scene/GamePlay/Layer/Background.js",
+        "src/Scene/GamePlay/Layer/IconLayer.js",
+        "src/Scene/GamePlay/Layer/BetPool.js",
+        "src/Scene/GamePlay/Layer/BetBoxLayer.js"
     ]
 }
