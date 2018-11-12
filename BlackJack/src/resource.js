@@ -29,6 +29,10 @@ let res = {
     // Animation
     animation_png: 'res/Animation/fx_animation.png',
     animation_plist: 'res/Animation/fx_animation.plist',
+
+    // Font
+    stake_png: 'res/Font/stake_number.png',
+    stake_fnt: 'res/Font/stake_number.fnt',
 };
 
 let g_resources = [];

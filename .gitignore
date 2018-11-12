@@ -7,3 +7,6 @@ publish/
 
 # mac
 .DS_Store
+
+# test
+cocos/

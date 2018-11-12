@@ -24,6 +24,7 @@
         "src/Scene/GamePlay/Layer/Background.js",
         "src/Scene/GamePlay/Layer/IconLayer.js",
         "src/Scene/GamePlay/Layer/BetPool.js",
-        "src/Scene/GamePlay/Layer/BetBoxLayer.js"
+        "src/Scene/GamePlay/Layer/BetBoxLayer.js",
+        "src/Scene/GamePlay/Layer/Player.js"
     ]
 }
