@@ -26,9 +26,8 @@ let BetPoolLayer = cc.Layer.extend({
             iconGold.setPosition(0, 6 + i * 6);
         }
 
-        // TODO
-        let goldNum = new ccui.Text('1111', 'AmericanTypewriter', 30);
-        layout.addChild(goldNum);
-        goldNum.setPosition(300, 100);
+        let goldNum = new cc.LabelTTF('0', 'AmericanTypewriter', 30);
+        poolBg.addChild(goldNum);
+        goldNum.setPosition(poolBg.getContentSize().width / 2, poolBg.getContentSize().height / 2);
     }
 });

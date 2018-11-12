@@ -30,10 +30,9 @@ let GPIconLayer = cc.Layer.extend({
         msgIconBg.addChild(msgIcon);
         msgIcon.setPosition(msgIconBg.getContentSize().width / 2, msgIconBg.getContentSize().height / 2);
     },
-    // TODO
     loadTips: function () {
-        let tips = new ccui.Text('请下注', 'AmericanTypewriter', 40);
-        tips.setPosition(cc.winSize.width, cc.winSize.height / 2);
+        let tips = new cc.LabelTTF('请下注', 'AmericanTypewriter', 40);
+        tips.setPosition(cc.winSize.width / 2, cc.winSize.height - 150);
         this.addChild(tips);
     }
 });
