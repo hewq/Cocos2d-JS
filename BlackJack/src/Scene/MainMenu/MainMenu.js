@@ -41,14 +41,7 @@ let MainMenuScene = cc.Scene.extend({
     },
 
     registerEvent: function () {
-        let listener = cc.EventListener.create({
-            event: cc.EventListener.CUSTOM,
-            target: this,
-            eventName: jf.EventName.OPEN_UNLOCK_UP_LAYER,
-            callback: this.onLoadUnlockLayer
-        });
 
-        cc.eventManager.addListener(listener, this);
     },
 
     onLoadUnlockLayer: function () {

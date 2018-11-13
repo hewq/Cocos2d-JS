@@ -89,6 +89,8 @@ let GamePlayScene = cc.Scene.extend({
         return true;
     },
     onEnter: function () {
+        this._super();
+
         this.loadBackground();
 
         this.loadIcon();
@@ -103,7 +105,8 @@ let GamePlayScene = cc.Scene.extend({
         this.addChild(new GPBackgroundLayer());
     },
     loadIcon: function () {
-        this.addChild(new GPIconLayer());
+        this.GPIconLayer = new GPIconLayer();
+        this.addChild(this.GPIconLayer);
     },
     loadBetPool: function () {
         let betPoolLayer = null;
@@ -127,5 +130,5 @@ let GamePlayScene = cc.Scene.extend({
     },
     loadBetBox: function () {
         this.addChild(new BetBoxLayer());
-    },
+    }
 });

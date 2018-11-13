@@ -1,4 +1,5 @@
 let GPIconLayer = cc.Layer.extend({
+    result: '',
     ctor: function () {
         this._super();
 
@@ -31,7 +32,8 @@ let GPIconLayer = cc.Layer.extend({
         msgIcon.setPosition(msgIconBg.getContentSize().width / 2, msgIconBg.getContentSize().height / 2);
     },
     loadTips: function () {
-        let tips = new cc.LabelTTF('请下注', 'AmericanTypewriter', 40);
+        this.result = '请下注';
+        let tips = new cc.LabelTTF(this.result, 'AmericanTypewriter', 40);
         tips.setPosition(cc.winSize.width / 2, cc.winSize.height - 150);
         this.addChild(tips);
     }
