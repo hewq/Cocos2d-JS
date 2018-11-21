@@ -1,41 +1,4 @@
 let GamePlayScene = cc.Scene.extend({
-    betPoolInfo: [
-        {
-            num: '1000',
-            pos: {
-                x: -320,
-                y: 320
-            }
-        },
-        {
-            num: '2000',
-            pos: {
-                x: -220,
-                y: 120
-            }
-        },
-        {
-            num: '3000',
-            pos: {
-                x: 0,
-                y: 45
-            }
-        },
-        {
-            num: '4000',
-            pos: {
-                x: 240,
-                y: 120
-            }
-        },
-        {
-            num: '5000',
-            pos: {
-                x: 320,
-                y: 320
-            }
-        }
-    ],
     playerInfo: [
         {
             name: '快递可',
@@ -98,8 +61,6 @@ let GamePlayScene = cc.Scene.extend({
         this.loadBetPool();
 
         this.loadPlayers();
-
-        this.loadBetBox();
     },
     loadBackground: function () {
         this.addChild(new GPBackgroundLayer());
@@ -109,11 +70,8 @@ let GamePlayScene = cc.Scene.extend({
         this.addChild(this.GPIconLayer);
     },
     loadBetPool: function () {
-        let betPoolLayer = null;
-        for (let i = 0; i < this.betPoolInfo.length; i++) {
-            betPoolLayer = new BetPoolLayer(this.betPoolInfo[i].num, this.betPoolInfo[i].pos);
-            this.addChild(betPoolLayer);
-        }
+        let betPoolLayer = new BetPoolLayer();
+        this.addChild(betPoolLayer);
     },
     loadPlayers: function () {
         let playerLayer = null;
@@ -127,8 +85,5 @@ let GamePlayScene = cc.Scene.extend({
             }
             this.addChild(playerLayer);
         }
-    },
-    loadBetBox: function () {
-        this.addChild(new BetBoxLayer());
     }
 });
