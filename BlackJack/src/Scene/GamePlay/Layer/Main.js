@@ -4,7 +4,12 @@ let GPMainLayer = cc.Layer.extend({
     playerChip: null,
     goldBgArr: [],
     btnClear: null,
+    btnBet: null,
     playerStatus: null,
+    gamingLayout: null,
+    betBox: null,
+    btnStart: null,
+    listener: null,
     ctor: function () {
         this._super();
 
@@ -12,13 +17,11 @@ let GPMainLayer = cc.Layer.extend({
 
         this.loadBetPool();
 
-        this.loadBox();
-
         this.loadPlayer();
 
         this.registerEvent();
 
-        this.amBetChip();
+        this.loadStart();
 
         return true;
     },
@@ -62,10 +65,29 @@ let GPMainLayer = cc.Layer.extend({
             }
         }
     },
+    loadStart: function () {
+        let btnStartBg = new cc.Sprite('#button_blue.png');
+        this.addChild(btnStartBg);
+        btnStartBg.setPosition(cc.winSize.width / 2, 60);
+
+        this.btnStart = btnStartBg;
+
+        btnStartBg.setTag(97);
+
+        let btnStart = new cc.LabelTTF('下注', 'AmericanTypewriter', 35);
+        btnStartBg.addChild(btnStart);
+        btnStart.setPosition(btnStartBg.getContentSize().width / 2, btnStartBg.getContentSize().height / 2 + 10);
+
+        cc.eventManager.addListener(this.listener.clone(), btnStartBg);
+    },
     loadBox: function () {
         let boxBg = new cc.Scale9Sprite('res/bg_gold_touzhu.png', cc.rect(0, 0, 141, 103), cc.rect(120, 0, 130, 103));
         boxBg.setContentSize(640, 103);
         this.addChild(boxBg);
+
+        boxBg.setTag(98);
+
+        this.betBox = boxBg;
 
         boxBg.anchorX = 1;
         boxBg.anchorY = 0;
@@ -103,6 +125,15 @@ let GPMainLayer = cc.Layer.extend({
         boxBg.addChild(btnBet);
         btnBet.setAnchorPoint(1, 0);
         btnBet.setPosition(boxBg.width + 20, -20);
+        btnBet.setTag(5);
+        this.btnBet = btnBet;
+
+        for (let i = 0; i < this.goldBgArr.length; i++) {
+            cc.eventManager.addListener(this.listener.clone(), this.goldBgArr[i]);
+        }
+
+        cc.eventManager.addListener(this.listener.clone(), this.btnClear);
+        cc.eventManager.addListener(this.listener.clone(), this.btnBet);
     },
     loadPlayer: function () {
         let layout = new ccui.Layout();
@@ -155,17 +186,55 @@ let GPMainLayer = cc.Layer.extend({
     amBetChip: function () {
         let chip = new cc.Sprite('#icon_gold_big.png');
         this.addChild(chip);
+        chip.setTag(99);
         chip.setPosition(cc.winSize.width - 300, 0);
         let bezierToConfig = [
             cc.p(cc.winSize.width - 300, cc.winSize.height),
             cc.p(cc.winSize.width / 2, cc.winSize.height / 2),
-            cc.p(cc.winSize.width / 2 - 30 + Math.random() * 80, cc.winSize.height / 2 - 20 - Math.random() * 30)
+            cc.p(cc.winSize.width / 2 - 30 + Math.random() * 80, cc.winSize.height / 2 + 150 - Math.random() * 60)
         ];
         let bezierTo = cc.bezierTo(.5, bezierToConfig);
         chip.runAction(bezierTo);
     },
+    loadBtnGaming: function () {
+        let layout = new ccui.Layout();
+        this.addChild(layout);
+        this.gamingLayout = layout;
+        layout.setContentSize(740, 100);
+        layout.setAnchorPoint(1, 0);
+        layout.setPosition(cc.winSize.width - 30, 0);
+        layout.setTag(96);
+
+        let btnStopBg = new cc.Sprite('#button_orange.png');
+        layout.addChild(btnStopBg);
+        btnStopBg.setAnchorPoint(0, 0);
+        btnStopBg.setPosition(0, 0);
+
+        let btnStop = new cc.Sprite('#stand.png');
+        btnStopBg.addChild(btnStop);
+        btnStop.setPosition(btnStopBg.getContentSize().width / 2, btnStopBg.getContentSize().height / 2 + 10);
+
+        let btnHitBg = new cc.Sprite('#button_blue.png');
+        layout.addChild(btnHitBg);
+        btnHitBg.setAnchorPoint(0.5, 0);
+        btnHitBg.setPosition(370, 0);
+
+        let btnHit = new cc.Sprite('#hit.png');
+        btnHitBg.addChild(btnHit);
+        btnHit.setPosition(btnHitBg.getContentSize().width / 2, btnHitBg.getContentSize().height / 2 + 10);
+
+
+        let btnDoubleBg = new cc.Sprite('#button_blue.png');
+        layout.addChild(btnDoubleBg);
+        btnDoubleBg.setAnchorPoint(1, 0);
+        btnDoubleBg.setPosition(740, 0);
+
+        let btnDouble = new cc.Sprite('#double.png');
+        btnDoubleBg.addChild(btnDouble);
+        btnDouble.setPosition(btnDoubleBg.getContentSize().width / 2, btnDoubleBg.getContentSize().height / 2 + 10);
+    },
     registerEvent: function () {
-        let listener = cc.EventListener.create({
+        let eventListener = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: true,
             target: this,
@@ -191,16 +260,25 @@ let GPMainLayer = cc.Layer.extend({
             },
             onTouchEnded: function (touch, event) {
                 let that = event.getCurrentTarget().parent.parent;
+                let startThat = event.getCurrentTarget().parent;
                 let betChip = event.getCurrentTarget().parent.parent.playingChip;
                 let playingStatus = '';
-                let playerChip = +that.playerChip.getString().slice(1);
+                let playerChip = 0;
 
-                function checkBalance (chip) {
+                function checkBalance(chip) {
+                    playerChip = +that.playerChip.getString().slice(1);
                     if (playerChip >= chip) {
                         betChip += chip;
                         playerChip -= chip;
+                        that.amBetChip();
                     } else {
                         playingStatus = '余额不足！'
+                    }
+                }
+
+                function removeBetChip() {
+                    while (that.getChildByTag(99)) {
+                        that.removeChildByTag(99, true);
                     }
                 }
 
@@ -221,21 +299,30 @@ let GPMainLayer = cc.Layer.extend({
                         playingStatus = '请下注';
                         playerChip = playerChip + betChip;
                         betChip = 0;
+                        removeBetChip();
+                        break;
+                    case 5:
+                        if (betChip !== 0) {
+                            that.loadBtnGaming();
+                            that.removeChildByTag(98);
+                            that.loadBtnGaming();
+                        }
+                        break;
+                    case 97:
+                        startThat.loadBox();
+                        startThat.removeChildByTag(97);
                         break;
                 }
 
-                that.amBetChip();
-                that.playing.setString(betChip + '');
-                that.playerStatus.setString(playingStatus);
-                that.playerChip.setString('$' + playerChip);
-                event.getCurrentTarget().parent.parent.playingChip = betChip;
+                if (event.getCurrentTarget().tag < 5) {
+                    that.playing.setString(betChip + '');
+                    that.playerStatus.setString(playingStatus);
+                    that.playerChip.setString('$' + playerChip);
+                    event.getCurrentTarget().parent.parent.playingChip = betChip;
+                }
             }
         });
 
-        for (let i = 0; i < this.goldBgArr.length; i++) {
-            cc.eventManager.addListener(listener.clone(), this.goldBgArr[i]);
-        }
-
-        cc.eventManager.addListener(listener.clone(), this.btnClear);
+        this.listener = eventListener;
     }
 });

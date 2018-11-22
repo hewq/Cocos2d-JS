@@ -1,42 +1,42 @@
 let playerInfo = [
     {
-        name: '快递可',
+        name: '洪兴陈浩南',
         goldNums: 1000,
-        headPhoto: '#user/circle_2.png',
+        headPhoto: '#user/circle_5.png',
         pos: {
             x: 340,
             y: 540
         }
     },
     {
-        name: '哈哈呵呵',
+        name: '红花双棍啊敏',
         goldNums: 5600,
-        headPhoto: '#user/circle_1.png',
+        headPhoto: '#user/circle_5.png',
         pos: {
             x: 440,
             y: 320
         }
     },
     {
-        name: '快乐的',
+        name: '塘朗山秋哥',
         goldNums: 200000,
-        headPhoto: '#user/circle_3.png',
+        headPhoto: '#user/circle_1.png',
         pos: {
             x: 750,
             y: 210
         }
     },
     {
-        name: '开心的',
+        name: '山口组山鸡',
         goldNums: 5400,
-        headPhoto: '#user/circle_4.png',
+        headPhoto: '#user/circle_5.png',
         pos: {
             x: 1180,
             y: 310
         }
     },
     {
-        name: '帮霸道',
+        name: '秋名山虎哥',
         goldNums: 13200,
         headPhoto: '#user/circle_5.png',
         pos: {
