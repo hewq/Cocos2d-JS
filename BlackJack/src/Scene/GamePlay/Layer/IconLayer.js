@@ -7,8 +7,6 @@ let GPIconLayer = cc.Layer.extend({
 
         this.loadMsgIcon();
 
-        this.loadTips();
-
         return true;
     },
     loadBackIcon: function () {
@@ -30,11 +28,5 @@ let GPIconLayer = cc.Layer.extend({
         let msgIcon = new cc.Sprite('#icon_message.png');
         msgIconBg.addChild(msgIcon);
         msgIcon.setPosition(msgIconBg.getContentSize().width / 2, msgIconBg.getContentSize().height / 2);
-    },
-    loadTips: function () {
-        this.result = '请下注';
-        let tips = new cc.LabelTTF(this.result, 'AmericanTypewriter', 40);
-        tips.setPosition(cc.winSize.width / 2, cc.winSize.height - 150);
-        this.addChild(tips);
     }
 });
