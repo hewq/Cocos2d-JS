@@ -455,15 +455,16 @@ let GPMainLayer = cc.Layer.extend({
         }
 
         // has jack
-        if (dealerCard0 === 1) {
-            if (dealerCard1 > 3) {
-                this.dealerNum = 11 + dealerCard1; // > 15
+        if (dealerCard0 === 1 || dealerCard1 === 1) {
+            let notJackCard = dealerCard0 === 1 ? dealerCard1 : dealerCard0;
+
+            this.dealerNum = 11 + notJackCard; // > 15
+            if (notJackCard > 3) {
                 return;
             }
 
-            if (dealerCard1 === 3) { // 13~14
-                getCard = this.getPokerRandom();
-                this.dealerCard.push(getCard);
+            if (notJackCard === 3) { // 13~14
+                getCard = this.getDealerCard();
 
                 if (getCard.num > 8) { // > 21
                     this.dealerBoom = true;
@@ -475,16 +476,29 @@ let GPMainLayer = cc.Layer.extend({
                     return;
                 }
 
-                this.dealerNum = 14 + getCard.num;
                 return;
             }
 
-            if (dealerCard1 === 2) { // 12~13
-                getCard = this.getPokerRandom();
-                this.dealerCard.push(getCard);
+            if (notJackCard === 2) { // 12~13
+                getCard = this.getDealerCard();
 
-                if (getCard.num > 9) { // > 21
-                    this.dealerBoom = true;
+                if (getCard.num === 10) {
+                    this.dealerNum = 13;
+                    getCard2 = this.getDealerCard();
+
+                    if (getCard2.num === 1) {
+                        this.dealerNum = 14;
+                        getCard3 = this.getDealerCard();
+
+                        if (this.checkBoom(this.dealerNum)) return;
+
+                        this.dealerFive = true;
+                        return;
+                    }
+
+                    // 15~23
+                    if (this.checkBoom(this.dealerNum)) return;
+
                     return;
                 }
 
@@ -493,50 +507,31 @@ let GPMainLayer = cc.Layer.extend({
                     return;
                 }
 
-                this.dealerNum = 13 + getCard.num;
-                return;
-            }
-        }
+                if (getCard.num === 1) {
+                    getCard2 = this.getDealerCard();
 
-        if (dealerCard1 === 1) {
-            if (dealerCard0 > 3) {
-                this.dealerNum = 11 + dealerCard0; // > 15
-                return;
-            }
+                    if (getCard2.num < 8) {
+                        getCard3 = this.getDealerCard();
+                        this.dealerFive = true;
+                        return;
+                    }
 
-            if (dealerCard0 === 3) { // 13~14
-                getCard = this.getPokerRandom();
-                this.dealerCard.push(getCard);
+                    if (getCard2.num === 8) {
+                        this.dealerNum = 21;
+                        return;
+                    }
 
-                if (getCard.num > 8) { // > 21
-                    this.dealerBoom = true;
-                    return;
+                    if (getCard2.num > 8) {
+                        this.dealerNum = 4 + getCard2.num;
+                        getCard3 = this.getDealerCard();
+
+                        if (this.checkBoom(this.dealerNum)) return;
+
+                        this.dealerFive = true;
+                        return;
+                    }
                 }
 
-                if (getCard.num === 8 || getCard.num === 7) { // 21
-                    this.dealerNum = 21;
-                    return;
-                }
-
-                this.dealerNum = 14 + getCard.num;
-                return;
-            }
-
-            if (dealerCard0 === 2) { // 12~13
-                getCard = this.getPokerRandom();
-                this.dealerCard.push(getCard);
-
-                if (getCard.num > 9) { // > 21
-                    this.dealerBoom = true;
-                    return;
-                }
-
-                if (getCard.num === 9 || getCard.num === 8) { // 21
-                    this.dealerNum = 21;
-                    return;
-                }
-
-                this.dealerNum = 13 + getCard.num;
                 return;
             }
         }
@@ -544,210 +539,143 @@ let GPMainLayer = cc.Layer.extend({
         // has not jack
         this.dealerNum = dealerCard0 + dealerCard1; // 4~20
 
-        if (this.dealerNum > 14) { // > 14
-            return;
-        }
+        if (this.checkPoint(this.dealerNum)) return;
 
         if(this.dealerNum > 11){ // 12~14
-            getCard = this.getPokerRandom();
-            this.dealerCard.push(getCard);
-            this.dealerNum += getCard.num; // 13~22
+            getCard = this.getDealerCard();
 
-            if (this.dealerNum > 21) { // > 21
-                this.dealerBoom = true;
-                return;
-            }
+            if (this.checkBoom(this.dealerNum)) return;
 
-            if (this.dealerNum > 14) { // > 14~21
-                return;
-            }
+            if (this.checkPoint(this.dealerNum)) return;
 
             // 13~14
-            getCard2 = this.getPokerRandom();
-            this.dealerCard.push(getCard2);
-            this.dealerNum += getCard2.num;
+            getCard2 = this.getDealerCard();
 
-            if (this.dealerNum > 21) { // > 21
-                this.dealerBoom = true;
-                return;
-            }
+            if (this.checkBoom(this.dealerNum)) return;
 
-            if (this.dealerNum > 14) { // 15~21
-                return;
-            }
+            if (this.checkPoint(this.dealerNum)) return;
 
             // 14
-            getCard3 = this.getPokerRandom();
-            this.dealerCard.push(getCard3);
-            this.dealerNum += getCard3.num;
+            getCard3 = this.getDealerCard();
 
-            if (this.dealerNum > 21) { // > 21
-                this.dealerBoom = true;
-                return;
-            }
+            if (this.checkBoom(this.dealerNum)) return;
 
             this.dealerFive = true; // 15~21
             return;
         }
 
         if (this.dealerNum === 11) { // 11
-            getCard = this.getPokerRandom();
-            this.dealerCard.push(getCard);
+            getCard = this.getDealerCard();
             if (getCard.num === 1) {
-                this.dealerNum += 10;
+                this.dealerNum = 21;
                 return;
             }
 
-            this.dealerNum += getCard.num; // 13~21
-
-            if (this.dealerNum > 14) { // 15~21
-                return;
-            }
+            if (this.checkPoint(this.dealerNum)) return;
 
             // 13~14
-            getCard2 = this.getPokerRandom();
-            this.dealerCard.push(getCard2);
-            this.dealerNum += getCard2.num; // 14~24
+            getCard2 = this.getDealerCard();
 
-            if (this.dealerNum > 21) { // > 21
-                this.dealerBoom = true;
-                return;
-            }
+            if (this.checkBoom(this.dealerNum)) return;
 
-            if (this.dealerNum > 14) { // 15~21
-                return;
-            }
+            if (this.checkPoint(this.dealerNum)) return;
 
             // 14
-            getCard3 = this.getPokerRandom();
-            this.dealerCard.push(getCard3);
-            this.dealerNum += getCard3.num;
+            getCard3 = this.getDealerCard();
 
-            if (this.dealerNum > 21) { // > 21
-                this.dealerBoom = true;
-                return;
-            }
+            if (this.checkBoom(this.dealerNum)) return;
 
             this.dealerFive = true;
             return;
         }
 
         if (this.dealerNum === 10) {  // 10
-            getCard = this.getPokerRandom();
-            this.dealerCard.push(getCard);
+            getCard = this.getDealerCard();
             if (getCard.num === 1) {  // 21
-                this.dealerNum += 11;
+                this.dealerNum = 21;
                 return;
             }
 
-            this.dealerNum += getCard.num; // 12~20
-
-            if (this.dealerNum > 14) { // 15~20
-                return;
-            }
+            if (this.checkPoint(this.dealerNum)) return;
 
             // 12~14
-            getCard2 = this.getPokerRandom();
-            this.dealerCard.push(getCard2);
-            this.dealerNum += getCard2.num; // 13~24
+            this.getDealerCard();
 
-            if (this.dealerNum > 21) { // > 21
-                this.dealerBoom = true;
-                return;
-            }
+            if (this.checkBoom(this.dealerNum)) return;
 
-            if (this.dealerNum > 14) { // 15~21
-                return;
-            }
+            if (this.checkPoint(this.dealerNum)) return;
 
             // 13~14
-            getCard3 = this.getPokerRandom();
-            this.dealerCard.push(getCard3);
-            this.dealerNum += getCard3.num; // 14~24
+            this.getDealerCard();
 
-            if (this.dealerNum > 21) { // > 21
-                this.dealerBoom = true;
-                return;
-            }
+            if (this.checkBoom(this.dealerNum)) return;
 
             this.dealerFive = true;
             return;
         }
 
         // 4~9
-        getCard = this.getPokerRandom();
-        this.dealerCard.push(getCard);
+        getCard = this.getDealerCard();
         if (getCard.num === 1) { // 15~20
-            this.dealerNum += 11;
+            this.dealerNum += 10;
             return;
         }
 
-        this.dealerNum += getCard.num; // 6~19
-
-        if (this.dealerNum > 14) { // 15~19
-            return;
-        }
+        if (this.checkPoint(this.dealerNum)) return;
 
         // 6~14
-        getCard2 = this.getPokerRandom();
-        this.dealerCard.push(getCard2);
+        getCard2 = this.getDealerCard();
 
         if (getCard2.num === 1) {
-            if (this.dealerNum < 11) { // 6~10
-                this.dealerNum += 11;
-                return;
-            }
-
-            if (this.dealerNum === 11) { // 11
+            if (this.dealerNum < 12) { // 6~10
                 this.dealerNum += 10;
                 return;
             }
 
-            // 12~14
-            this.dealerNum += 1; // 13~15
-
-            if (this.dealerNum > 14) { // 15
+            if (this.dealerNum === 12) { // 11
+                this.dealerNum = 21;
                 return;
             }
+
+            if (this.checkPoint(this.dealerNum)) return;
 
             // 13~14
-            getCard3 = this.getPokerRandom();
-            this.dealerCard.push(getCard3);
-            this.dealerNum += getCard3.num; // 14~24
+            this.getDealerCard();
 
-            if (this.dealerNum > 21) { // > 21
-                this.dealerBoom = true;
-                return;
-            }
+            if (this.checkBoom(this.dealerNum)) return;
 
             this.dealerFive = true;
             return;
         }
 
-        this.dealerNum += getCard2.num; // 8~24
+        if (this.checkBoom(this.dealerNum)) return;
 
-        if (this.dealerNum > 21) {
-            this.dealerBoom = true;
-            return;
-        }
-
-        if (this.dealerNum > 14) {
-            return;
-        }
+        if (this.checkPoint(this.dealerNum)) return;
 
         // 8~14
-        getCard3 = this.getPokerRandom();
-        this.dealerCard.push(getCard3);
+        this.getDealerCard();
 
-        this.dealerNum += getCard3.num; // 9~24
-
-        if (this.dealerNum > 21) {
-            this.dealerBoom = true;
-            return;
-        }
+        if (this.checkBoom(this.dealerNum)) return;
 
         this.dealerFive = true;
         return;
+    },
+    checkBoom: function (num) {
+        if (num > 21) return true;
+
+        return false;
+    },
+    checkPoint: function (num) {
+        if (num > 14 && num < 22) return true;
+
+        return false;
+    },
+    getDealerCard: function () {
+        let card = this.getPokerRandom();
+        this.dealerCard.push(card);
+        this.dealerNum += card.num;
+
+        return card;
     },
     getPokerRandom: function () {
         let random = Math.floor(Math.random() * this.pokerNum);
