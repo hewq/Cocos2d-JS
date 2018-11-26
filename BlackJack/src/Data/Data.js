@@ -85,3 +85,370 @@ let betPoolInfo = [
 ];
 
 let chipPng = ['#10K.png', '#5K.png', '#2K.png', '#1K.png'];
+
+let poker = [
+    {
+        'text': '2',
+        'num': 2,
+        'color': 'red',
+        'iconSmall': '#fangkuai_small.png',
+        'iconBig': '#fangkuai_big.png'
+    },
+    {
+        'text': '3',
+        'num': 3,
+        'color': 'red',
+        'iconSmall': '#fangkuai_small.png',
+        'iconBig': '#fangkuai_big.png'
+    },
+    {
+        'text': '4',
+        'num': 4,
+        'color': 'red',
+        'iconSmall': '#fangkuai_small.png',
+        'iconBig': '#fangkuai_big.png'
+    },
+    {
+        'text': '5',
+        'num': 5,
+        'color': 'red',
+        'iconSmall': '#fangkuai_small.png',
+        'iconBig': '#fangkuai_big.png'
+    },
+    {
+        'text': '6',
+        'num': 6,
+        'color': 'red',
+        'iconSmall': '#fangkuai_small.png',
+        'iconBig': '#fangkuai_big.png'
+    },
+    {
+        'text': '7',
+        'num': 7,
+        'color': 'red',
+        'iconSmall': '#fangkuai_small.png',
+        'iconBig': '#fangkuai_big.png'
+    },
+    {
+        'text': '8',
+        'num': 8,
+        'color': 'red',
+        'iconSmall': '#fangkuai_small.png',
+        'iconBig': '#fangkuai_big.png'
+    },
+    {
+        'text': '9',
+        'num': 9,
+        'color': 'red',
+        'iconSmall': '#fangkuai_small.png',
+        'iconBig': '#fangkuai_big.png'
+    },
+    {
+        'text': '10',
+        'num': 10,
+        'color': 'red',
+        'iconSmall': '#fangkuai_small.png',
+        'iconBig': '#fangkuai_big.png'
+    },
+    {
+        'text': 'J',
+        'num': 10,
+        'color': 'red',
+        'iconSmall': '#fangkuai_small.png',
+        'iconBig': '#fangkuai_big.png'
+    },
+    {
+        'text': 'Q',
+        'num': 10,
+        'color': 'red',
+        'iconSmall': '#fangkuai_small.png',
+        'iconBig': '#fangkuai_big.png'
+    },
+    {
+        'text': 'K',
+        'num': 10,
+        'color': 'red',
+        'iconSmall': '#fangkuai_small.png',
+        'iconBig': '#fangkuai_big.png'
+    },
+    {
+        'text': 'A',
+        'num': 1,
+        'color': 'red',
+        'iconSmall': '#fangkuai_small.png',
+        'iconBig': '#fangkuai_big.png'
+    },
+    {
+        'text': '2',
+        'num': 2,
+        'color': 'black',
+        'iconSmall': '#heimei_small.png',
+        'iconBig': '#heimei_big.png'
+    },
+    {
+        'text': '3',
+        'num': 3,
+        'color': 'black',
+        'iconSmall': '#heimei_small.png',
+        'iconBig': '#heimei_big.png'
+    },
+    {
+        'text': '4',
+        'num': 4,
+        'color': 'black',
+        'iconSmall': '#heimei_small.png',
+        'iconBig': '#heimei_big.png'
+    },
+    {
+        'text': '5',
+        'num': 5,
+        'color': 'black',
+        'iconSmall': '#heimei_small.png',
+        'iconBig': '#heimei_big.png'
+    },
+    {
+        'text': '6',
+        'num': 6,
+        'color': 'black',
+        'iconSmall': '#heimei_small.png',
+        'iconBig': '#heimei_big.png'
+    },
+    {
+        'text': '7',
+        'num': 7,
+        'color': 'black',
+        'iconSmall': '#heimei_small.png',
+        'iconBig': '#heimei_big.png'
+    },
+    {
+        'text': '8',
+        'num': 8,
+        'color': 'black',
+        'iconSmall': '#heimei_small.png',
+        'iconBig': '#heimei_big.png'
+    },
+    {
+        'text': '9',
+        'num': 9,
+        'color': 'black',
+        'iconSmall': '#heimei_small.png',
+        'iconBig': '#heimei_big.png'
+    },
+    {
+        'text': '10',
+        'num': 10,
+        'color': 'black',
+        'iconSmall': '#heimei_small.png',
+        'iconBig': '#heimei_big.png'
+    },
+    {
+        'text': 'J',
+        'num': 10,
+        'color': 'black',
+        'iconSmall': '#heimei_small.png',
+        'iconBig': '#heimei_big.png'
+    },
+    {
+        'text': 'Q',
+        'num': 10,
+        'color': 'black',
+        'iconSmall': '#heimei_small.png',
+        'iconBig': '#heimei_big.png'
+    },
+    {
+        'text': 'K',
+        'num': 10,
+        'color': 'black',
+        'iconSmall': '#heimei_small.png',
+        'iconBig': '#heimei_big.png'
+    },
+    {
+        'text': 'A',
+        'num': 1,
+        'color': 'black',
+        'iconSmall': '#heimei_small.png',
+        'iconBig': '#heimei_big.png'
+    },
+    {
+        'text': '2',
+        'num': 2,
+        'color': 'red',
+        'iconSmall': '#hongtao_small.png',
+        'iconBig': '#hongtao_big.png'
+    },
+    {
+        'text': '3',
+        'num': 3,
+        'color': 'red',
+        'iconSmall': '#hongtao_small.png',
+        'iconBig': '#hongtao_big.png'
+    },
+    {
+        'text': '4',
+        'num': 4,
+        'color': 'red',
+        'iconSmall': '#hongtao_small.png',
+        'iconBig': '#hongtao_big.png'
+    },
+    {
+        'text': '5',
+        'num': 5,
+        'color': 'red',
+        'iconSmall': '#hongtao_small.png',
+        'iconBig': '#hongtao_big.png'
+    },
+    {
+        'text': '6',
+        'num': 6,
+        'color': 'red',
+        'iconSmall': '#hongtao_small.png',
+        'iconBig': '#hongtao_big.png'
+    },
+    {
+        'text': '7',
+        'num': 7,
+        'color': 'red',
+        'iconSmall': '#hongtao_small.png',
+        'iconBig': '#hongtao_big.png'
+    },
+    {
+        'text': '8',
+        'num': 8,
+        'color': 'red',
+        'iconSmall': '#hongtao_small.png',
+        'iconBig': '#hongtao_big.png'
+    },
+    {
+        'text': '9',
+        'num': 9,
+        'color': 'red',
+        'iconSmall': '#hongtao_small.png',
+        'iconBig': '#hongtao_big.png'
+    },
+    {
+        'text': '10',
+        'num': 10,
+        'color': 'red',
+        'iconSmall': '#hongtao_small.png',
+        'iconBig': '#hongtao_big.png'
+    },
+    {
+        'text': 'J',
+        'num': 10,
+        'color': 'red',
+        'iconSmall': '#hongtao_small.png',
+        'iconBig': '#hongtao_big.png'
+    },
+    {
+        'text': 'Q',
+        'num': 10,
+        'color': 'red',
+        'iconSmall': '#hongtao_small.png',
+        'iconBig': '#hongtao_big.png'
+    },
+    {
+        'text': 'K',
+        'num': 10,
+        'color': 'red',
+        'iconSmall': '#hongtao_small.png',
+        'iconBig': '#hongtao_big.png'
+    },
+    {
+        'text': 'A',
+        'num': 1,
+        'color': 'red',
+        'iconSmall': '#hongtao_small.png',
+        'iconBig': '#hongtao_big.png'
+    },
+    {
+        'text': '2',
+        'num': 2,
+        'color': 'black',
+        'iconSmall': '#heitao_small.png',
+        'iconBig': '#heitao_big.png'
+    },
+    {
+        'text': '3',
+        'num': 3,
+        'color': 'black',
+        'iconSmall': '#heitao_small.png',
+        'iconBig': '#heitao_big.png'
+    },
+    {
+        'text': '4',
+        'num': 4,
+        'color': 'black',
+        'iconSmall': '#heitao_small.png',
+        'iconBig': '#heitao_big.png'
+    },
+    {
+        'text': '5',
+        'num': 5,
+        'color': 'black',
+        'iconSmall': '#heitao_small.png',
+        'iconBig': '#heitao_big.png'
+    },
+    {
+        'text': '6',
+        'num': 6,
+        'color': 'black',
+        'iconSmall': '#heitao_small.png',
+        'iconBig': '#heitao_big.png'
+    },
+    {
+        'text': '7',
+        'num': 7,
+        'color': 'black',
+        'iconSmall': '#heitao_small.png',
+        'iconBig': '#heitao_big.png'
+    },
+    {
+        'text': '8',
+        'num': 8,
+        'color': 'black',
+        'iconSmall': '#heitao_small.png',
+        'iconBig': '#heitao_big.png'
+    },
+    {
+        'text': '9',
+        'num': 9,
+        'color': 'black',
+        'iconSmall': '#heitao_small.png',
+        'iconBig': '#heitao_big.png'
+    },
+    {
+        'text': '10',
+        'num': 10,
+        'color': 'black',
+        'iconSmall': '#heitao_small.png',
+        'iconBig': '#heitao_big.png'
+    },
+    {
+        'text': 'J',
+        'num': 10,
+        'color': 'black',
+        'iconSmall': '#heitao_small.png',
+        'iconBig': '#heitao_big.png'
+    },
+    {
+        'text': 'Q',
+        'num': 10,
+        'color': 'black',
+        'iconSmall': '#heitao_small.png',
+        'iconBig': '#heitao_big.png'
+    },
+    {
+        'text': 'K',
+        'num': 10,
+        'color': 'black',
+        'iconSmall': '#heitao_small.png',
+        'iconBig': '#heitao_big.png'
+    },
+    {
+        'text': 'A',
+        'num': 1,
+        'color': 'black',
+        'iconSmall': '#heitao_small.png',
+        'iconBig': '#heitao_big.png'
+    }
+];

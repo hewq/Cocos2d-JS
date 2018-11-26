@@ -16,11 +16,14 @@
         "src/app.js",
 
         "src/Data/Data.js",
+        "src/Data/define.js",
 
         "src/Scene/MainMenu/MainMenu.js",
         "src/Scene/MainMenu/Layer/Background.js",
         "src/Scene/MainMenu/Layer/Main.js",
         "src/Scene/MainMenu/Layer/RankItem.js",
+
+        "src/Scene/GamePlay/cardSprite.js",
 
         "src/Scene/GamePlay/GamePlay.js",
         "src/Scene/GamePlay/Layer/Background.js",
