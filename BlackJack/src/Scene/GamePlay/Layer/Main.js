@@ -14,6 +14,7 @@ let GPMainLayer = cc.Layer.extend({
     pokerNum: 52,
     playerCardNum: 0,
     dealerCard: [],
+    playerCard: [],
     dealerBlackJack: false,
     dealerDoubleJack: false,
     dealerFive: false,
@@ -236,16 +237,21 @@ let GPMainLayer = cc.Layer.extend({
         layout.addChild(btnHitBg);
         btnHitBg.setAnchorPoint(0.5, 0);
         btnHitBg.setPosition(370, 0);
+        btnHitBg.setTag(Tag.ONE_CARD);
+
+        cc.eventManager.addListener(this.listener.clone(), btnHitBg);
 
         let btnHit = new cc.Sprite('#hit.png');
         btnHitBg.addChild(btnHit);
         btnHit.setPosition(btnHitBg.getContentSize().width / 2, btnHitBg.getContentSize().height / 2 + 10);
 
-
         let btnDoubleBg = new cc.Sprite('#button_blue.png');
         layout.addChild(btnDoubleBg);
         btnDoubleBg.setAnchorPoint(1, 0);
         btnDoubleBg.setPosition(740, 0);
+        btnDoubleBg.setTag(Tag.DOUBLE_CARD);
+
+        cc.eventManager.addListener(this.listener.clone(), btnDoubleBg);
 
         let btnDouble = new cc.Sprite('#double.png');
         btnDoubleBg.addChild(btnDouble);
@@ -335,6 +341,12 @@ let GPMainLayer = cc.Layer.extend({
                         removeDealerDipai();
                         that.showDealerCard();
                         break;
+                    case Tag.ONE_CARD:
+                        that.getOneCard();
+                        break;
+                    case Tag.DOUBLE_CARD:
+                        that.getDoubleCard();
+                        break;
                 }
 
                 if (event.getCurrentTarget().tag < 5) {
@@ -406,8 +418,11 @@ let GPMainLayer = cc.Layer.extend({
         this.dealerCard.push(this.getPokerRandom());
         this.dealerCard.push(this.getPokerRandom());
 
-        let playerPoker_1 = new cardSprite(false, this.getPokerRandom());
-        let playerPoker_2 = new cardSprite(false, this.getPokerRandom());
+        this.playerCard.push(this.getPokerRandom());
+        this.playerCard.push(this.getPokerRandom());
+
+        let playerPoker_1 = new cardSprite(false, this.playerCard[0]);
+        let playerPoker_2 = new cardSprite(false, this.playerCard[1]);
 
         this.addChild(playerPoker_1);
         this.addChild(playerPoker_2);
@@ -415,7 +430,7 @@ let GPMainLayer = cc.Layer.extend({
         playerPoker_1.setPosition(cc.winSize.width / 2 + 20, cc.winSize.height / 2 - 45);
         playerPoker_2.setPosition(cc.winSize.width / 2 + 20, cc.winSize.height / 2 - 45);
 
-        let playerPokerMove = cc.moveTo(.3, cc.p(cc.winSize.width / 2 + 45, cc.winSize.height / 2 - 45));
+        let playerPokerMove = cc.moveTo(.3, cc.p(cc.winSize.width / 2 + 50, cc.winSize.height / 2 - 45));
 
         playerPoker_2.runAction(playerPokerMove);
     },
@@ -427,7 +442,7 @@ let GPMainLayer = cc.Layer.extend({
         this.computeDealer();
 
         for (let i = 0; i < this.dealerCard.length; i++) {
-            let dealerCard = new cardSprite(false, this.dealerCard[i]);
+            dealerCard = new cardSprite(false, this.dealerCard[i]);
             layout.addChild(dealerCard);
             dealerCard.setAnchorPoint(0, 0.5);
             dealerCard.setPosition(0, layout.getContentSize().height / 2);
@@ -652,6 +667,63 @@ let GPMainLayer = cc.Layer.extend({
 
         if (this.cardEnd) return true;
     },
+    getOneCard: function () {
+        let sprite = null;
+        if (this.playerCard.length >= 5) return;
+
+        if (this.playerCard.length === 2) {
+            this.playerCard.push(this.getPokerRandom());
+            sprite = new cardSprite(false, this.playerCard[2]);
+            this.addChild(sprite);
+            sprite.setPosition(cc.winSize.width / 2 + 80, cc.winSize.height / 2 - 45);
+            return;
+        }
+
+        if (this.playerCard.length === 3) {
+            this.playerCard.push(this.getPokerRandom());
+            sprite = new cardSprite(false, this.playerCard[3]);
+            this.addChild(sprite);
+            sprite.setPosition(cc.winSize.width / 2 + 110, cc.winSize.height / 2 - 45);
+            return;
+        }
+
+        if (this.playerCard.length === 4) {
+            this.playerCard.push(this.getPokerRandom());
+            sprite = new cardSprite(false, this.playerCard[4]);
+            this.addChild(sprite);
+            sprite.setPosition(cc.winSize.width / 2 + 140, cc.winSize.height / 2 - 45);
+        }
+    },
+    getDoubleCard: function () {
+        let sprite = null;
+        if (this.playerCard.length >= 4) return;
+
+        if (this.playerCard.length === 2) {
+            this.playerCard.push(this.getPokerRandom());
+            sprite = new cardSprite(false, this.playerCard[2]);
+            this.addChild(sprite);
+            sprite.setPosition(cc.winSize.width / 2 + 80, cc.winSize.height / 2 - 45);
+
+            this.playerCard.push(this.getPokerRandom());
+            sprite = new cardSprite(false, this.playerCard[3]);
+            this.addChild(sprite);
+            sprite.setPosition(cc.winSize.width / 2 + 110, cc.winSize.height / 2 - 45);
+            return;
+        }
+
+        if (this.playerCard.length === 3) {
+            this.playerCard.push(this.getPokerRandom());
+            sprite = new cardSprite(false, this.playerCard[3]);
+            this.addChild(sprite);
+            sprite.setPosition(cc.winSize.width / 2 + 110, cc.winSize.height / 2 - 45);
+
+            this.playerCard.push(this.getPokerRandom());
+            sprite = new cardSprite(false, this.playerCard[4]);
+            this.addChild(sprite);
+            sprite.setPosition(cc.winSize.width / 2 + 140, cc.winSize.height / 2 - 45);
+            return;
+        }
+    },
     getPokerRandom: function () {
         let random = Math.floor(Math.random() * this.pokerNum);
         let cardInfo = poker[random];
@@ -660,5 +732,102 @@ let GPMainLayer = cc.Layer.extend({
         this.pokerNum--;
 
         return cardInfo;
+    },
+    computePlayer: function () {
+        let playerCardLength = this.playerCard.length;
+
+        if (playerCardLength === 2) {
+            let playerCard0 = this.playerCard[0];
+            let playerCard1 = this.playerCard[0];
+
+            // double jack
+            if (playerCard0 === 1 && playerCard1 === 1) {
+                this.playerDoubleJack = true;
+                return;
+            }
+
+            // black jack
+            if (playerCard0 === 1 && playerCard1 === 10 || playerCard0 === 10 && playerCard1 === 1) {
+                this.playerBlackJack = true;
+                return;
+            }
+
+            // has jack
+            if (playerCard0 === 1 || playerCard1 === 1) {
+                let notJackCard = playerCard0 === 1 ? playerCard1 : playerCard0;
+                this.playerCardNum = 11 + notJackCard.num;
+                return;
+            }
+
+            this.playerCardNum = playerCard0.num + playerCard1.num;
+            return;
+        }
+
+        if (playerCardLength === 3) {
+            let jackLen = 0;
+            let total = this.playerCard[0].num + this.playerCard[1].num + this.playerCard[2].num;
+            for (let i = 0; i < playerCardLength; i++) {
+                if (this.playerCard[i].num === 1) {
+                    jackLen++;
+                }
+            }
+
+            if (jackLen === 1) {
+                if (total - 1 < 11) {
+                    this.playerCardNum = total + 10;
+                    return;
+                }
+
+                if (total - 1 === 11) {
+                    this.playerCardNum = total + 9;
+                    return;
+                }
+            }
+
+            this.playerCardNum = total;
+            if (total > 21 || total < 15) {
+                this.playerBoom = true;
+            }
+            return;
+        }
+
+        if (playerCardLength === 4) {
+            let jackLen = 0;
+            let total = this.playerCard[0].num + this.playerCard[1].num + this.playerCard[2].num+ this.playerCard[3].num;
+            for (let i = 0; i < playerCardLength; i++) {
+                if (this.playerCard[i].num === 1) {
+                    jackLen++;
+                }
+            }
+
+            if (jackLen === 1) {
+                if (total - 1 < 11) {
+                    this.playerCardNum = total + 10;
+                    return;
+                }
+
+                if (total - 1 === 11) {
+                    this.playerCardNum = total + 9;
+                    return;
+                }
+            }
+
+            this.playerCardNum = total;
+            if (total > 21 || total < 15) {
+                this.playerBoom = true;
+            }
+            return;
+        }
+
+        if (playerCardLength === 5) {
+            let total = this.playerCard[0].num + this.playerCard[1].num + this.playerCard[2].num + this.playerCard[3].num + this.playerCard[4].num;
+
+            if (this.checkBoom(total)) {
+                this.playerBoom = true;
+                return;
+            }
+
+            this.playerFive = true;
+        }
     }
 });
