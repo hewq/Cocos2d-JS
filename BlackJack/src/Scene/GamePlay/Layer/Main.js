@@ -455,7 +455,6 @@ let GPMainLayer = cc.Layer.extend({
         let dealerCard0 = this.dealerCard[0].num;
         let dealerCard1 = this.dealerCard[1].num;
         let getCard = null;
-        let getCard2 = null;
 
         // double jack
         if (dealerCard0 === 1 && dealerCard1 === 1) {
@@ -482,12 +481,45 @@ let GPMainLayer = cc.Layer.extend({
                 getCard = this.getDealerCard();
 
                 if (getCard.num > 8) { // > 21
-                    this.dealerBoom = true;
+                    this.dealerNum = getCard.num + 4;
+                    this.getDealerCard();
+
+                    if (this.checkBoom(this.dealerNum)) {
+                        this.dealerBoom = true;
+                        return;
+                    }
+
+                    if (this.checkPoint(this.dealerNum)) return;
+
+                    this.getDealerCard();
+                    if (this.checkBoom(this.dealerNum)) {
+                        this.dealerBoom = true;
+                        return;
+                    }
+
+                    this.dealerFive = true;
                     return;
                 }
 
                 if (getCard.num === 8 || getCard.num === 7) { // 21
                     this.dealerNum = 21;
+                    return;
+                }
+
+                if (getCard.num === 1) { // 21
+                    this.dealerNum = 5;
+                    this.getDealerCard();
+
+                    if(this.checkPoint(this.dealerNum)) return;
+
+                    this.getDealerCard();
+
+                    if (this.checkBoom(this.dealerNum))  {
+                        this.dealerBoom = true;
+                        return;
+                    }
+
+                    this.dealerFive = true;
                     return;
                 }
 
@@ -499,20 +531,23 @@ let GPMainLayer = cc.Layer.extend({
 
                 if (getCard.num === 10) {
                     this.dealerNum = 13;
-                    getCard2 = this.getDealerCard();
+                    this.getDealerCard();
 
-                    if (getCard2.num === 1) {
-                        this.dealerNum = 14;
-
-                        if (this.getDealerCardAndCardEnd) return;
-
-                        this.dealerFive = true;
+                    if (this.checkBoom(this.dealerNum)) {
+                        this.dealerBoom = true;
                         return;
                     }
 
-                    // 15~23
-                    if (this.cardEnd) return;
+                    if (this.checkPoint(this.dealerNum)) return;
 
+                    this.getDealerCard();
+
+                    if (this.checkBoom(this.dealerNum)) {
+                        this.dealerBoom = true;
+                        return;
+                    }
+
+                    this.dealerFive = true;
                     return;
                 }
 
@@ -522,48 +557,52 @@ let GPMainLayer = cc.Layer.extend({
                 }
 
                 if (getCard.num === 1) {
-                    getCard2 = this.getDealerCard();
+                    this.dealerNum = 4;
+                    this.getDealerCard();
+                    this.getDealerCard();
 
-                    if (getCard2.num < 8) {
-                        this.getDealerCard();
-                        this.dealerFive = true;
+                    if (this.checkBoom(this.dealerNum)) {
+                        this.dealerBoom = true;
                         return;
                     }
 
-                    if (getCard2.num === 8) {
-                        this.dealerNum = 21;
-                        return;
-                    }
-
-                    if (getCard2.num > 8) {
-                        this.dealerNum = 4 + getCard2.num;
-
-                        if (this.getDealerCardAndCardEnd) return;
-
-                        this.dealerFive = true;
-                        return;
-                    }
+                    this.dealerFive = true;
+                    return;
                 }
-
-                return;
             }
         }
 
         // has not jack
         this.dealerNum = dealerCard0 + dealerCard1; // 4~20
 
-        if (this.cardEnd) return;
+        if (this.checkPoint(this.dealerNum)) return;
 
         if(this.dealerNum > 11){ // 12~14
-            getCard = this.getDealerCard();
+            this.getDealerCard();
 
-            if (this.cardEnd) return;
+            if (this.checkBoom(this.dealerNum)) {
+                this.dealerBoom = true;
+                return;
+            }
+
+            if (this.checkPoint(this.dealerNum)) return;
 
             // 13~14
-            if (this.getDealerCardAndCardEnd) return;
+            this.getDealerCard();
+            if (this.checkBoom(this.dealerNum)) {
+                this.dealerBoom = true;
+                return;
+            }
+
+            if (this.checkPoint(this.dealerNum)) return;
 
             // 14
-            if (this.getDealerCardAndCardEnd) return;
+            this.getDealerCard();
+
+            if (this.checkBoom(this.dealerNum)) {
+                this.dealerBoom = true;
+                return;
+            }
 
             this.dealerFive = true; // 15~21
             return;
@@ -576,13 +615,23 @@ let GPMainLayer = cc.Layer.extend({
                 return;
             }
 
-            if (this.cardEnd) return;
+            if (this.checkPoint(this.dealerNum)) return;
 
-            // 13~14
-            if (this.getDealerCardAndCardEnd) return;
+            this.getDealerCard();
+            if (this.checkBoom(this.dealerNum)) {
+                this.dealerBoom = true;
+                return;
+            }
+
+            if (this.checkPoint(this.dealerNum)) return;
 
             // 14
-            if (this.getDealerCardAndCardEnd) return;
+            this.getDealerCard();
+
+            if (this.checkBoom(this.dealerNum)) {
+                this.dealerBoom = true;
+                return;
+            }
 
             this.dealerFive = true;
             return;
@@ -595,13 +644,23 @@ let GPMainLayer = cc.Layer.extend({
                 return;
             }
 
-            if (this.cardEnd) return;
+            if (this.checkPoint(this.dealerNum)) return;
 
-            // 12~14
-            if (this.getDealerCardAndCardEnd) return;
+            this.getDealerCard();
 
-            // 13~14
-            if (this.getDealerCardAndCardEnd) return;
+            if (this.checkBoom(this.dealerNum)) {
+                this.dealerBoom = true;
+                return;
+            }
+
+            if (this.checkPoint(this.dealerNum)) return;
+
+            this.getDealerCard();
+
+            if (this.checkBoom(this.dealerNum)) {
+                this.dealerBoom = true;
+                return;
+            }
 
             this.dealerFive = true;
             return;
@@ -614,12 +673,12 @@ let GPMainLayer = cc.Layer.extend({
             return;
         }
 
-        if (this.cardEnd) return;
+        if (this.checkPoint(this.dealerNum)) return;
 
         // 6~14
-        getCard2 = this.getDealerCard();
+        getCard = this.getDealerCard();
 
-        if (getCard2.num === 1) {
+        if (getCard.num === 1) {
             if (this.dealerNum < 12) { // 6~10
                 this.dealerNum += 10;
                 return;
@@ -630,20 +689,33 @@ let GPMainLayer = cc.Layer.extend({
                 return;
             }
 
-            if (this.cardEnd) return;
+            if (this.checkPoint(this.dealerNum)) return;
 
             // 13~14
-            if (this.getDealerCardAndCardEnd) return;
+            this.getDealerCard();
+
+            if (this.checkBoom(this.dealerNum)) {
+                this.dealerBoom = true;
+                return;
+            }
 
             this.dealerFive = true;
             return;
         }
 
-        if (this.cardEnd) return;
+        if (this.checkBoom(this.dealerBoom)) {
+            this.dealerBoom = true;
+            return;
+        }
+
+        if (this.checkPoint(this.dealerNum)) return;
 
         // 8~14
-        if (this.getDealerCardAndCardEnd) return;
-
+        this.getDealerCard();
+        if (this.checkBoom(this.dealerBoom)) {
+            this.dealerBoom = true;
+            return;
+        }
         this.dealerFive = true;
     },
     checkBoom: function (num) {
@@ -661,11 +733,6 @@ let GPMainLayer = cc.Layer.extend({
         if (this.checkPoint(this.dealerNum)) this.cardEnd = true;
 
         return card;
-    },
-    getDealerCardAndCardEnd: function () {
-        this.getDealerCard();
-
-        if (this.cardEnd) return true;
     },
     getOneCard: function () {
         let sprite = null;
@@ -822,7 +889,7 @@ let GPMainLayer = cc.Layer.extend({
         if (playerCardLength === 5) {
             let total = this.playerCard[0].num + this.playerCard[1].num + this.playerCard[2].num + this.playerCard[3].num + this.playerCard[4].num;
 
-            if (this.checkBoom(total)) {
+            if (total > 21) {
                 this.playerBoom = true;
                 return;
             }
