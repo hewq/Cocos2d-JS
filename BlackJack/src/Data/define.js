@@ -12,5 +12,6 @@ let Tag = {
     LAYOUT_BTN_GAMING: 96,
     AM_BET_CHIP: 99,
     BTN_BET_BOX: 98,
-    DEALER_DIPAI: 92
+    DEALER_DIPAI: 92,
+    CARD: 91
 };

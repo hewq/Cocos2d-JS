@@ -4,6 +4,8 @@ let cardSprite = cc.Sprite.extend({
 
         this.loadCard(dipai, cardInfo);
 
+        this.setTag(Tag.CARD);
+
         return true;
     },
     loadCard: function (dipai, cardInfo) {

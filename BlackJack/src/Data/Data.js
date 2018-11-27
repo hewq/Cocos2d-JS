@@ -452,3 +452,6 @@ let poker = [
         'iconBig': '#heitao_big.png'
     }
 ];
+
+let resetPoker = [].concat(poker);
+
