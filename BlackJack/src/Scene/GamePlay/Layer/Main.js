@@ -396,7 +396,7 @@ let GPMainLayer = cc.Layer.extend({
                         GameManager.setOwnChip(ownChip - chip);
                         that.amBetChip();
                     } else {
-                        status = '余额不足！'
+                        status = '金币不足！'
                     }
                 }
 
@@ -938,41 +938,36 @@ let GPMainLayer = cc.Layer.extend({
         }
     },
     computeRes: function () {
-        if (GameManager.getDealerBust() || GameManager.getPlayerBust()) {
+        let res = 0;
+        let isPDJ = GameManager.getPlayerDoubleJack(),
+            isPBJ = GameManager.getPlayerBlackJack(),
+            isPF = GameManager.getPlayerFive(),
+            isPB = GameManager.getPlayerBust(),
+            PN = GameManager.getPlayerNum(),
+            isDDJ = GameManager.getDealerDoubleJack(),
+            isDBJ = GameManager.getDealerBlackJack(),
+            isDF = GameManager.getDealerFive(),
+            isDB = GameManager.getDealerBust(),
+            DN = GameManager.getDealerNum();
+
+        if (isDDJ) {
+            res = isPDJ ? 0 : -1;
+        } else if (isDBJ) {
+            res = isPDJ ? 1 : (isPBJ ? 0 : -1);
+        } else if (isDF) {
+            res = isPDJ || isPBJ ? 1 : (isPF ? 0 : -1);
+        } else if (isPBJ || isPDJ || isPF) {
+            res = 1;
+        } else if (isDB) {
             this.playBust();
+            res = isPB ? 0 : (PN > 14 ? 1 : -1);
+        } else if (isPB) {
+            res = DN < 14 ? 1 : -1;
+        } else {
+            res = PN > DN ? 1 : (PN < DN ? -1 : 0);
         }
 
-        if (GameManager.getDealerDoubleJack()) {
-            GameManager.setIsWin(GameManager.getPlayerDoubleJack() ? 0 : -1);
-            return;
-        }
-
-        if (GameManager.getDealerBlackJack()) {
-            GameManager.setIsWin(GameManager.getPlayerDoubleJack() ? 1 : (GameManager.getPlayerBlackJack() ? 0 : -1));
-            return;
-        }
-
-        if (GameManager.getDealerFive()) {
-            GameManager.setIsWin(GameManager.getPlayerDoubleJack() || GameManager.getPlayerBlackJack() ? 1 : (GameManager.getPlayerFive() ? 0 : -1));
-            return;
-        }
-
-        if (GameManager.getPlayerBlackJack() || GameManager.getPlayerDoubleJack() || GameManager.getPlayerFive()) {
-            GameManager.setIsWin(1);
-            return;
-        }
-
-        if (GameManager.getDealerBust()) {
-            GameManager.setIsWin(GameManager.getPlayerBust() ? 0 : (GameManager.getPlayerNum() > 14 ? 1 : -1));
-            return;
-        }
-
-        if (GameManager.getPlayerBust()) {
-            GameManager.setIsWin(GameManager.getDealerBust() ? 0 : (GameManager.getDealerNum() < 14 ? 1 : -1));
-            return;
-        }
-
-        GameManager.setIsWin(GameManager.getPlayerNum() > GameManager.getDealerNum() ? 1 : (GameManager.getPlayerNum() < GameManager.getDealerNum() ? -1 : 0));
+        GameManager.setIsWin(res);
     },
     resultText: function () {
         if (GameManager.getIsWin() === 1) {
