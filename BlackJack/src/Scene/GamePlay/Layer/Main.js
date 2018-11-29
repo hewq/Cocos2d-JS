@@ -1,31 +1,15 @@
 let GPMainLayer = cc.Layer.extend({
-    playing: null,
-    playingChip: 0,
-    playerChip: null,
     goldBgArr: [],
     btnClear: null,
     btnBet: null,
-    playerStatus: null,
     gamingLayout: null,
     betBox: null,
     btnStart: null,
     listener: null,
     startListener: null,
-    pokerNum: 52,
-    dealerCard: [],
-    playerCard: [],
-    dealerBlackJack: false,
-    dealerDoubleJack: false,
-    dealerFive: false,
-    playerBlackJack: false,
-    playerDoubleJack: false,
-    playerFive: false,
-    dealerNum: 0,
-    playerNum: 0,
-    dealerBoom: false,
-    playerBoom: false,
-    cardEnd: false,
-    playerWin: -1, // 赢：1，输，-1，平：0
+    labelOwnChip: null,
+    labelBetChip: null,
+    labelSystemTips: null,
     ctor: function () {
         this._super();
 
@@ -42,10 +26,10 @@ let GPMainLayer = cc.Layer.extend({
         return true;
     },
     loadTips: function () {
-        let tips = new ccui.Text('请下注', 'AmericanTypewriter', 40);
+        let tips = new ccui.Text(GameManager.getSystemTips(), 'AmericanTypewriter', 40);
         tips.setPosition(cc.winSize.width / 2 - 150, cc.winSize.height - 150);
         this.addChild(tips);
-        this.playerStatus = tips;
+        this.labelSystemTips = tips;
     },
     loadBetPool: function () {
         let layout = new ccui.Layout();
@@ -77,7 +61,7 @@ let GPMainLayer = cc.Layer.extend({
             goldNum.setPosition(poolBg.getContentSize().width / 2, poolBg.getContentSize().height / 2);
 
             if (i === 2) {
-                this.playing = goldNum;
+                this.labelBetChip = goldNum;
             }
         }
     },
@@ -102,11 +86,13 @@ let GPMainLayer = cc.Layer.extend({
                     let parent = sender.parent;
                     parent.loadBox();
                     parent.removeChildByTag(Tag.START);
-                    parent.playerStatus.setString("请下注");
+                    GameManager.setSystemTips('请下注');
+                    parent.labelSystemTips.setString(GameManager.getSystemTips());
                     while (parent.getChildByTag(Tag.CARD)) {
                         parent.removeChildByTag(Tag.CARD, true);
                     }
                     parent.restart();
+                    parent.labelBetChip.setString(GameManager.getBetChip());
 
                     break;
                 default:
@@ -141,22 +127,20 @@ let GPMainLayer = cc.Layer.extend({
             switch (type) {
                 case ccui.Widget.TOUCH_ENDED:
                     let that = sender.parent.parent;
-                    let betChip = sender.parent.parent.playingChip;
-                    let status = '';
-                    let playerChip = +that.playerChip.getString().slice(1);
+                    let betChip = GameManager.getBetChip();
+                    let ownChip = GameManager.getOwnChip();
 
-                    status = '请下注';
-                    playerChip = playerChip + betChip;
-                    betChip = 0;
+                    GameManager.setSystemTips('请下注');
+                    GameManager.setOwnChip(ownChip + betChip);
+                    GameManager.setBetChip(0);
 
                     while (that.getChildByTag(Tag.AM_BET_CHIP)) {
                         that.removeChildByTag(Tag.AM_BET_CHIP, true);
                     }
 
-                    that.playing.setString(betChip + '');
-                    that.playerStatus.setString(status);
-                    that.playerChip.setString('$' + playerChip);
-                    that.playingChip = betChip;
+                    that.labelBetChip.setString('0');
+                    that.labelSystemTips.setString(GameManager.getSystemTips());
+                    that.labelOwnChip.setString('$' + GameManager.getOwnChip());
                     break;
                 default:
                     break;
@@ -196,7 +180,7 @@ let GPMainLayer = cc.Layer.extend({
             switch (type) {
                 case ccui.Widget.TOUCH_ENDED:
                     let that = sender.parent.parent;
-                    let betChip = sender.parent.parent.playingChip;
+                    let betChip = GameManager.getBetChip();
                     if (betChip !== 0) {
                         that.removeChildByTag(Tag.BTN_BET_BOX);
                         that.loadBtnGaming();
@@ -241,7 +225,8 @@ let GPMainLayer = cc.Layer.extend({
             playerLayout.addChild(goldNum);
 
             if (i === 2) {
-                this.playerChip = goldNum;
+                this.labelOwnChip = goldNum;
+                GameManager.setOwnChip(playerInfo[i].goldNums);
             }
 
             if (i < 3) {
@@ -294,8 +279,8 @@ let GPMainLayer = cc.Layer.extend({
             switch (type) {
                 case ccui.Widget.TOUCH_ENDED:
                     let that = sender.parent.parent;
-                    let betChip = sender.parent.parent.playingChip;
-                    let playerChip = +that.playerChip.getString().slice(1);
+                    let betChip = GameManager.getBetChip();
+                    let ownChip = GameManager.getOwnChip();
                     let status = '';
 
                     while (that.getChildByTag(Tag.DEALER_DIPAI)) {
@@ -306,12 +291,11 @@ let GPMainLayer = cc.Layer.extend({
                     that.computePlayer();
                     that.computeRes();
                     that.resultText();
-                    if (that.playerWin === 1) {
-                        playerChip = playerChip + betChip * 2;
-                    } else if (that.playerWin === 0) {
-                        playerChip = playerChip + betChip;
+                    if (GameManager.getIsWin() === 1) {
+                        GameManager.setOwnChip(ownChip + betChip * 2);
+                    } else if (GameManager.getIsWin() === 0) {
+                        GameManager.setOwnChip(ownChip + betChip);
                     }
-                    betChip = 0;
 
                     while (that.getChildByTag(Tag.AM_BET_CHIP)) {
                         that.removeChildByTag(Tag.AM_BET_CHIP, true);
@@ -319,12 +303,12 @@ let GPMainLayer = cc.Layer.extend({
 
                     that.loadStart();
                     that.removeChildByTag(Tag.LAYOUT_BTN_GAMING);
-                    status = that.playerStatus.getString();
+                    status = that.labelSystemTips.getString();
 
-                    that.playing.setString(betChip + '');
-                    that.playerStatus.setString(status);
-                    that.playerChip.setString('$' + playerChip);
-                    that.playingChip = betChip;
+                    that.labelBetChip.setString(betChip + '');
+                    that.labelSystemTips.setString(status);
+                    that.labelOwnChip.setString('$' + GameManager.getOwnChip());
+                    GameManager.setBetChip(0);
 
                     break;
                 default:
@@ -403,15 +387,13 @@ let GPMainLayer = cc.Layer.extend({
             },
             onTouchEnded: function (touch, event) {
                 let that = event.getCurrentTarget().parent.parent;
-                let betChip = event.getCurrentTarget().parent.parent.playingChip;
                 let status = '';
-                let playerChip = +that.playerChip.getString().slice(1);
+                let ownChip = GameManager.getOwnChip();
 
                 function checkBalance(chip) {
-                    playerChip = +that.playerChip.getString().slice(1);
-                    if (playerChip >= chip) {
-                        betChip += chip;
-                        playerChip -= chip;
+                    if (ownChip >= chip) {
+                        GameManager.setBetChip(GameManager.getBetChip() + chip);
+                        GameManager.setOwnChip(ownChip - chip);
                         that.amBetChip();
                     } else {
                         status = '余额不足！'
@@ -433,12 +415,9 @@ let GPMainLayer = cc.Layer.extend({
                         break;
                 }
 
-                if (event.getCurrentTarget().tag < 5 || event.getCurrentTarget().tag === Tag.STOP) {
-                    that.playing.setString(betChip + '');
-                    that.playerStatus.setString(status);
-                    that.playerChip.setString('$' + playerChip);
-                    that.playingChip = betChip;
-                }
+                that.labelBetChip.setString(GameManager.getBetChip() + '');
+                that.labelSystemTips.setString(status);
+                that.labelOwnChip.setString('$' + GameManager.getOwnChip());
             }
         });
 
@@ -461,14 +440,17 @@ let GPMainLayer = cc.Layer.extend({
 
         dealerPoker_2.runAction(dealerPokerMove);
 
-        this.dealerCard.push(this.getPokerRandom());
-        this.dealerCard.push(this.getPokerRandom());
+        GameManager.getDealerCard().push(this.getPokerRandom());
+        GameManager.getDealerCard().push(this.getPokerRandom());
+        GameManager.setDealerCard(GameManager.getDealerCard());
 
-        this.playerCard.push(this.getPokerRandom());
-        this.playerCard.push(this.getPokerRandom());
+        GameManager.getPlayerCard().push(this.getPokerRandom());
+        GameManager.getPlayerCard().push(this.getPokerRandom());
+        GameManager.setPlayerCard(GameManager.getPlayerCard());
 
-        let playerPoker_1 = new cardSprite(false, this.playerCard[0]);
-        let playerPoker_2 = new cardSprite(false, this.playerCard[1]);
+        let playerCard = GameManager.getPlayerCard();
+        let playerPoker_1 = new cardSprite(false, playerCard[0]);
+        let playerPoker_2 = new cardSprite(false, playerCard[1]);
 
         this.addChild(playerPoker_1);
         this.addChild(playerPoker_2);
@@ -487,9 +469,10 @@ let GPMainLayer = cc.Layer.extend({
         layout.setTag(Tag.CARD);
         let dealerCard = null;
         this.computeDealer();
+        let dealerCardArr = GameManager.getDealerCard();
 
-        for (let i = 0; i < this.dealerCard.length; i++) {
-            dealerCard = new cardSprite(false, this.dealerCard[i]);
+        for (let i = 0; i < dealerCardArr.length; i++) {
+            dealerCard = new cardSprite(false, dealerCardArr[i]);
             layout.addChild(dealerCard);
             dealerCard.setAnchorPoint(0, 0.5);
             dealerCard.setPosition(0, layout.getContentSize().height / 2);
@@ -499,19 +482,20 @@ let GPMainLayer = cc.Layer.extend({
         }
     },
     computeDealer: function () {
-        let dealerCard0 = this.dealerCard[0].num;
-        let dealerCard1 = this.dealerCard[1].num;
+        let dealerCard = GameManager.getDealerCard(); // 庄家牌
+        let dealerCard0 = dealerCard[0].num;
+        let dealerCard1 = dealerCard[1].num;
         let getCard = null;
 
         // double jack
         if (dealerCard0 === 1 && dealerCard1 === 1) {
-            this.dealerDoubleJack = true;
+            GameManager.setDealerDoubleJack(true);
             return;
         }
 
         // black jack
         if (dealerCard0 === 1 && dealerCard1 === 10 || dealerCard0 === 10 && dealerCard1 === 1) {
-            this.dealerBlackJack = true;
+            GameManager.setDealerBlackJack(true);
             return;
         }
 
@@ -519,7 +503,7 @@ let GPMainLayer = cc.Layer.extend({
         if (dealerCard0 === 1 || dealerCard1 === 1) {
             let notJackCard = dealerCard0 === 1 ? dealerCard1 : dealerCard0;
 
-            this.dealerNum = 11 + notJackCard; // > 15
+            GameManager.setDealerNum(11 + notJackCard);
             if (notJackCard > 3) {
                 return;
             }
@@ -528,45 +512,45 @@ let GPMainLayer = cc.Layer.extend({
                 getCard = this.getDealerCard(); // 3
 
                 if (getCard.num > 8) { // > 21
-                    this.dealerNum = getCard.num + 4;
+                    GameManager.setDealerNum(getCard.num + 4);
                     this.getDealerCard(); // 4
 
-                    if (this.checkBoom(this.dealerNum)) {
-                        this.dealerBoom = true;
+                    if (this.checkBoom(GameManager.getDealerNum())) {
+                        GameManager.setDealerBust(true);
                         return;
                     }
 
-                    if (this.checkPoint(this.dealerNum)) return;
+                    if (this.checkPoint(GameManager.getDealerNum())) return;
 
                     this.getDealerCard(); // 5
-                    if (this.checkBoom(this.dealerNum)) {
-                        this.dealerBoom = true;
+                    if (this.checkBoom(GameManager.getDealerNum())) {
+                        GameManager.setDealerBust(true);
                         return;
                     }
 
-                    this.dealerFive = true;
+                    GameManager.setDealerFive(true);
                     return;
                 }
 
                 if (getCard.num === 8 || getCard.num === 7) { // 21
-                    this.dealerNum = 21;
+                    GameManager.setDealerNum(21);
                     return;
                 }
 
                 if (getCard.num === 1) { // 21
-                    this.dealerNum = 5;
+                    GameManager.setDealerNum(5);
                     this.getDealerCard();  // 4
 
-                    if(this.checkPoint(this.dealerNum)) return;
+                    if(this.checkPoint(GameManager.getDealerNum())) return;
 
                     this.getDealerCard();  // 5
 
-                    if (this.checkBoom(this.dealerNum))  {
-                        this.dealerBoom = true;
+                    if (this.checkBoom(GameManager.getDealerNum()))  {
+                        GameManager.setDealerBust(true);
                         return;
                     }
 
-                    this.dealerFive = true;
+                    GameManager.setDealerFive(true);
                     return;
                 }
 
@@ -577,43 +561,43 @@ let GPMainLayer = cc.Layer.extend({
                 getCard = this.getDealerCard(); // 3
 
                 if (getCard.num === 10) {
-                    this.dealerNum = 13;
+                    GameManager.setDealerNum(13);
                     this.getDealerCard();  // 4
 
-                    if (this.checkBoom(this.dealerNum)) {
-                        this.dealerBoom = true;
+                    if (this.checkBoom(GameManager.getDealerNum())) {
+                        GameManager.setDealerBust(true);
                         return;
                     }
 
-                    if (this.checkPoint(this.dealerNum)) return;
+                    if (this.checkPoint(GameManager.getDealerNum())) return;
 
                     this.getDealerCard(); // 5
 
-                    if (this.checkBoom(this.dealerNum)) {
-                        this.dealerBoom = true;
+                    if (this.checkBoom(GameManager.getDealerNum())) {
+                        GameManager.setDealerBust(true);
                         return;
                     }
 
-                    this.dealerFive = true;
+                    GameManager.setDealerFive(true);
                     return;
                 }
 
                 if (getCard.num === 9 || getCard.num === 8) { // 21
-                    this.dealerNum = 21;
+                    GameManager.setDealerNum(21);
                     return;
                 }
 
                 if (getCard.num === 1) {
-                    this.dealerNum = 4;
+                    GameManager.setDealerNum(4);
                     this.getDealerCard(); // 4
                     this.getDealerCard(); // 5
 
-                    if (this.checkBoom(this.dealerNum)) {
-                        this.dealerBoom = true;
+                    if (this.checkBoom(GameManager.getDealerNum())) {
+                        GameManager.setDealerBust(true);
                         return;
                     }
 
-                    this.dealerFive = true;
+                    GameManager.setDealerFive(true);
                     return;
                 }
 
@@ -622,150 +606,150 @@ let GPMainLayer = cc.Layer.extend({
         }
 
         // has not jack
-        this.dealerNum = dealerCard0 + dealerCard1; // 4~20
+        GameManager.setDealerNum(dealerCard0 + dealerCard1);
 
-        if (this.checkPoint(this.dealerNum)) return;
+        if (this.checkPoint(GameManager.getDealerNum())) return;
 
-        if(this.dealerNum > 11){ // 12~14
+        if(GameManager.getDealerNum() > 11){ // 12~14
             this.getDealerCard();  // 3
 
-            if (this.checkBoom(this.dealerNum)) {
-                this.dealerBoom = true;
+            if (this.checkBoom(GameManager.getDealerNum())) {
+                GameManager.setDealerBust(true);
                 return;
             }
 
-            if (this.checkPoint(this.dealerNum)) return;
+            if (this.checkPoint(GameManager.getDealerNum())) return;
 
             // 13~14
             this.getDealerCard(); // 4
-            if (this.checkBoom(this.dealerNum)) {
-                this.dealerBoom = true;
+            if (this.checkBoom(GameManager.getDealerNum())) {
+                GameManager.setDealerBust(true);
                 return;
             }
 
-            if (this.checkPoint(this.dealerNum)) return;
+            if (this.checkPoint(GameManager.getDealerNum())) return;
 
             // 14
             this.getDealerCard();
 
-            if (this.checkBoom(this.dealerNum)) {
-                this.dealerBoom = true;
+            if (this.checkBoom(GameManager.getDealerNum())) {
+                GameManager.setDealerBust(true);
                 return;
             }
 
-            this.dealerFive = true; // 15~21
+            GameManager.setDealerFive(true);
             return;
         }
 
-        if (this.dealerNum === 11) { // 11
+        if (GameManager.getDealerNum() === 11) { // 11
             getCard = this.getDealerCard();  // 3
             if (getCard.num === 1) {
-                this.dealerNum = 21;
+                GameManager.setDealerNum(21);
                 return;
             }
 
-            if (this.checkPoint(this.dealerNum)) return;
+            if (this.checkPoint(GameManager.getDealerNum())) return;
 
             this.getDealerCard(); // 4
-            if (this.checkBoom(this.dealerNum)) {
-                this.dealerBoom = true;
+            if (this.checkBoom(GameManager.getDealerNum())) {
+                GameManager.setDealerBust(true);
                 return;
             }
 
-            if (this.checkPoint(this.dealerNum)) return;
+            if (this.checkPoint(GameManager.getDealerNum())) return;
 
             // 14
             this.getDealerCard();
 
-            if (this.checkBoom(this.dealerNum)) {
-                this.dealerBoom = true;
+            if (this.checkBoom(GameManager.getDealerNum())) {
+                GameManager.setDealerBust(true);
                 return;
             }
 
-            this.dealerFive = true;
+            GameManager.setDealerFive(true);
             return;
         }
 
-        if (this.dealerNum === 10) {  // 10
+        if (GameManager.getDealerNum() === 10) {  // 10
             getCard = this.getDealerCard(); // 3
             if (getCard.num === 1) {  // 21
-                this.dealerNum = 21;
+                GameManager.setDealerNum(21);
                 return;
             }
 
-            if (this.checkPoint(this.dealerNum)) return;
+            if (this.checkPoint(GameManager.getDealerNum())) return;
 
             this.getDealerCard(); // 4
 
-            if (this.checkBoom(this.dealerNum)) {
-                this.dealerBoom = true;
+            if (this.checkBoom(GameManager.getDealerNum())) {
+                GameManager.setDealerBust(true);
                 return;
             }
 
-            if (this.checkPoint(this.dealerNum)) return;
+            if (this.checkPoint(GameManager.getDealerNum())) return;
 
             this.getDealerCard();
 
-            if (this.checkBoom(this.dealerNum)) {
-                this.dealerBoom = true;
+            if (this.checkBoom(GameManager.getDealerNum())) {
+                GameManager.setDealerBust(true);
                 return;
             }
 
-            this.dealerFive = true;
+            GameManager.setDealerFive(true);
             return;
         }
 
         // 4~9
         getCard = this.getDealerCard(); // 3
         if (getCard.num === 1) { // 15~20
-            this.dealerNum += 10;
+            GameManager.setDealerNum(GameManager.getDealerNum() + 10);
             return;
         }
 
-        if (this.checkPoint(this.dealerNum)) return;
+        if (this.checkPoint(GameManager.getDealerNum())) return;
 
         // 6~14
         getCard = this.getDealerCard(); // 4
 
         if (getCard.num === 1) {
-            if (this.dealerNum < 12) { // 6~10
-                this.dealerNum += 10;
+            if (GameManager.getDealerNum() < 12) { // 6~10
+                GameManager.setDealerNum(GameManager.getDealerNum() + 10);
                 return;
             }
 
-            if (this.dealerNum === 12) { // 11
-                this.dealerNum = 21;
+            if (GameManager.getDealerNum() === 12) { // 11
+                GameManager.setDealerNum(21);
                 return;
             }
 
-            if (this.checkPoint(this.dealerNum)) return;
+            if (this.checkPoint(GameManager.getDealerNum())) return;
 
             // 13~14
             this.getDealerCard(); // 5
 
-            if (this.checkBoom(this.dealerNum)) {
-                this.dealerBoom = true;
+            if (this.checkBoom(GameManager.getDealerNum())) {
+                GameManager.setDealerBust(true);
                 return;
             }
 
-            this.dealerFive = true;
+            GameManager.setDealerFive(true);
             return;
         }
 
-        if (this.checkBoom(this.dealerBoom)) {
-            this.dealerBoom = true;
+        if (this.checkBoom(GameManager.getDealerNum())) {
+            GameManager.setDealerBust(true);
             return;
         }
 
-        if (this.checkPoint(this.dealerNum)) return;
+        if (this.checkPoint(GameManager.getDealerNum())) return;
 
         // 8~14
         this.getDealerCard(); // 5
-        if (this.checkBoom(this.dealerBoom)) {
-            this.dealerBoom = true;
+        if (this.checkBoom(GameManager.getDealerNum())) {
+            GameManager.setDealerBust(true);
             return;
         }
-        this.dealerFive = true;
+        GameManager.setDealerFive(true);
     },
     checkBoom: function (num) {
         return num > 21;
@@ -775,239 +759,234 @@ let GPMainLayer = cc.Layer.extend({
     },
     getDealerCard: function () {
         let card = this.getPokerRandom();
-        this.dealerCard.push(card);
-        this.dealerNum += card.num;
-
-        if (this.checkBoom(this.dealerNum)) this.cardEnd = true;
-        if (this.checkPoint(this.dealerNum)) this.cardEnd = true;
+        GameManager.getDealerCard().push(card);
+        GameManager.setDealerCard(GameManager.getDealerCard());
+        GameManager.setDealerNum(GameManager.getDealerNum() + card.num);
 
         return card;
     },
     getOneCard: function () {
         let sprite = null;
-        if (this.playerCard.length >= 5) return;
+        let playerCard = GameManager.getPlayerCard();
+        if (playerCard.length >= 5) return;
 
-        if (this.playerCard.length === 2) {
-            this.playerCard.push(this.getPokerRandom());
-            sprite = new cardSprite(false, this.playerCard[2]);
+        if (playerCard.length === 2) {
+            GameManager.getPlayerCard().push(this.getPokerRandom());
+            playerCard = GameManager.getPlayerCard();
+            sprite = new cardSprite(false, playerCard[2]);
             this.addChild(sprite);
             sprite.setPosition(cc.winSize.width / 2 + 80, cc.winSize.height / 2 - 45);
             return;
         }
 
-        if (this.playerCard.length === 3) {
-            this.playerCard.push(this.getPokerRandom());
-            sprite = new cardSprite(false, this.playerCard[3]);
+        if (playerCard.length === 3) {
+            GameManager.getPlayerCard().push(this.getPokerRandom());
+            playerCard = GameManager.getPlayerCard();
+            sprite = new cardSprite(false, playerCard[3]);
             this.addChild(sprite);
             sprite.setPosition(cc.winSize.width / 2 + 110, cc.winSize.height / 2 - 45);
             return;
         }
 
-        if (this.playerCard.length === 4) {
-            this.playerCard.push(this.getPokerRandom());
-            sprite = new cardSprite(false, this.playerCard[4]);
+        if (playerCard.length === 4) {
+            GameManager.getPlayerCard().push(this.getPokerRandom());
+            playerCard = GameManager.getPlayerCard();
+            sprite = new cardSprite(false, playerCard[4]);
             this.addChild(sprite);
             sprite.setPosition(cc.winSize.width / 2 + 140, cc.winSize.height / 2 - 45);
         }
     },
     getDoubleCard: function () {
         let sprite = null;
-        if (this.playerCard.length >= 4) return;
+        let playerCard = GameManager.getPlayerCard();
+        if (playerCard.length >= 4) return;
 
-        if (this.playerCard.length === 2) {
-            this.playerCard.push(this.getPokerRandom());
-            sprite = new cardSprite(false, this.playerCard[2]);
+        if (playerCard.length === 2) {
+            GameManager.getPlayerCard().push(this.getPokerRandom());
+            playerCard = GameManager.getPlayerCard();
+            sprite = new cardSprite(false, playerCard[2]);
             this.addChild(sprite);
             sprite.setPosition(cc.winSize.width / 2 + 80, cc.winSize.height / 2 - 45);
 
-            this.playerCard.push(this.getPokerRandom());
-            sprite = new cardSprite(false, this.playerCard[3]);
+            GameManager.getPlayerCard().push(this.getPokerRandom());
+            playerCard = GameManager.getPlayerCard();
+            sprite = new cardSprite(false, playerCard[3]);
             this.addChild(sprite);
             sprite.setPosition(cc.winSize.width / 2 + 110, cc.winSize.height / 2 - 45);
             return;
         }
 
-        if (this.playerCard.length === 3) {
-            this.playerCard.push(this.getPokerRandom());
-            sprite = new cardSprite(false, this.playerCard[3]);
+        if (playerCard.length === 3) {
+            GameManager.getPlayerCard().push(this.getPokerRandom());
+            playerCard = GameManager.getPlayerCard();
+            sprite = new cardSprite(false, playerCard[3]);
             this.addChild(sprite);
             sprite.setPosition(cc.winSize.width / 2 + 110, cc.winSize.height / 2 - 45);
 
-            this.playerCard.push(this.getPokerRandom());
-            sprite = new cardSprite(false, this.playerCard[4]);
+            GameManager.getPlayerCard().push(this.getPokerRandom());
+            playerCard = GameManager.getPlayerCard();
+            sprite = new cardSprite(false, playerCard[4]);
             this.addChild(sprite);
             sprite.setPosition(cc.winSize.width / 2 + 140, cc.winSize.height / 2 - 45);
         }
     },
     getPokerRandom: function () {
-        let random = Math.floor(Math.random() * this.pokerNum);
+        let random = Math.floor(Math.random() * GameManager.getPokerNum());
         let cardInfo = poker[random];
         poker.splice(random, 1);
 
-        this.pokerNum--;
+        GameManager.setPokerNum(GameManager.getPokerNum() - 1);
 
         return cardInfo;
     },
     computePlayer: function () {
-        let playerCardLength = this.playerCard.length;
+        let playerCard = GameManager.getPlayerCard();
+        let playerCardLength = playerCard.length;
 
         if (playerCardLength === 2) {
-            let playerCard0 = this.playerCard[0].num;
-            let playerCard1 = this.playerCard[1].num;
+            let playerCard0 = playerCard[0].num;
+            let playerCard1 = playerCard[1].num;
 
             // double jack
             if (playerCard0 === 1 && playerCard1 === 1) {
-                this.playerDoubleJack = true;
+                GameManager.setPlayerDoubleJack(true);
                 return;
             }
 
             // black jack
             if (playerCard0 === 1 && playerCard1 === 10 || playerCard0 === 10 && playerCard1 === 1) {
-                this.playerBlackJack = true;
+                GameManager.setPlayerBlackJack(true);
                 return;
             }
 
             // has jack
             if (playerCard0 === 1 || playerCard1 === 1) {
                 let notJackCard = playerCard0 === 1 ? playerCard1 : playerCard0;
-                this.playerNum = 11 + notJackCard.num;
+                GameManager.setPlayerNum(11 + notJackCard);
                 return;
             }
 
-            this.playerNum = playerCard0 + playerCard1;
+            GameManager.setPlayerNum(playerCard0 + playerCard1)
             return;
         }
 
         if (playerCardLength === 3) {
             let jackLen = 0;
-            let total = this.playerCard[0].num + this.playerCard[1].num + this.playerCard[2].num;
+            let total = playerCard[0].num + playerCard[1].num + playerCard[2].num;
             for (let i = 0; i < playerCardLength; i++) {
-                if (this.playerCard[i].num === 1) {
+                if (playerCard[i].num === 1) {
                     jackLen++;
                 }
             }
 
             if (jackLen === 1) {
                 if (total - 1 < 11) {
-                    this.playerNum = total + 10;
+                    GameManager.setPlayerNum(total + 10);
                     return;
                 }
 
                 if (total - 1 === 11) {
-                    this.playerNum = total + 9;
+                    GameManager.setPlayerNum(total + 9);
                     return;
                 }
             }
 
-            this.playerNum = total;
+            GameManager.setPlayerNum(total);
             if (total > 21) {
-                this.playerBoom = true;
+                GameManager.setPlayerBust(true);
             }
             return;
         }
 
         if (playerCardLength === 4) {
             let jackLen = 0;
-            let total = this.playerCard[0].num + this.playerCard[1].num + this.playerCard[2].num+ this.playerCard[3].num;
+            let total = playerCard[0].num + playerCard[1].num + playerCard[2].num+ playerCard[3].num;
             for (let i = 0; i < playerCardLength; i++) {
-                if (this.playerCard[i].num === 1) {
+                if (playerCard[i].num === 1) {
                     jackLen++;
                 }
             }
 
             if (jackLen === 1) {
                 if (total - 1 < 11) {
-                    this.playerNum = total + 10;
+                    GameManager.setPlayerNum(total + 10);
                     return;
                 }
 
                 if (total - 1 === 11) {
-                    this.playerNum = total + 9;
+                    GameManager.setPlayerNum(total + 9);
                     return;
                 }
             }
 
-            this.playerNum = total;
+            GameManager.setPlayerNum(total);
             if (total > 21) {
-                this.playerBoom = true;
+                GameManager.setPlayerBust(true);
             }
             return;
         }
 
         if (playerCardLength === 5) {
-            let total = this.playerCard[0].num + this.playerCard[1].num + this.playerCard[2].num + this.playerCard[3].num + this.playerCard[4].num;
+            let total = playerCard[0].num + playerCard[1].num + playerCard[2].num + playerCard[3].num + playerCard[4].num;
 
             if (total > 21) {
-                this.playerBoom = true;
+                GameManager.setPlayerBust(true);
                 return;
             }
 
-            this.playerFive = true;
+            GameManager.setPlayerFive(true);
         }
     },
     computeRes: function () {
-        if (this.dealerBoom || this.playerBoom) {
+        if (GameManager.getDealerBust() || GameManager.getPlayerBust()) {
             this.playBust();
         }
 
-        if (this.dealerDoubleJack) {
-            this.playerWin = this.playerDoubleJack ? 0 : -1;
+        if (GameManager.getDealerDoubleJack()) {
+            GameManager.setIsWin(GameManager.getPlayerDoubleJack() ? 0 : -1);
             return;
         }
 
-        if (this.dealerBlackJack) {
-            this.playerWin = this.playerDoubleJack ? 1 : (this.playerBlackJack ? 0 : -1);
+        if (GameManager.getDealerBlackJack()) {
+            GameManager.setIsWin(GameManager.getPlayerDoubleJack() ? 1 : (GameManager.getPlayerBlackJack() ? 0 : -1));
             return;
         }
 
-        if (this.dealerFive) {
-            this.playerWin = this.playerDoubleJack || this.playerBlackJack ? 1 : (this.playerFive ? 0 : -1);
+        if (GameManager.getDealerFive()) {
+            GameManager.setIsWin(GameManager.getPlayerDoubleJack() || GameManager.getPlayerBlackJack() ? 1 : (GameManager.getPlayerFive() ? 0 : -1));
             return;
         }
 
-        if (this.playerDoubleJack || this.playerBlackJack || this.playerFive) {
-            this.playerWin = 1;
+        if (GameManager.getPlayerBlackJack() || GameManager.getPlayerDoubleJack() || GameManager.getPlayerFive()) {
+            GameManager.setIsWin(1);
             return;
         }
 
-        if (this.dealerBoom) {
-            this.playerWin = this.playerBoom ? 0 : (this.dealerNum > 14 ? 1 : -1);
+        if (GameManager.getDealerBust()) {
+            GameManager.setIsWin(GameManager.getPlayerBust() ? 0 : (GameManager.getPlayerNum() > 14 ? 1 : -1));
             return;
         }
 
-        if (this.playerBoom) {
-            this.playerWin = -1;
+        if (GameManager.getPlayerBust()) {
+            GameManager.setIsWin(GameManager.getDealerBust() ? 0 : (GameManager.getDealerNum() < 14 ? 1 : -1));
             return;
         }
 
-        this.playerWin = this.playerNum > this.dealerNum ? 1 : (this.playerNum < this.dealerNum ? -1 : 0);
+        GameManager.setIsWin(GameManager.getPlayerNum() > GameManager.getDealerNum() ? 1 : (GameManager.getPlayerNum() < GameManager.getDealerNum() ? -1 : 0));
     },
     resultText: function () {
-        if (this.playerWin === 1) {
-            this.playerStatus.setString('你赢了');
+        if (GameManager.getIsWin() === 1) {
+            this.labelSystemTips.setString('你赢了');
             cc.audioEngine.playEffect(res.win_mp3, false);
-        } else if (this.playerWin === -1) {
-            this.playerStatus.setString('你输了');
+        } else if (GameManager.getIsWin() === -1) {
+            this.labelSystemTips.setString('你输了');
             cc.audioEngine.playEffect(res.fail_mp3, false);
         } else {
-            this.playerStatus.setString('和局');
+            this.labelSystemTips.setString('和局');
         }
     },
     restart: function () {
-        this.dealerCard = [];
-        this.playerCard = [];
-        this.dealerBlackJack = false;
-        this.dealerDoubleJack = false;
-        this.dealerFive = false;
-        this.playerBlackJack = false;
-        this.playerDoubleJack = false;
-        this.playerFive = false;
-        this.dealerNum = 0;
-        this.playerNum = 0;
-        this.dealerBoom = false;
-        this.playerBoom = false;
-        this.cardEnd = false;
-        this.playerWin = -1;
+        GameManager.betAgain();
         poker = [].concat(resetPoker);
     },
     playBust: function () {
