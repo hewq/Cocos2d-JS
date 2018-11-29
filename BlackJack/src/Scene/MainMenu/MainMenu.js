@@ -28,6 +28,7 @@ let MainMenuScene = cc.Scene.extend({
         cc.spriteFrameCache.addSpriteFrames(res.menu_plist, res.menu_png);
         cc.spriteFrameCache.addSpriteFrames(res.share_plist, res.share_png);
         cc.spriteFrameCache.addSpriteFrames(res.table_plist, res.table_png);
+        cc.spriteFrameCache.addSpriteFrames(res.bust_plist, res.bust_png);
     },
 
     loadBackgroundLayer: function () {

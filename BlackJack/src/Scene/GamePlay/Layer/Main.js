@@ -42,7 +42,7 @@ let GPMainLayer = cc.Layer.extend({
         return true;
     },
     loadTips: function () {
-        let tips = new cc.LabelTTF('请下注', 'AmericanTypewriter', 40);
+        let tips = new ccui.Text('请下注', 'AmericanTypewriter', 40);
         tips.setPosition(cc.winSize.width / 2 - 150, cc.winSize.height - 150);
         this.addChild(tips);
         this.playerStatus = tips;
@@ -82,19 +82,37 @@ let GPMainLayer = cc.Layer.extend({
         }
     },
     loadStart: function () {
-        let btnStartBg = new cc.Sprite('#button_blue.png');
-        this.addChild(btnStartBg);
-        btnStartBg.setPosition(cc.winSize.width / 2, 60);
+        let node = new ccui.Button();
+        this.addChild(node);
+        node.loadTextures('button_blue.png', '', '', ccui.Widget.PLIST_TEXTURE);
+        node.setPosition(cc.winSize.width / 2, 60);
+        node.setTouchEnabled(true);
 
-        this.btnStart = btnStartBg;
+        let text = new cc.LabelTTF('下注', 'AmericanTypewriter', 35);
+        node.addChild(text);
+        text.setPosition(node.getContentSize().width / 2, node.getContentSize().height / 2 + 10);
 
-        btnStartBg.setTag(Tag.START);
+        this.btnStart = node;
 
-        let btnStart = new cc.LabelTTF('下注', 'AmericanTypewriter', 35);
-        btnStartBg.addChild(btnStart);
-        btnStart.setPosition(btnStartBg.getContentSize().width / 2, btnStartBg.getContentSize().height / 2 + 10);
+        node.setTag(Tag.START);
 
-        cc.eventManager.addListener(this.startListener, btnStartBg);
+        node.addTouchEventListener(function (sender, type) {
+            switch (type) {
+                case ccui.Widget.TOUCH_ENDED:
+                    let parent = sender.parent;
+                    parent.loadBox();
+                    parent.removeChildByTag(Tag.START);
+                    parent.playerStatus.setString("请下注");
+                    while (parent.getChildByTag(Tag.CARD)) {
+                        parent.removeChildByTag(Tag.CARD, true);
+                    }
+                    parent.restart();
+
+                    break;
+                default:
+                    break;
+            }
+        }, this);
     },
     loadBox: function () {
         let boxBg = new cc.Scale9Sprite('res/bg_gold_touzhu.png', cc.rect(0, 0, 141, 103), cc.rect(120, 0, 130, 103));
@@ -112,13 +130,39 @@ let GPMainLayer = cc.Layer.extend({
 
         let boxBgSize = boxBg.getContentSize();
 
-        let clear = new cc.Sprite('#icon_qingkongtouzhu.png');
-        boxBg.addChild(clear);
-        clear.setAnchorPoint(0, 0.5);
-        clear.setPosition(35, boxBgSize.height / 2 - 5);
-        clear.setTag(Tag.CLEAR);
+        let btnClear = new ccui.Button();
+        boxBg.addChild(btnClear);
+        btnClear.loadTextures('icon_qingkongtouzhu.png', '', '', ccui.Widget.PLIST_TEXTURE);
+        btnClear.setAnchorPoint(0, 0.5);
+        btnClear.setPosition(35, boxBgSize.height / 2 - 5);
+        btnClear.setTouchEnabled(true);
 
-        this.btnClear = clear;
+        btnClear.addTouchEventListener(function (sender, type) {
+            switch (type) {
+                case ccui.Widget.TOUCH_ENDED:
+                    let that = sender.parent.parent;
+                    let betChip = sender.parent.parent.playingChip;
+                    let status = '';
+                    let playerChip = +that.playerChip.getString().slice(1);
+
+                    status = '请下注';
+                    playerChip = playerChip + betChip;
+                    betChip = 0;
+
+                    while (that.getChildByTag(Tag.AM_BET_CHIP)) {
+                        that.removeChildByTag(Tag.AM_BET_CHIP, true);
+                    }
+
+                    that.playing.setString(betChip + '');
+                    that.playerStatus.setString(status);
+                    that.playerChip.setString('$' + playerChip);
+                    that.playingChip = betChip;
+                    break;
+                default:
+                    break;
+            }
+        }, this);
+        this.btnClear = btnClear;
 
         let chip = null;
         let goldBg = null;
@@ -137,19 +181,33 @@ let GPMainLayer = cc.Layer.extend({
             this.goldBgArr[i] = goldBg;
         }
 
-        let btnBet = new cc.Sprite('#icon_touzhu-.png');
-        boxBg.addChild(btnBet);
-        btnBet.setAnchorPoint(1, 0);
-        btnBet.setPosition(boxBg.width + 20, -20);
-        btnBet.setTag(Tag.BET);
-        this.btnBet = btnBet;
-
         for (let i = 0; i < this.goldBgArr.length; i++) {
             cc.eventManager.addListener(this.listener.clone(), this.goldBgArr[i]);
         }
 
-        cc.eventManager.addListener(this.listener.clone(), this.btnClear);
-        cc.eventManager.addListener(this.listener.clone(), this.btnBet);
+        let btnBet = new ccui.Button();
+        boxBg.addChild(btnBet);
+        btnBet.loadTextures('icon_touzhu-.png', '', '', ccui.Widget.PLIST_TEXTURE);
+        btnBet.setAnchorPoint(1, 0);
+        btnBet.setPosition(boxBg.width + 20, -20);
+        btnBet.setTouchEnabled(true);
+
+        btnBet.addTouchEventListener(function (sender, type) {
+            switch (type) {
+                case ccui.Widget.TOUCH_ENDED:
+                    let that = sender.parent.parent;
+                    let betChip = sender.parent.parent.playingChip;
+                    if (betChip !== 0) {
+                        that.removeChildByTag(Tag.BTN_BET_BOX);
+                        that.loadBtnGaming();
+                        that.loadCard();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }, this);
+        this.btnBet = btnBet;
     },
     loadPlayer: function () {
         let layout = new ccui.Layout();
@@ -221,41 +279,102 @@ let GPMainLayer = cc.Layer.extend({
         layout.setPosition(cc.winSize.width - 30, 0);
         layout.setTag(Tag.LAYOUT_BTN_GAMING);
 
-        let btnStopBg = new cc.Sprite('#button_orange.png');
-        layout.addChild(btnStopBg);
-        btnStopBg.setAnchorPoint(0, 0);
-        btnStopBg.setPosition(0, 0);
-        btnStopBg.setTag(Tag.STOP);
+        let btnStand = new ccui.Button();
+        layout.addChild(btnStand);
+        btnStand.loadTextures('button_orange.png', '', '', ccui.Widget.PLIST_TEXTURE);
+        btnStand.setTouchEnabled(true);
+        btnStand.setAnchorPoint(0, 0);
+        btnStand.setPosition(0, 0);
 
-        cc.eventManager.addListener(this.listener.clone(), btnStopBg);
+        let textStand = new cc.Sprite('#stand.png');
+        btnStand.addChild(textStand);
+        textStand.setPosition(btnStand.getContentSize().width / 2, btnStand.getContentSize().height / 2 + 10);
 
-        let btnStop = new cc.Sprite('#stand.png');
-        btnStopBg.addChild(btnStop);
-        btnStop.setPosition(btnStopBg.getContentSize().width / 2, btnStopBg.getContentSize().height / 2 + 10);
+        btnStand.addTouchEventListener(function (sender, type) {
+            switch (type) {
+                case ccui.Widget.TOUCH_ENDED:
+                    let that = sender.parent.parent;
+                    let betChip = sender.parent.parent.playingChip;
+                    let playerChip = +that.playerChip.getString().slice(1);
+                    let status = '';
 
-        let btnHitBg = new cc.Sprite('#button_blue.png');
-        layout.addChild(btnHitBg);
-        btnHitBg.setAnchorPoint(0.5, 0);
-        btnHitBg.setPosition(370, 0);
-        btnHitBg.setTag(Tag.ONE_CARD);
+                    while (that.getChildByTag(Tag.DEALER_DIPAI)) {
+                        that.removeChildByTag(Tag.DEALER_DIPAI, true);
+                    }
 
-        cc.eventManager.addListener(this.listener.clone(), btnHitBg);
+                    that.showDealerCard();
+                    that.computePlayer();
+                    that.computeRes();
+                    that.resultText();
+                    if (that.playerWin === 1) {
+                        playerChip = playerChip + betChip * 2;
+                    } else if (that.playerWin === 0) {
+                        playerChip = playerChip + betChip;
+                    }
+                    betChip = 0;
 
-        let btnHit = new cc.Sprite('#hit.png');
-        btnHitBg.addChild(btnHit);
-        btnHit.setPosition(btnHitBg.getContentSize().width / 2, btnHitBg.getContentSize().height / 2 + 10);
+                    while (that.getChildByTag(Tag.AM_BET_CHIP)) {
+                        that.removeChildByTag(Tag.AM_BET_CHIP, true);
+                    }
 
-        let btnDoubleBg = new cc.Sprite('#button_blue.png');
-        layout.addChild(btnDoubleBg);
-        btnDoubleBg.setAnchorPoint(1, 0);
-        btnDoubleBg.setPosition(740, 0);
-        btnDoubleBg.setTag(Tag.DOUBLE_CARD);
+                    that.loadStart();
+                    that.removeChildByTag(Tag.LAYOUT_BTN_GAMING);
+                    status = that.playerStatus.getString();
 
-        cc.eventManager.addListener(this.listener.clone(), btnDoubleBg);
+                    that.playing.setString(betChip + '');
+                    that.playerStatus.setString(status);
+                    that.playerChip.setString('$' + playerChip);
+                    that.playingChip = betChip;
 
-        let btnDouble = new cc.Sprite('#double.png');
-        btnDoubleBg.addChild(btnDouble);
-        btnDouble.setPosition(btnDoubleBg.getContentSize().width / 2, btnDoubleBg.getContentSize().height / 2 + 10);
+                    break;
+                default:
+                    break;
+            }
+        }, this);
+
+        let btnHit = new ccui.Button();
+        layout.addChild(btnHit);
+        btnHit.loadTextures('button_blue.png', '', '', ccui.Widget.PLIST_TEXTURE);
+        btnHit.setTouchEnabled(true);
+        btnHit.setAnchorPoint(0.5, 0);
+        btnHit.setPosition(370, 0);
+
+        let textHit = new cc.Sprite('#hit.png');
+        btnHit.addChild(textHit);
+        textHit.setPosition(btnHit.getContentSize().width / 2, btnHit.getContentSize().height / 2 + 10);
+
+        btnHit.addTouchEventListener(function (sender, type) {
+            switch (type) {
+                case ccui.Widget.TOUCH_ENDED:
+                    sender.parent.parent.getOneCard();
+
+                    break;
+                default:
+                    break;
+            }
+        }, this);
+
+        let btnDouble = new ccui.Button();
+        layout.addChild(btnDouble);
+        btnDouble.loadTextures('button_blue.png', '', '', ccui.Widget.PLIST_TEXTURE);
+        btnDouble.setTouchEnabled(true);
+        btnDouble.setAnchorPoint(1, 0);
+        btnDouble.setPosition(740, 0);
+
+        let textDouble = new cc.Sprite('#double.png');
+        btnDouble.addChild(textDouble);
+        textDouble.setPosition(btnDouble.getContentSize().width / 2, btnDouble.getContentSize().height / 2 + 10);
+
+        btnDouble.addTouchEventListener(function (sender, type) {
+            switch (type) {
+                case ccui.Widget.TOUCH_ENDED:
+                    sender.parent.parent.getDoubleCard();;
+                    break;
+                default:
+                    break;
+            }
+        }, this);
+
     },
     registerEvent: function () {
         let eventListener = cc.EventListener.create({
@@ -299,18 +418,6 @@ let GPMainLayer = cc.Layer.extend({
                     }
                 }
 
-                function removeBetChip() {
-                    while (that.getChildByTag(Tag.AM_BET_CHIP)) {
-                        that.removeChildByTag(Tag.AM_BET_CHIP, true);
-                    }
-                }
-
-                function removeDealerDipai() {
-                    while (that.getChildByTag(Tag.DEALER_DIPAI)) {
-                        that.removeChildByTag(Tag.DEALER_DIPAI, true);
-                    }
-                }
-
                 switch (event.getCurrentTarget().tag) {
                     case Tag.CHIP_10K:
                         checkBalance(10000);
@@ -324,42 +431,6 @@ let GPMainLayer = cc.Layer.extend({
                     case Tag.CHIP_1K:
                         checkBalance(1000);
                         break;
-                    case Tag.CLEAR:
-                        status = '请下注';
-                        playerChip = playerChip + betChip;
-                        betChip = 0;
-                        removeBetChip();
-                        break;
-                    case Tag.BET:
-                        if (betChip !== 0) {
-                            that.removeChildByTag(Tag.BTN_BET_BOX);
-                            that.loadBtnGaming();
-                            that.loadCard();
-                        }
-                        break;
-                    case Tag.STOP:
-                        removeDealerDipai();
-                        that.showDealerCard();
-                        that.computePlayer();
-                        that.computeRes();
-                        that.resultText();
-                        if (that.playerWin === 1) {
-                            playerChip = playerChip + betChip * 2;
-                        } else if (that.playerWin === 0) {
-                            playerChip = playerChip + betChip;
-                        }
-                        betChip = 0;
-                        removeBetChip();
-                        that.loadStart();
-                        that.removeChildByTag(Tag.LAYOUT_BTN_GAMING);
-                        status = that.playerStatus.getString();
-                        break;
-                    case Tag.ONE_CARD:
-                        that.getOneCard();
-                        break;
-                    case Tag.DOUBLE_CARD:
-                        that.getDoubleCard();
-                        break;
                 }
 
                 if (event.getCurrentTarget().tag < 5 || event.getCurrentTarget().tag === Tag.STOP) {
@@ -372,49 +443,6 @@ let GPMainLayer = cc.Layer.extend({
         });
 
         this.listener = eventListener;
-
-        let startEventListener = cc.EventListener.create({
-            event: cc.EventListener.TOUCH_ONE_BY_ONE,
-            swallowTouches: true,
-            target: this,
-            onTouchBegan: function (touch, event) {
-                // 获取当前触发事件的对象
-                let target = event.getCurrentTarget();
-
-                // 将点击坐标转换为基于当前触发事件对象的本地坐标
-                let posInNode = target.convertToNodeSpace(touch.getLocation());
-
-                // 获取当前节点大小
-                let size = target.getContentSize();
-
-                // 区域设定
-                let rect = cc.rect(0, 0, size.width, size.height);
-
-                // 判断触摸点是否在节点区域内
-                if (!(cc.rectContainsPoint(rect, posInNode))) {
-                    return false;
-                }
-
-                return true;
-            },
-            onTouchEnded: function (touch, event) {
-                let startThat = event.getCurrentTarget().parent;
-
-                switch (event.getCurrentTarget().tag) {
-                    case Tag.START:
-                        startThat.loadBox();
-                        startThat.removeChildByTag(Tag.START);
-                        startThat.playerStatus.setString("请下注");
-                        while (startThat.getChildByTag(Tag.CARD)) {
-                            startThat.removeChildByTag(Tag.CARD, true);
-                        }
-                        startThat.restart();
-                        break;
-                }
-            }
-        });
-
-        this.startListener = startEventListener;
     },
     loadCard: function () {
         let dealerPoker_1 = new cardSprite(true);
@@ -918,6 +946,10 @@ let GPMainLayer = cc.Layer.extend({
         }
     },
     computeRes: function () {
+        if (this.dealerBoom || this.playerBoom) {
+            this.playBust();
+        }
+
         if (this.dealerDoubleJack) {
             this.playerWin = this.playerDoubleJack ? 0 : -1;
             return;
@@ -953,8 +985,10 @@ let GPMainLayer = cc.Layer.extend({
     resultText: function () {
         if (this.playerWin === 1) {
             this.playerStatus.setString('你赢了');
+            cc.audioEngine.playEffect(res.win_mp3, false);
         } else if (this.playerWin === -1) {
             this.playerStatus.setString('你输了');
+            cc.audioEngine.playEffect(res.fail_mp3, false);
         } else {
             this.playerStatus.setString('和局');
         }
@@ -975,5 +1009,20 @@ let GPMainLayer = cc.Layer.extend({
         this.cardEnd = false;
         this.playerWin = -1;
         poker = [].concat(resetPoker);
+    },
+    playBust: function () {
+        let bust = new cc.Sprite('#BUST_1.png');
+        this.addChild(bust);
+        bust.setPosition(cc.winSize.width / 2, cc.winSize.height - 250);
+        let frames = [];
+        for (let i = 1; i < 11; i++) {
+            let str = 'BUST_' + i + '.png';
+            let frame = cc.spriteFrameCache.getSpriteFrame(str);
+            frames.push(frame);
+        }
+        let animation = new cc.Animation(frames, 0.15);
+        animation.setRestoreOriginalFrame(false);
+        let animate = cc.animate(animation);
+        bust.runAction(animate);
     }
 });

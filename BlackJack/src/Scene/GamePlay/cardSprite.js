@@ -19,7 +19,7 @@ let cardSprite = cc.Sprite.extend({
 
         this.addChild(playerPoker);
 
-        let text = new cc.LabelTTF(cardInfo.text, 'AmericanTypewriter', 20);
+        let text = new cc.LabelTTF(cardInfo.text, 'res/Font/poker_number.fnt');
         playerPoker.addChild(text);
         text.setAnchorPoint(0, 1);
         text.setPosition(10, playerPoker.getContentSize().height - 5);

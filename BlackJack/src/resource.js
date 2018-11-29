@@ -30,6 +30,11 @@ let res = {
     animation_png: 'res/Animation/fx_animation.png',
     animation_plist: 'res/Animation/fx_animation.plist',
 
+
+    // Bust
+    bust_png: 'res/Bust/bust.png',
+    bust_plist: 'res/Bust/bust.plist',
+
     // Font
     stake_png: 'res/Font/stake_number.png',
     stake_fnt: 'res/Font/stake_number.fnt',
