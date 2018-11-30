@@ -93,6 +93,8 @@ let GPMainLayer = cc.Layer.extend({
                     }
                     Util.restart();
                     parent.labelBetChip.setString(GameManager.getBetChip());
+                    parent.loadProgress();
+                    cc.log('dd');
 
                     break;
                 default:
@@ -523,6 +525,9 @@ let GPMainLayer = cc.Layer.extend({
     resultText: function () {
         Util.resultText();
         this.labelSystemTips.setString(GameManager.getSystemTips());
+        if (GameManager.getIsWin() === -1) {
+            this.playBust();
+        }
     },
     playBust: function () {
         let bust = new cc.Sprite('#BUST_1.png');
@@ -538,5 +543,12 @@ let GPMainLayer = cc.Layer.extend({
         animation.setRestoreOriginalFrame(false);
         let animate = cc.animate(animation);
         bust.runAction(animate);
+    },
+    loadProgress: function () {
+        let action = cc.ProgressTo.create(10, 100);
+        let progressBar = new cc.ProgressTimer(new cc.Sprite('#daojishi_photo.png'));
+        progressBar.setPosition(cc.winSize.width / 2 - 63, cc.winSize.height / 2 - 163);
+        this.addChild(progressBar);
+        progressBar.runAction(action);
     }
 });

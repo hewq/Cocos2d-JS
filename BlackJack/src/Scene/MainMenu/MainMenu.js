@@ -17,9 +17,6 @@ let MainMenuScene = cc.Scene.extend({
 
         // 加载主层
         this.loadMainLayer();
-
-        // 注册事件
-        // this.registerEvent();
     },
 
     loadResource: function () {
@@ -40,11 +37,6 @@ let MainMenuScene = cc.Scene.extend({
         this.mainLayer = new MMMainLayer();
         this.addChild(this.mainLayer);
     },
-
-    registerEvent: function () {
-
-    },
-
     onLoadUnlockLayer: function () {
         let target = event.getCurrentTarget(); // 获取当前事件监听器的事件源
         target.unlockLayer = new MMUnlockLayer();
