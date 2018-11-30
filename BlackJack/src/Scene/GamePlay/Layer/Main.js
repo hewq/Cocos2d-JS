@@ -91,7 +91,7 @@ let GPMainLayer = cc.Layer.extend({
                     while (parent.getChildByTag(Tag.CARD)) {
                         parent.removeChildByTag(Tag.CARD, true);
                     }
-                    parent.restart();
+                    Util.restart();
                     parent.labelBetChip.setString(GameManager.getBetChip());
 
                     break;
@@ -288,8 +288,8 @@ let GPMainLayer = cc.Layer.extend({
                     }
 
                     that.showDealerCard();
-                    that.computePlayer();
-                    that.computeRes();
+                    Util.computePlayer();
+                    Util.computeRes();
                     that.resultText();
                     if (GameManager.getIsWin() === 1) {
                         GameManager.setOwnChip(ownChip + betChip * 2);
@@ -352,7 +352,7 @@ let GPMainLayer = cc.Layer.extend({
         btnDouble.addTouchEventListener(function (sender, type) {
             switch (type) {
                 case ccui.Widget.TOUCH_ENDED:
-                    sender.parent.parent.getDoubleCard();;
+                    sender.parent.parent.getDoubleCard();
                     break;
                 default:
                     break;
@@ -440,12 +440,12 @@ let GPMainLayer = cc.Layer.extend({
 
         dealerPoker_2.runAction(dealerPokerMove);
 
-        GameManager.getDealerCard().push(this.getPokerRandom());
-        GameManager.getDealerCard().push(this.getPokerRandom());
+        GameManager.getDealerCard().push(Util.getPokerRandom());
+        GameManager.getDealerCard().push(Util.getPokerRandom());
         GameManager.setDealerCard(GameManager.getDealerCard());
 
-        GameManager.getPlayerCard().push(this.getPokerRandom());
-        GameManager.getPlayerCard().push(this.getPokerRandom());
+        GameManager.getPlayerCard().push(Util.getPokerRandom());
+        GameManager.getPlayerCard().push(Util.getPokerRandom());
         GameManager.setPlayerCard(GameManager.getPlayerCard());
 
         let playerCard = GameManager.getPlayerCard();
@@ -468,7 +468,7 @@ let GPMainLayer = cc.Layer.extend({
         layout.setPosition(cc.winSize.width / 2, cc.winSize.height - 140);
         layout.setTag(Tag.CARD);
         let dealerCard = null;
-        this.computeDealer();
+        Util.computeDealer();
         let dealerCardArr = GameManager.getDealerCard();
 
         for (let i = 0; i < dealerCardArr.length; i++) {
@@ -481,508 +481,48 @@ let GPMainLayer = cc.Layer.extend({
             dealerCard.runAction(dealerPokerMove);
         }
     },
-    computeDealer: function () {
-        let dealerCard = GameManager.getDealerCard(); // 庄家牌
-        let dealerCard0 = dealerCard[0].num;
-        let dealerCard1 = dealerCard[1].num;
-        let getCard = null;
-
-        // double jack
-        if (dealerCard0 === 1 && dealerCard1 === 1) {
-            GameManager.setDealerDoubleJack(true);
-            return;
-        }
-
-        // black jack
-        if (dealerCard0 === 1 && dealerCard1 === 10 || dealerCard0 === 10 && dealerCard1 === 1) {
-            GameManager.setDealerBlackJack(true);
-            return;
-        }
-
-        // has jack
-        if (dealerCard0 === 1 || dealerCard1 === 1) {
-            let notJackCard = dealerCard0 === 1 ? dealerCard1 : dealerCard0;
-
-            GameManager.setDealerNum(11 + notJackCard);
-            if (notJackCard > 3) {
-                return;
-            }
-
-            if (notJackCard === 3) { // 13~14
-                getCard = this.getDealerCard(); // 3
-
-                if (getCard.num > 8) { // > 21
-                    GameManager.setDealerNum(getCard.num + 4);
-                    this.getDealerCard(); // 4
-
-                    if (this.checkBoom(GameManager.getDealerNum())) {
-                        GameManager.setDealerBust(true);
-                        return;
-                    }
-
-                    if (this.checkPoint(GameManager.getDealerNum())) return;
-
-                    this.getDealerCard(); // 5
-                    if (this.checkBoom(GameManager.getDealerNum())) {
-                        GameManager.setDealerBust(true);
-                        return;
-                    }
-
-                    GameManager.setDealerFive(true);
-                    return;
-                }
-
-                if (getCard.num === 8 || getCard.num === 7) { // 21
-                    GameManager.setDealerNum(21);
-                    return;
-                }
-
-                if (getCard.num === 1) { // 21
-                    GameManager.setDealerNum(5);
-                    this.getDealerCard();  // 4
-
-                    if(this.checkPoint(GameManager.getDealerNum())) return;
-
-                    this.getDealerCard();  // 5
-
-                    if (this.checkBoom(GameManager.getDealerNum()))  {
-                        GameManager.setDealerBust(true);
-                        return;
-                    }
-
-                    GameManager.setDealerFive(true);
-                    return;
-                }
-
-                return;
-            }
-
-            if (notJackCard === 2) { // 12~13
-                getCard = this.getDealerCard(); // 3
-
-                if (getCard.num === 10) {
-                    GameManager.setDealerNum(13);
-                    this.getDealerCard();  // 4
-
-                    if (this.checkBoom(GameManager.getDealerNum())) {
-                        GameManager.setDealerBust(true);
-                        return;
-                    }
-
-                    if (this.checkPoint(GameManager.getDealerNum())) return;
-
-                    this.getDealerCard(); // 5
-
-                    if (this.checkBoom(GameManager.getDealerNum())) {
-                        GameManager.setDealerBust(true);
-                        return;
-                    }
-
-                    GameManager.setDealerFive(true);
-                    return;
-                }
-
-                if (getCard.num === 9 || getCard.num === 8) { // 21
-                    GameManager.setDealerNum(21);
-                    return;
-                }
-
-                if (getCard.num === 1) {
-                    GameManager.setDealerNum(4);
-                    this.getDealerCard(); // 4
-                    this.getDealerCard(); // 5
-
-                    if (this.checkBoom(GameManager.getDealerNum())) {
-                        GameManager.setDealerBust(true);
-                        return;
-                    }
-
-                    GameManager.setDealerFive(true);
-                    return;
-                }
-
-                return;
-            }
-        }
-
-        // has not jack
-        GameManager.setDealerNum(dealerCard0 + dealerCard1);
-
-        if (this.checkPoint(GameManager.getDealerNum())) return;
-
-        if(GameManager.getDealerNum() > 11){ // 12~14
-            this.getDealerCard();  // 3
-
-            if (this.checkBoom(GameManager.getDealerNum())) {
-                GameManager.setDealerBust(true);
-                return;
-            }
-
-            if (this.checkPoint(GameManager.getDealerNum())) return;
-
-            // 13~14
-            this.getDealerCard(); // 4
-            if (this.checkBoom(GameManager.getDealerNum())) {
-                GameManager.setDealerBust(true);
-                return;
-            }
-
-            if (this.checkPoint(GameManager.getDealerNum())) return;
-
-            // 14
-            this.getDealerCard();
-
-            if (this.checkBoom(GameManager.getDealerNum())) {
-                GameManager.setDealerBust(true);
-                return;
-            }
-
-            GameManager.setDealerFive(true);
-            return;
-        }
-
-        if (GameManager.getDealerNum() === 11) { // 11
-            getCard = this.getDealerCard();  // 3
-            if (getCard.num === 1) {
-                GameManager.setDealerNum(21);
-                return;
-            }
-
-            if (this.checkPoint(GameManager.getDealerNum())) return;
-
-            this.getDealerCard(); // 4
-            if (this.checkBoom(GameManager.getDealerNum())) {
-                GameManager.setDealerBust(true);
-                return;
-            }
-
-            if (this.checkPoint(GameManager.getDealerNum())) return;
-
-            // 14
-            this.getDealerCard();
-
-            if (this.checkBoom(GameManager.getDealerNum())) {
-                GameManager.setDealerBust(true);
-                return;
-            }
-
-            GameManager.setDealerFive(true);
-            return;
-        }
-
-        if (GameManager.getDealerNum() === 10) {  // 10
-            getCard = this.getDealerCard(); // 3
-            if (getCard.num === 1) {  // 21
-                GameManager.setDealerNum(21);
-                return;
-            }
-
-            if (this.checkPoint(GameManager.getDealerNum())) return;
-
-            this.getDealerCard(); // 4
-
-            if (this.checkBoom(GameManager.getDealerNum())) {
-                GameManager.setDealerBust(true);
-                return;
-            }
-
-            if (this.checkPoint(GameManager.getDealerNum())) return;
-
-            this.getDealerCard();
-
-            if (this.checkBoom(GameManager.getDealerNum())) {
-                GameManager.setDealerBust(true);
-                return;
-            }
-
-            GameManager.setDealerFive(true);
-            return;
-        }
-
-        // 4~9
-        getCard = this.getDealerCard(); // 3
-        if (getCard.num === 1) { // 15~20
-            GameManager.setDealerNum(GameManager.getDealerNum() + 10);
-            return;
-        }
-
-        if (this.checkPoint(GameManager.getDealerNum())) return;
-
-        // 6~14
-        getCard = this.getDealerCard(); // 4
-
-        if (getCard.num === 1) {
-            if (GameManager.getDealerNum() < 12) { // 6~10
-                GameManager.setDealerNum(GameManager.getDealerNum() + 10);
-                return;
-            }
-
-            if (GameManager.getDealerNum() === 12) { // 11
-                GameManager.setDealerNum(21);
-                return;
-            }
-
-            if (this.checkPoint(GameManager.getDealerNum())) return;
-
-            // 13~14
-            this.getDealerCard(); // 5
-
-            if (this.checkBoom(GameManager.getDealerNum())) {
-                GameManager.setDealerBust(true);
-                return;
-            }
-
-            GameManager.setDealerFive(true);
-            return;
-        }
-
-        if (this.checkBoom(GameManager.getDealerNum())) {
-            GameManager.setDealerBust(true);
-            return;
-        }
-
-        if (this.checkPoint(GameManager.getDealerNum())) return;
-
-        // 8~14
-        this.getDealerCard(); // 5
-        if (this.checkBoom(GameManager.getDealerNum())) {
-            GameManager.setDealerBust(true);
-            return;
-        }
-        GameManager.setDealerFive(true);
-    },
-    checkBoom: function (num) {
-        return num > 21;
-    },
-    checkPoint: function (num) {
-        return num > 14 && num < 22;
-    },
-    getDealerCard: function () {
-        let card = this.getPokerRandom();
-        GameManager.getDealerCard().push(card);
-        GameManager.setDealerCard(GameManager.getDealerCard());
-        GameManager.setDealerNum(GameManager.getDealerNum() + card.num);
-
-        return card;
-    },
     getOneCard: function () {
-        let sprite = null;
+        if (GameManager.getPlayerCard().length > 5) return;
+
+        GameManager.getPlayerCard().push(Util.getPokerRandom());
+
         let playerCard = GameManager.getPlayerCard();
-        if (playerCard.length >= 5) return;
+        let len = playerCard.length;
 
-        if (playerCard.length === 2) {
-            GameManager.getPlayerCard().push(this.getPokerRandom());
-            playerCard = GameManager.getPlayerCard();
-            sprite = new cardSprite(false, playerCard[2]);
-            this.addChild(sprite);
-            sprite.setPosition(cc.winSize.width / 2 + 80, cc.winSize.height / 2 - 45);
-            return;
-        }
-
-        if (playerCard.length === 3) {
-            GameManager.getPlayerCard().push(this.getPokerRandom());
-            playerCard = GameManager.getPlayerCard();
-            sprite = new cardSprite(false, playerCard[3]);
-            this.addChild(sprite);
-            sprite.setPosition(cc.winSize.width / 2 + 110, cc.winSize.height / 2 - 45);
-            return;
-        }
-
-        if (playerCard.length === 4) {
-            GameManager.getPlayerCard().push(this.getPokerRandom());
-            playerCard = GameManager.getPlayerCard();
-            sprite = new cardSprite(false, playerCard[4]);
-            this.addChild(sprite);
-            sprite.setPosition(cc.winSize.width / 2 + 140, cc.winSize.height / 2 - 45);
-        }
+        let sprite = new cardSprite(false, playerCard[len - 1]);
+        this.addChild(sprite);
+        sprite.setPosition(cc.winSize.width / 2 + 80 + 30 * (len - 3), cc.winSize.height / 2 - 45);
     },
     getDoubleCard: function () {
+        if (GameManager.getPlayerCard().length > 3) return;
+
+        GameManager.getPlayerCard().push(Util.getPokerRandom());
+        GameManager.getPlayerCard().push(Util.getPokerRandom());
+
         let sprite = null;
         let playerCard = GameManager.getPlayerCard();
-        if (playerCard.length >= 4) return;
 
-        if (playerCard.length === 2) {
-            GameManager.getPlayerCard().push(this.getPokerRandom());
-            playerCard = GameManager.getPlayerCard();
+        if (playerCard.length === 4) {
             sprite = new cardSprite(false, playerCard[2]);
             this.addChild(sprite);
             sprite.setPosition(cc.winSize.width / 2 + 80, cc.winSize.height / 2 - 45);
 
-            GameManager.getPlayerCard().push(this.getPokerRandom());
-            playerCard = GameManager.getPlayerCard();
             sprite = new cardSprite(false, playerCard[3]);
             this.addChild(sprite);
             sprite.setPosition(cc.winSize.width / 2 + 110, cc.winSize.height / 2 - 45);
-            return;
-        }
-
-        if (playerCard.length === 3) {
-            GameManager.getPlayerCard().push(this.getPokerRandom());
-            playerCard = GameManager.getPlayerCard();
+        } else if (playerCard.length === 5) {
             sprite = new cardSprite(false, playerCard[3]);
             this.addChild(sprite);
             sprite.setPosition(cc.winSize.width / 2 + 110, cc.winSize.height / 2 - 45);
 
-            GameManager.getPlayerCard().push(this.getPokerRandom());
-            playerCard = GameManager.getPlayerCard();
             sprite = new cardSprite(false, playerCard[4]);
             this.addChild(sprite);
             sprite.setPosition(cc.winSize.width / 2 + 140, cc.winSize.height / 2 - 45);
         }
     },
-    getPokerRandom: function () {
-        let random = Math.floor(Math.random() * GameManager.getPokerNum());
-        let cardInfo = poker[random];
-        poker.splice(random, 1);
-
-        GameManager.setPokerNum(GameManager.getPokerNum() - 1);
-
-        return cardInfo;
-    },
-    computePlayer: function () {
-        let playerCard = GameManager.getPlayerCard();
-        let playerCardLength = playerCard.length;
-
-        if (playerCardLength === 2) {
-            let playerCard0 = playerCard[0].num;
-            let playerCard1 = playerCard[1].num;
-
-            // double jack
-            if (playerCard0 === 1 && playerCard1 === 1) {
-                GameManager.setPlayerDoubleJack(true);
-                return;
-            }
-
-            // black jack
-            if (playerCard0 === 1 && playerCard1 === 10 || playerCard0 === 10 && playerCard1 === 1) {
-                GameManager.setPlayerBlackJack(true);
-                return;
-            }
-
-            // has jack
-            if (playerCard0 === 1 || playerCard1 === 1) {
-                let notJackCard = playerCard0 === 1 ? playerCard1 : playerCard0;
-                GameManager.setPlayerNum(11 + notJackCard);
-                return;
-            }
-
-            GameManager.setPlayerNum(playerCard0 + playerCard1)
-            return;
-        }
-
-        if (playerCardLength === 3) {
-            let jackLen = 0;
-            let total = playerCard[0].num + playerCard[1].num + playerCard[2].num;
-            for (let i = 0; i < playerCardLength; i++) {
-                if (playerCard[i].num === 1) {
-                    jackLen++;
-                }
-            }
-
-            if (jackLen === 1) {
-                if (total - 1 < 11) {
-                    GameManager.setPlayerNum(total + 10);
-                    return;
-                }
-
-                if (total - 1 === 11) {
-                    GameManager.setPlayerNum(total + 9);
-                    return;
-                }
-            }
-
-            GameManager.setPlayerNum(total);
-            if (total > 21) {
-                GameManager.setPlayerBust(true);
-            }
-            return;
-        }
-
-        if (playerCardLength === 4) {
-            let jackLen = 0;
-            let total = playerCard[0].num + playerCard[1].num + playerCard[2].num+ playerCard[3].num;
-            for (let i = 0; i < playerCardLength; i++) {
-                if (playerCard[i].num === 1) {
-                    jackLen++;
-                }
-            }
-
-            if (jackLen === 1) {
-                if (total - 1 < 11) {
-                    GameManager.setPlayerNum(total + 10);
-                    return;
-                }
-
-                if (total - 1 === 11) {
-                    GameManager.setPlayerNum(total + 9);
-                    return;
-                }
-            }
-
-            GameManager.setPlayerNum(total);
-            if (total > 21) {
-                GameManager.setPlayerBust(true);
-            }
-            return;
-        }
-
-        if (playerCardLength === 5) {
-            let total = playerCard[0].num + playerCard[1].num + playerCard[2].num + playerCard[3].num + playerCard[4].num;
-
-            if (total > 21) {
-                GameManager.setPlayerBust(true);
-                return;
-            }
-
-            GameManager.setPlayerFive(true);
-        }
-    },
-    computeRes: function () {
-        let res = 0;
-        let isPDJ = GameManager.getPlayerDoubleJack(),
-            isPBJ = GameManager.getPlayerBlackJack(),
-            isPF = GameManager.getPlayerFive(),
-            isPB = GameManager.getPlayerBust(),
-            PN = GameManager.getPlayerNum(),
-            isDDJ = GameManager.getDealerDoubleJack(),
-            isDBJ = GameManager.getDealerBlackJack(),
-            isDF = GameManager.getDealerFive(),
-            isDB = GameManager.getDealerBust(),
-            DN = GameManager.getDealerNum();
-
-        if (isDDJ) {
-            res = isPDJ ? 0 : -1;
-        } else if (isDBJ) {
-            res = isPDJ ? 1 : (isPBJ ? 0 : -1);
-        } else if (isDF) {
-            res = isPDJ || isPBJ ? 1 : (isPF ? 0 : -1);
-        } else if (isPBJ || isPDJ || isPF) {
-            res = 1;
-        } else if (isDB) {
-            this.playBust();
-            res = isPB ? 0 : (PN > 14 ? 1 : -1);
-        } else if (isPB) {
-            res = DN < 14 ? 1 : -1;
-        } else {
-            res = PN > DN ? 1 : (PN < DN ? -1 : 0);
-        }
-
-        GameManager.setIsWin(res);
-    },
     resultText: function () {
-        if (GameManager.getIsWin() === 1) {
-            this.labelSystemTips.setString('你赢了');
-            cc.audioEngine.playEffect(res.win_mp3, false);
-        } else if (GameManager.getIsWin() === -1) {
-            this.labelSystemTips.setString('你输了');
-            cc.audioEngine.playEffect(res.fail_mp3, false);
-        } else {
-            this.labelSystemTips.setString('和局');
-        }
-    },
-    restart: function () {
-        GameManager.betAgain();
-        poker = [].concat(resetPoker);
+        Util.resultText();
+        this.labelSystemTips.setString(GameManager.getSystemTips());
     },
     playBust: function () {
         let bust = new cc.Sprite('#BUST_1.png');

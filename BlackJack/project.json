@@ -19,6 +19,7 @@
         "src/Data/define.js",
 
         "src/Manager/GameManager.js",
+        "src/Manager/Util.js",
 
         "src/Scene/MainMenu/MainMenu.js",
         "src/Scene/MainMenu/Layer/Background.js",

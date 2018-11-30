@@ -15,3 +15,11 @@ let Tag = {
     DEALER_DIPAI: 92,
     CARD: 91
 };
+
+let Res = {
+    DJ: 100, // double jack
+    BJ: 99, // black jack
+    FIVE: 98, // five
+    BUST: 0, // bust
+    LESS: -1 // less 15
+};

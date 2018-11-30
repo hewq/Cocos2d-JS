@@ -16,6 +16,9 @@ let GameManager = {
     dealerBust: false, // 庄家是否爆牌
     playerBust: false, // 玩家是否爆牌
     pokerUseUp: false, // 扑克牌是否没牌
+    dealerRes: 0,
+    playerRes: 0,
+    playerLess: false,
     isWin: -1, // 赢：1，输，-1，平：0
     
     betAgain: function () {
@@ -77,44 +80,51 @@ let GameManager = {
     getDealerBlackJack: function () {
         return this.dealerBlackJack;
     },
-    setDealerBlackJack: function (dealerBlackJack) {
-        this.dealerBlackJack = dealerBlackJack;
+    setDealerBlackJack: function () {
+        this.dealerBlackJack = true;
+        this.setDealerRes(Res.BJ);
     },
     getDealerDoubleJack: function () {
         return this.dealerDoubleJack;
     },
-    setDealerDoubleJack: function (dealerDoubleJack) {
-        this.dealerDoubleJack = dealerDoubleJack;
+    setDealerDoubleJack: function () {
+        this.dealerDoubleJack = true;
+        this.setDealerRes(Res.DJ);
     },
     getDealerFive: function () {
         return this.dealerFive;
     },
-    setDealerFive: function (dealerFive) {
-        this.dealerFive = dealerFive;
+    setDealerFive: function () {
+        this.dealerFive = true;
+        this.setDealerRes(Res.FIVE);
     },
     getPlayerBlackJack: function () {
         return this.playerBlackJack;
     },
-    setPlayerBlackJack: function (playerBlackJack) {
-        this.playerBlackJack = playerBlackJack;
+    setPlayerBlackJack: function () {
+        this.playerBlackJack = true;
+        this.setPlayerRes(Res.BJ);
     },
     getPlayerDoubleJack: function () {
         return this.playerDoubleJack;
     },
-    setPlayerDoubleJack: function (playerDoubleJack) {
-        this.playerDoubleJack = playerDoubleJack;
+    setPlayerDoubleJack: function () {
+        this.playerDoubleJack = true;
+        this.setPlayerRes(Res.DJ);
     },
     getPlayerFive: function () {
         return this.playerFive;
     },
-    setPlayerFive: function (playerFive) {
-        this.playerFive = playerFive;
+    setPlayerFive: function () {
+        this.playerFive = true;
+        this.setPlayerRes(Res.FIVE);
     },
     getDealerNum: function () {
         return this.dealerNum;
     },
     setDealerNum: function (dealerNum) {
         this.dealerNum = dealerNum;
+        this.setDealerRes(dealerNum);
     },
     getPlayerNum: function () {
         return this.playerNum;
@@ -125,20 +135,41 @@ let GameManager = {
     getDealerBust: function () {
         return this.dealerBust;
     },
-    setDealerBust: function (dealerBust) {
-        this.dealerBust = dealerBust;
+    setDealerBust: function () {
+        this.dealerBust = true;
+        this.setDealerRes(Res.BUST);
     },
     getPlayerBust: function () {
         return this.playerBust;
     },
-    setPlayerBust: function (playerBust) {
-        this.playerBust = playerBust;
+    setPlayerBust: function () {
+        this.playerBust = true;
+        this.setPlayerRes(Res.BUST);
     },
     getPokerUseUp: function () {
         return this.pokerUseUp;
     },
     setPokerUseUp: function (pokerUseUp) {
         this.pokerUseUp = pokerUseUp;
+    },
+    getDealerRes: function () {
+        return this.dealerRes;
+    },
+    setDealerRes: function (res) {
+        this.dealerRes = res;
+    },
+    getPlayerRes: function () {
+        return this.playerRes;
+    },
+    setPlayerRes: function (res) {
+        this.playerRes = res;
+    },
+    getPlayerLess: function () {
+        return this.playerLess;
+    },
+    setPlayerLess: function () {
+        this.playerLess = true;
+        this.setPlayerRes(Res.LESS);
     },
     getIsWin: function () {
         return this.isWin;
