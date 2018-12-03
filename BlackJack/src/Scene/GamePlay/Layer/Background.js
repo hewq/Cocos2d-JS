@@ -1,4 +1,4 @@
-let GPBackgroundLayer = cc.Layer.extend({
+var GPBackgroundLayer = cc.Layer.extend({
     ctor: function () {
         this._super();
 
@@ -9,8 +9,8 @@ let GPBackgroundLayer = cc.Layer.extend({
         return true;
     },
     loadBackground: function () {
-        let deskLeft = new cc.Sprite('res/zhuozi.jpg');
-        let deskRight = new cc.Sprite('res/zhuozi.jpg');
+        var deskLeft = new cc.Sprite('res/zhuozi.jpg');
+        var deskRight = new cc.Sprite('res/zhuozi.jpg');
 
         this.addChild(deskLeft);
         this.addChild(deskRight);
@@ -23,7 +23,7 @@ let GPBackgroundLayer = cc.Layer.extend({
         deskRight.setPosition(cc.winSize.width / 2, cc.winSize.height / 2);
     },
     loadDealer: function () {
-        let dealer = new cc.Sprite('#dealer.png');
+        var dealer = new cc.Sprite('#dealer.png');
         this.addChild(dealer);
         dealer.setAnchorPoint(0.5, 1);
         dealer.setPosition(cc.winSize.width / 2, cc.winSize.height);

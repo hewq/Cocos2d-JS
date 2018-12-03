@@ -1,4 +1,4 @@
-let res = {
+var res = {
     // Sound
     bgm_mp3: 'res/Sound/bgm2.mp3',
     button_mp3: 'res/Sound/button.mp3',
@@ -40,7 +40,7 @@ let res = {
     stake_fnt: 'res/Font/stake_number.fnt',
 };
 
-let g_resources = [];
-for (let i in res) {
+var g_resources = [];
+for (var i in res) {
     g_resources.push(res[i]);
 }

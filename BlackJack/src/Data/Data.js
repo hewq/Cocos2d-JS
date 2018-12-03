@@ -1,4 +1,4 @@
-let playerInfo = [
+var playerInfo = [
     {
         name: '洪兴陈浩南',
         goldNums: 1000,
@@ -46,7 +46,7 @@ let playerInfo = [
     },
 ];
 
-let betPoolInfo = [
+var betPoolInfo = [
     {
         num: '1000',
         pos: {
@@ -84,9 +84,9 @@ let betPoolInfo = [
     }
 ];
 
-let chipPng = ['#10K.png', '#5K.png', '#2K.png', '#1K.png'];
+var chipPng = ['#10K.png', '#5K.png', '#2K.png', '#1K.png'];
 
-let poker = [
+var poker = [
     {
         'text': '2',
         'num': 2,
@@ -453,5 +453,5 @@ let poker = [
     }
 ];
 
-let resetPoker = [].concat(poker);
+var resetPoker = [].concat(poker);
 

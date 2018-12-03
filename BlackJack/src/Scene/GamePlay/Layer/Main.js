@@ -1,4 +1,4 @@
-let GPMainLayer = cc.Layer.extend({
+var GPMainLayer = cc.Layer.extend({
     goldBgArr: [],
     btnClear: null,
     btnBet: null,
@@ -26,23 +26,23 @@ let GPMainLayer = cc.Layer.extend({
         return true;
     },
     loadTips: function () {
-        let tips = new ccui.Text(GameManager.getSystemTips(), 'AmericanTypewriter', 40);
+        var tips = new ccui.Text(GameManager.getSystemTips(), 'AmericanTypewriter', 40);
         tips.setPosition(cc.winSize.width / 2 - 150, cc.winSize.height - 150);
         this.addChild(tips);
         this.labelSystemTips = tips;
     },
     loadBetPool: function () {
-        let layout = new ccui.Layout();
+        var layout = new ccui.Layout();
         this.addChild(layout);
         layout.setContentSize(1624, 750);
         layout.setAnchorPoint(0.5, 0.5);
         layout.setPosition(cc.winSize.width / 2, cc.winSize.height / 2);
 
-        let poolBg = null,
+        var poolBg = null,
             iconGold = null,
             goldNum = null;
 
-        for (let i = 0; i < betPoolInfo.length; i++) {
+        for (var i = 0; i < betPoolInfo.length; i++) {
             poolBg = new cc.Scale9Sprite('res/bg_gold.png', cc.rect(0, 0, 70, 42), cc.rect(20, 0, 25, 42));
             poolBg.setContentSize(130, 42);
             poolBg.setAnchorPoint(0.5, 0.5);
@@ -50,7 +50,7 @@ let GPMainLayer = cc.Layer.extend({
             poolBg.setPosition(betPoolInfo[i].pos.x, betPoolInfo[i].pos.y);
             layout.addChild(poolBg);
 
-            for (let j = 0; j < 5; j++) {
+            for (var j = 0; j < 5; j++) {
                 iconGold = new cc.Sprite('#icon_gold_big.png');
                 poolBg.addChild(iconGold);
                 iconGold.setPosition(0, 6 + j * 6);
@@ -66,13 +66,13 @@ let GPMainLayer = cc.Layer.extend({
         }
     },
     loadStart: function () {
-        let node = new ccui.Button();
+        var node = new ccui.Button();
         this.addChild(node);
         node.loadTextures('button_blue.png', '', '', ccui.Widget.PLIST_TEXTURE);
         node.setPosition(cc.winSize.width / 2, 60);
         node.setTouchEnabled(true);
 
-        let text = new cc.LabelTTF('下注', 'AmericanTypewriter', 35);
+        var text = new cc.LabelTTF('下注', 'AmericanTypewriter', 35);
         node.addChild(text);
         text.setPosition(node.getContentSize().width / 2, node.getContentSize().height / 2 + 10);
 
@@ -83,7 +83,7 @@ let GPMainLayer = cc.Layer.extend({
         node.addTouchEventListener(function (sender, type) {
             switch (type) {
                 case ccui.Widget.TOUCH_ENDED:
-                    let parent = sender.parent;
+                    var parent = sender.parent;
                     parent.loadBox();
                     parent.removeChildByTag(Tag.START);
                     GameManager.setSystemTips('请下注');
@@ -103,7 +103,7 @@ let GPMainLayer = cc.Layer.extend({
         }, this);
     },
     loadBox: function () {
-        let boxBg = new cc.Scale9Sprite('res/bg_gold_touzhu.png', cc.rect(0, 0, 141, 103), cc.rect(120, 0, 130, 103));
+        var boxBg = new cc.Scale9Sprite('res/bg_gold_touzhu.png', cc.rect(0, 0, 141, 103), cc.rect(120, 0, 130, 103));
         boxBg.setContentSize(640, 103);
         this.addChild(boxBg);
 
@@ -116,9 +116,9 @@ let GPMainLayer = cc.Layer.extend({
 
         boxBg.setPosition(cc.winSize.width, 0);
 
-        let boxBgSize = boxBg.getContentSize();
+        var boxBgSize = boxBg.getContentSize();
 
-        let btnClear = new ccui.Button();
+        var btnClear = new ccui.Button();
         boxBg.addChild(btnClear);
         btnClear.loadTextures('icon_qingkongtouzhu.png', '', '', ccui.Widget.PLIST_TEXTURE);
         btnClear.setAnchorPoint(0, 0.5);
@@ -128,9 +128,9 @@ let GPMainLayer = cc.Layer.extend({
         btnClear.addTouchEventListener(function (sender, type) {
             switch (type) {
                 case ccui.Widget.TOUCH_ENDED:
-                    let that = sender.parent.parent;
-                    let betChip = GameManager.getBetChip();
-                    let ownChip = GameManager.getOwnChip();
+                    var that = sender.parent.parent;
+                    var betChip = GameManager.getBetChip();
+                    var ownChip = GameManager.getOwnChip();
 
                     GameManager.setSystemTips('请下注');
                     GameManager.setOwnChip(ownChip + betChip);
@@ -150,10 +150,10 @@ let GPMainLayer = cc.Layer.extend({
         }, this);
         this.btnClear = btnClear;
 
-        let chip = null;
-        let goldBg = null;
+        var chip = null;
+        var goldBg = null;
 
-        for (let i = 0; i < chipPng.length; i++) {
+        for (var i = 0; i < chipPng.length; i++) {
             goldBg = new cc.Sprite('#bg_gold(1).png');
             boxBg.addChild(goldBg);
             goldBg.setAnchorPoint(0, 0.5);
@@ -167,11 +167,11 @@ let GPMainLayer = cc.Layer.extend({
             this.goldBgArr[i] = goldBg;
         }
 
-        for (let i = 0; i < this.goldBgArr.length; i++) {
+        for (var i = 0; i < this.goldBgArr.length; i++) {
             cc.eventManager.addListener(this.listener.clone(), this.goldBgArr[i]);
         }
 
-        let btnBet = new ccui.Button();
+        var btnBet = new ccui.Button();
         boxBg.addChild(btnBet);
         btnBet.loadTextures('icon_touzhu-.png', '', '', ccui.Widget.PLIST_TEXTURE);
         btnBet.setAnchorPoint(1, 0);
@@ -181,8 +181,8 @@ let GPMainLayer = cc.Layer.extend({
         btnBet.addTouchEventListener(function (sender, type) {
             switch (type) {
                 case ccui.Widget.TOUCH_ENDED:
-                    let that = sender.parent.parent;
-                    let betChip = GameManager.getBetChip();
+                    var that = sender.parent.parent;
+                    var betChip = GameManager.getBetChip();
                     if (betChip !== 0) {
                         that.removeChildByTag(Tag.BTN_BET_BOX);
                         that.loadBtnGaming();
@@ -196,34 +196,34 @@ let GPMainLayer = cc.Layer.extend({
         this.btnBet = btnBet;
     },
     loadPlayer: function () {
-        let layout = new ccui.Layout();
+        var layout = new ccui.Layout();
         this.addChild(layout);
         layout.setContentSize(1624, 750);
         layout.setAnchorPoint(0.5, 0.5);
         layout.setPosition(cc.winSize.width / 2, cc.winSize.height / 2);
 
-        for (let i = 0; i < playerInfo.length; i++) {
-            let playerLayout = new ccui.Layout();
+        for (var i = 0; i < playerInfo.length; i++) {
+            var playerLayout = new ccui.Layout();
             layout.addChild(playerLayout);
             playerLayout.setAnchorPoint(0.5, 0.5);
             playerLayout.setContentSize(400, 140);
             playerLayout.setPosition(playerInfo[i].pos.x, playerInfo[i].pos.y);
 
-            let layoutSize = playerLayout.getContentSize();
+            var layoutSize = playerLayout.getContentSize();
 
-            let photoFrame = new cc.Sprite('#daojishi_photo.png');
+            var photoFrame = new cc.Sprite('#daojishi_photo.png');
             playerLayout.addChild(photoFrame);
             photoFrame.setAnchorPoint(0.5, 0.5);
             photoFrame.setPosition(layoutSize.width / 2, layoutSize.height / 2);
 
-            let photo = new cc.Sprite(playerInfo[i].headPhoto);
+            var photo = new cc.Sprite(playerInfo[i].headPhoto);
             photoFrame.addChild(photo);
             photo.setPosition(photoFrame.getContentSize().width / 2, photoFrame.getContentSize().height / 2);
 
-            let playerName = new cc.LabelTTF(playerInfo[i].name, 'AmericanTypewriter', 24);
+            var playerName = new cc.LabelTTF(playerInfo[i].name, 'AmericanTypewriter', 24);
             playerLayout.addChild(playerName);
 
-            let goldNum = new cc.LabelBMFont('$' + playerInfo[i].goldNums, res.stake_fnt);
+            var goldNum = new cc.LabelBMFont('$' + playerInfo[i].goldNums, res.stake_fnt);
             playerLayout.addChild(goldNum);
 
             if (i === 2) {
@@ -245,20 +245,20 @@ let GPMainLayer = cc.Layer.extend({
         }
     },
     amBetChip: function () {
-        let chip = new cc.Sprite('#icon_gold_big.png');
+        var chip = new cc.Sprite('#icon_gold_big.png');
         this.addChild(chip);
         chip.setTag(Tag.AM_BET_CHIP);
         chip.setPosition(cc.winSize.width - 300, 0);
-        let bezierToConfig = [
+        var bezierToConfig = [
             cc.p(cc.winSize.width - 300, cc.winSize.height),
             cc.p(cc.winSize.width / 2, cc.winSize.height / 2),
             cc.p(cc.winSize.width / 2 - 30 + Math.random() * 80, cc.winSize.height / 2 + 150 - Math.random() * 60)
         ];
-        let bezierTo = cc.bezierTo(.5, bezierToConfig);
+        var bezierTo = cc.bezierTo(.5, bezierToConfig);
         chip.runAction(bezierTo);
     },
     loadBtnGaming: function () {
-        let layout = new ccui.Layout();
+        var layout = new ccui.Layout();
         this.addChild(layout);
         this.gamingLayout = layout;
         layout.setContentSize(740, 100);
@@ -266,24 +266,24 @@ let GPMainLayer = cc.Layer.extend({
         layout.setPosition(cc.winSize.width - 30, 0);
         layout.setTag(Tag.LAYOUT_BTN_GAMING);
 
-        let btnStand = new ccui.Button();
+        var btnStand = new ccui.Button();
         layout.addChild(btnStand);
         btnStand.loadTextures('button_orange.png', '', '', ccui.Widget.PLIST_TEXTURE);
         btnStand.setTouchEnabled(true);
         btnStand.setAnchorPoint(0, 0);
         btnStand.setPosition(0, 0);
 
-        let textStand = new cc.Sprite('#stand.png');
+        var textStand = new cc.Sprite('#stand.png');
         btnStand.addChild(textStand);
         textStand.setPosition(btnStand.getContentSize().width / 2, btnStand.getContentSize().height / 2 + 10);
 
         btnStand.addTouchEventListener(function (sender, type) {
             switch (type) {
                 case ccui.Widget.TOUCH_ENDED:
-                    let that = sender.parent.parent;
-                    let betChip = GameManager.getBetChip();
-                    let ownChip = GameManager.getOwnChip();
-                    let status = '';
+                    var that = sender.parent.parent;
+                    var betChip = GameManager.getBetChip();
+                    var ownChip = GameManager.getOwnChip();
+                    var status = '';
 
                     while (that.getChildByTag(Tag.DEALER_DIPAI)) {
                         that.removeChildByTag(Tag.DEALER_DIPAI, true);
@@ -318,14 +318,14 @@ let GPMainLayer = cc.Layer.extend({
             }
         }, this);
 
-        let btnHit = new ccui.Button();
+        var btnHit = new ccui.Button();
         layout.addChild(btnHit);
         btnHit.loadTextures('button_blue.png', '', '', ccui.Widget.PLIST_TEXTURE);
         btnHit.setTouchEnabled(true);
         btnHit.setAnchorPoint(0.5, 0);
         btnHit.setPosition(370, 0);
 
-        let textHit = new cc.Sprite('#hit.png');
+        var textHit = new cc.Sprite('#hit.png');
         btnHit.addChild(textHit);
         textHit.setPosition(btnHit.getContentSize().width / 2, btnHit.getContentSize().height / 2 + 10);
 
@@ -340,14 +340,14 @@ let GPMainLayer = cc.Layer.extend({
             }
         }, this);
 
-        let btnDouble = new ccui.Button();
+        var btnDouble = new ccui.Button();
         layout.addChild(btnDouble);
         btnDouble.loadTextures('button_blue.png', '', '', ccui.Widget.PLIST_TEXTURE);
         btnDouble.setTouchEnabled(true);
         btnDouble.setAnchorPoint(1, 0);
         btnDouble.setPosition(740, 0);
 
-        let textDouble = new cc.Sprite('#double.png');
+        var textDouble = new cc.Sprite('#double.png');
         btnDouble.addChild(textDouble);
         textDouble.setPosition(btnDouble.getContentSize().width / 2, btnDouble.getContentSize().height / 2 + 10);
 
@@ -363,22 +363,22 @@ let GPMainLayer = cc.Layer.extend({
 
     },
     registerEvent: function () {
-        let eventListener = cc.EventListener.create({
+        var eventListener = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: true,
             target: this,
             onTouchBegan: function (touch, event) {
                 // 获取当前触发事件的对象
-                let target = event.getCurrentTarget();
+                var target = event.getCurrentTarget();
 
                 // 将点击坐标转换为基于当前触发事件对象的本地坐标
-                let posInNode = target.convertToNodeSpace(touch.getLocation());
+                var posInNode = target.convertToNodeSpace(touch.getLocation());
 
                 // 获取当前节点大小
-                let size = target.getContentSize();
+                var size = target.getContentSize();
 
                 // 区域设定
-                let rect = cc.rect(0, 0, size.width, size.height);
+                var rect = cc.rect(0, 0, size.width, size.height);
 
                 // 判断触摸点是否在节点区域内
                 if (!(cc.rectContainsPoint(rect, posInNode))) {
@@ -388,9 +388,9 @@ let GPMainLayer = cc.Layer.extend({
                 return true;
             },
             onTouchEnded: function (touch, event) {
-                let that = event.getCurrentTarget().parent.parent;
-                let status = '';
-                let ownChip = GameManager.getOwnChip();
+                var that = event.getCurrentTarget().parent.parent;
+                var status = '';
+                var ownChip = GameManager.getOwnChip();
 
                 function checkBalance(chip) {
                     if (ownChip >= chip) {
@@ -426,8 +426,8 @@ let GPMainLayer = cc.Layer.extend({
         this.listener = eventListener;
     },
     loadCard: function () {
-        let dealerPoker_1 = new cardSprite(true);
-        let dealerPoker_2 = new cardSprite(true);
+        var dealerPoker_1 = new cardSprite(true);
+        var dealerPoker_2 = new cardSprite(true);
 
         this.addChild(dealerPoker_1);
         this.addChild(dealerPoker_2);
@@ -438,7 +438,7 @@ let GPMainLayer = cc.Layer.extend({
         dealerPoker_1.setPosition(cc.winSize.width / 2 - 10, cc.winSize.height - 140);
         dealerPoker_2.setPosition(cc.winSize.width / 2 - 10, cc.winSize.height - 140);
 
-        let dealerPokerMove = cc.moveTo(.3, cc.p(cc.winSize.width / 2 + 10, cc.winSize.height - 140));
+        var dealerPokerMove = cc.moveTo(.3, cc.p(cc.winSize.width / 2 + 10, cc.winSize.height - 140));
 
         dealerPoker_2.runAction(dealerPokerMove);
 
@@ -450,9 +450,9 @@ let GPMainLayer = cc.Layer.extend({
         GameManager.getPlayerCard().push(Util.getPokerRandom());
         GameManager.setPlayerCard(GameManager.getPlayerCard());
 
-        let playerCard = GameManager.getPlayerCard();
-        let playerPoker_1 = new cardSprite(false, playerCard[0]);
-        let playerPoker_2 = new cardSprite(false, playerCard[1]);
+        var playerCard = GameManager.getPlayerCard();
+        var playerPoker_1 = new cardSprite(false, playerCard[0]);
+        var playerPoker_2 = new cardSprite(false, playerCard[1]);
 
         this.addChild(playerPoker_1);
         this.addChild(playerPoker_2);
@@ -460,25 +460,25 @@ let GPMainLayer = cc.Layer.extend({
         playerPoker_1.setPosition(cc.winSize.width / 2 + 20, cc.winSize.height / 2 - 45);
         playerPoker_2.setPosition(cc.winSize.width / 2 + 20, cc.winSize.height / 2 - 45);
 
-        let playerPokerMove = cc.moveTo(.3, cc.p(cc.winSize.width / 2 + 50, cc.winSize.height / 2 - 45));
+        var playerPokerMove = cc.moveTo(.3, cc.p(cc.winSize.width / 2 + 50, cc.winSize.height / 2 - 45));
 
         playerPoker_2.runAction(playerPokerMove);
     },
     showDealerCard: function () {
-        let layout = new ccui.Layout();
+        var layout = new ccui.Layout();
         this.addChild(layout);
         layout.setPosition(cc.winSize.width / 2, cc.winSize.height - 140);
         layout.setTag(Tag.CARD);
-        let dealerCard = null;
+        var dealerCard = null;
         Util.computeDealer();
-        let dealerCardArr = GameManager.getDealerCard();
+        var dealerCardArr = GameManager.getDealerCard();
 
-        for (let i = 0; i < dealerCardArr.length; i++) {
+        for (var i = 0; i < dealerCardArr.length; i++) {
             dealerCard = new cardSprite(false, dealerCardArr[i]);
             layout.addChild(dealerCard);
             dealerCard.setAnchorPoint(0, 0.5);
             dealerCard.setPosition(0, layout.getContentSize().height / 2);
-            let dealerPokerMove = cc.moveTo(.3, cc.p(i * 30, layout.getContentSize().height / 2));
+            var dealerPokerMove = cc.moveTo(.3, cc.p(i * 30, layout.getContentSize().height / 2));
 
             dealerCard.runAction(dealerPokerMove);
         }
@@ -488,10 +488,10 @@ let GPMainLayer = cc.Layer.extend({
 
         GameManager.getPlayerCard().push(Util.getPokerRandom());
 
-        let playerCard = GameManager.getPlayerCard();
-        let len = playerCard.length;
+        var playerCard = GameManager.getPlayerCard();
+        var len = playerCard.length;
 
-        let sprite = new cardSprite(false, playerCard[len - 1]);
+        var sprite = new cardSprite(false, playerCard[len - 1]);
         this.addChild(sprite);
         sprite.setPosition(cc.winSize.width / 2 + 80 + 30 * (len - 3), cc.winSize.height / 2 - 45);
     },
@@ -501,8 +501,8 @@ let GPMainLayer = cc.Layer.extend({
         GameManager.getPlayerCard().push(Util.getPokerRandom());
         GameManager.getPlayerCard().push(Util.getPokerRandom());
 
-        let sprite = null;
-        let playerCard = GameManager.getPlayerCard();
+        var sprite = null;
+        var playerCard = GameManager.getPlayerCard();
 
         if (playerCard.length === 4) {
             sprite = new cardSprite(false, playerCard[2]);
@@ -530,23 +530,23 @@ let GPMainLayer = cc.Layer.extend({
         }
     },
     playBust: function () {
-        let bust = new cc.Sprite('#BUST_1.png');
+        var bust = new cc.Sprite('#BUST_1.png');
         this.addChild(bust);
         bust.setPosition(cc.winSize.width / 2, cc.winSize.height - 250);
-        let frames = [];
-        for (let i = 1; i < 11; i++) {
-            let str = 'BUST_' + i + '.png';
-            let frame = cc.spriteFrameCache.getSpriteFrame(str);
+        var frames = [];
+        for (var i = 1; i < 11; i++) {
+            var str = 'BUST_' + i + '.png';
+            var frame = cc.spriteFrameCache.getSpriteFrame(str);
             frames.push(frame);
         }
-        let animation = new cc.Animation(frames, 0.15);
+        var animation = new cc.Animation(frames, 0.15);
         animation.setRestoreOriginalFrame(false);
-        let animate = cc.animate(animation);
+        var animate = cc.animate(animation);
         bust.runAction(animate);
     },
     loadProgress: function () {
-        let action = cc.ProgressTo.create(10, 100);
-        let progressBar = new cc.ProgressTimer(new cc.Sprite('#daojishi_photo.png'));
+        var action = cc.ProgressTo.create(10, 100);
+        var progressBar = new cc.ProgressTimer(new cc.Sprite('#daojishi_photo.png'));
         progressBar.setPosition(cc.winSize.width / 2 - 63, cc.winSize.height / 2 - 163);
         this.addChild(progressBar);
         progressBar.runAction(action);

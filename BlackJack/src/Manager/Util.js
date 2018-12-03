@@ -1,13 +1,13 @@
-let Util = {
+var Util = {
     computeDealer: function () {
-        let dealerCard = GameManager.getDealerCard(); // 庄家牌
-        let dealerCard0 = dealerCard[0].num;
-        let dealerCard1 = dealerCard[1].num;
-        let getCard = null;
+        var dealerCard = GameManager.getDealerCard(); // 庄家牌
+        var dealerCard0 = dealerCard[0].num;
+        var dealerCard1 = dealerCard[1].num;
+        var getCard = null;
 
         GameManager.setDealerNum(dealerCard0 + dealerCard1);
 
-        let twoNum = GameManager.getDealerNum(),
+        var twoNum = GameManager.getDealerNum(),
             threeNum = 0,
             fourNum = 0;
 
@@ -17,7 +17,7 @@ let Util = {
         } else if (dealerCard0 === 1 && dealerCard1 === 10 || dealerCard0 === 10 && dealerCard1 === 1) {
             GameManager.setDealerBlackJack();
         } else if (dealerCard0 === 1 || dealerCard1 === 1) {
-            let notJackCard = dealerCard0 === 1 ? dealerCard1 : dealerCard0;
+            var notJackCard = dealerCard0 === 1 ? dealerCard1 : dealerCard0;
 
             GameManager.setDealerNum(11 + notJackCard);
 
@@ -118,7 +118,7 @@ let Util = {
         return num < 15;
     },
     getDealerCard: function () {
-        let card = this.getPokerRandom();
+        var card = this.getPokerRandom();
         GameManager.getDealerCard().push(card);
         GameManager.setDealerNum(GameManager.getDealerNum() + card.num);
         GameManager.setDealerRes(GameManager.getDealerNum());
@@ -126,8 +126,8 @@ let Util = {
         return card;
     },
     getPokerRandom: function () {
-        let random = Math.floor(Math.random() * GameManager.getPokerNum());
-        let cardInfo = poker[random];
+        var random = Math.floor(Math.random() * GameManager.getPokerNum());
+        var cardInfo = poker[random];
         poker.splice(random, 1);
 
         GameManager.setPokerNum(GameManager.getPokerNum() - 1);
@@ -135,11 +135,11 @@ let Util = {
         return cardInfo;
     },
     computePlayer: function () {
-        let playerCard = GameManager.getPlayerCard();
-        let playerCardLength = playerCard.length;
+        var playerCard = GameManager.getPlayerCard();
+        var playerCardLength = playerCard.length;
 
-        let playerCard0 = playerCard[0].num;
-        let playerCard1 = playerCard[1].num;
+        var playerCard0 = playerCard[0].num;
+        var playerCard1 = playerCard[1].num;
 
         if (playerCardLength === 2) {
             if (playerCard0 === 1 && playerCard1 === 1) {
@@ -147,7 +147,7 @@ let Util = {
             } else if (playerCard0 === 1 && playerCard1 === 10 || playerCard0 === 10 && playerCard1 === 1) {
                 GameManager.setPlayerBlackJack();
             } else if (playerCard0 === 1 || playerCard1 === 1) {
-                let notJackCard = playerCard0 === 1 ? playerCard1 : playerCard0;
+                var notJackCard = playerCard0 === 1 ? playerCard1 : playerCard0;
                 GameManager.setPlayerNum(11 + notJackCard);
                 GameManager.setPlayerRes(GameManager.getPlayerNum());
             } else if (playerCard0 + playerCard1 < 15) {
@@ -157,7 +157,7 @@ let Util = {
                 GameManager.setPlayerRes(GameManager.getPlayerNum());
             }
         } else if (playerCardLength === 5) {
-            let total = playerCard0 + playerCard1 + playerCard[2].num + playerCard[3].num + playerCard[4].num;
+            var total = playerCard0 + playerCard1 + playerCard[2].num + playerCard[3].num + playerCard[4].num;
 
             if (total > 21) {
                 GameManager.setPlayerBust();
@@ -169,9 +169,9 @@ let Util = {
         }
     },
     getJackLen: function (arr) {
-        let jackLen = 0;
-        let total = 0;
-        for (let i = 0; i < arr.length; i++) {
+        var jackLen = 0;
+        var total = 0;
+        for (var i = 0; i < arr.length; i++) {
             if (arr[i].num === 1) {
                 jackLen++;
             }
@@ -197,8 +197,8 @@ let Util = {
         }
     },
     computeRes: function () {
-        let res = 0;
-        let resDealer = GameManager.getDealerRes(),
+        var res = 0;
+        var resDealer = GameManager.getDealerRes(),
             resPlayer = GameManager.getPlayerRes();
 
         switch (true) {
@@ -219,7 +219,7 @@ let Util = {
         GameManager.setIsWin(res);
     },
     resultText: function () {
-        let resText = '和局';
+        var resText = '和局';
         if (GameManager.getIsWin() === 1) {
             resText = '你赢了';
             cc.audioEngine.playEffect(res.win_mp3, false);

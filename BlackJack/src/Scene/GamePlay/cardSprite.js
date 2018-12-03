@@ -1,4 +1,4 @@
-let cardSprite = cc.Sprite.extend({
+var cardSprite = cc.Sprite.extend({
     ctor: function (dipai, cardInfo) {
         this._super(dipai, cardInfo);
 
@@ -10,16 +10,16 @@ let cardSprite = cc.Sprite.extend({
     },
     loadCard: function (dipai, cardInfo) {
         if (dipai) {
-            let dealerPoker = new cc.Sprite('#poker_dipai.png');
+            var dealerPoker = new cc.Sprite('#poker_dipai.png');
             this.addChild(dealerPoker);
             return true;
         }
 
-        let playerPoker = new cc.Sprite('#poker_bg.png');
+        var playerPoker = new cc.Sprite('#poker_bg.png');
 
         this.addChild(playerPoker);
 
-        let text = new cc.LabelTTF(cardInfo.text, 'res/Font/poker_number.fnt');
+        var text = new cc.LabelTTF(cardInfo.text, 'res/Font/poker_number.fnt');
         playerPoker.addChild(text);
         text.setAnchorPoint(0, 1);
         text.setPosition(10, playerPoker.getContentSize().height - 5);
@@ -29,12 +29,12 @@ let cardSprite = cc.Sprite.extend({
             text.setColor(cc.color(0, 0, 0));
         }
 
-        let iconSmall = new cc.Sprite(cardInfo.iconSmall);
+        var iconSmall = new cc.Sprite(cardInfo.iconSmall);
         playerPoker.addChild(iconSmall);
         iconSmall.setAnchorPoint(0, 1);
         iconSmall.setPosition(10, playerPoker.getContentSize().height - 30);
 
-        let iconBig = new cc.Sprite(cardInfo.iconBig);
+        var iconBig = new cc.Sprite(cardInfo.iconBig);
         playerPoker.addChild(iconBig);
         iconBig.setAnchorPoint(1, 0);
         iconBig.setPosition(playerPoker.getContentSize().width - 15, 20);

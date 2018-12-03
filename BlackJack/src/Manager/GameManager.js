@@ -1,4 +1,4 @@
-let GameManager = {
+var GameManager = {
     betChip: 0, // 投注的金币
     ownChip: 0, // 拥有的金币
     systemTips: '', // 系统提示信息

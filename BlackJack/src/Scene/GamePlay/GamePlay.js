@@ -1,4 +1,4 @@
-let GamePlayScene = cc.Scene.extend({
+var GamePlayScene = cc.Scene.extend({
     ctor: function () {
         this._super();
 

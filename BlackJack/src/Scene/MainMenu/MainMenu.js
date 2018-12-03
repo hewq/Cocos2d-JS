@@ -1,4 +1,4 @@
-let MainMenuScene = cc.Scene.extend({
+var MainMenuScene = cc.Scene.extend({
     ctor: function () {
         this._super();
         cc.audioEngine.playMusic(res.bgm_mp3, true);
@@ -38,7 +38,7 @@ let MainMenuScene = cc.Scene.extend({
         this.addChild(this.mainLayer);
     },
     onLoadUnlockLayer: function () {
-        let target = event.getCurrentTarget(); // 获取当前事件监听器的事件源
+        var target = event.getCurrentTarget(); // 获取当前事件监听器的事件源
         target.unlockLayer = new MMUnlockLayer();
         target.addChild(target.unlockLayer);
     }

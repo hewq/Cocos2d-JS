@@ -1,4 +1,4 @@
-let Tag = {
+var Tag = {
     START: 97,
     CHIP_10K: 0,
     CHIP_5K: 1,
@@ -16,7 +16,7 @@ let Tag = {
     CARD: 91
 };
 
-let Res = {
+var Res = {
     DJ: 100, // double jack
     BJ: 99, // black jack
     FIVE: 98, // five
