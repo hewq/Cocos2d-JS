@@ -60,7 +60,6 @@ var MMMainLayer = cc.Layer.extend({
         var msgBg = new cc.Sprite('#bg_icon.png');
         var msgIcon = new cc.Sprite('#icon_message.png');
 
-        // TODO ccui.button 的锚点问题
         this.addChild(btnMsg);
         btnMsg.setContentSize(msgBg.getContentSize().width, msgBg.getContentSize().height);
         btnMsg.setAnchorPoint(0.5, 0.5);
@@ -74,7 +73,6 @@ var MMMainLayer = cc.Layer.extend({
         btnMsg.setTouchEnabled(true);
     },
     loadRankList: function () {
-        // TODO cc.Scale9Sprite 为什么不能用 plist
         var rankListBg = new cc.Scale9Sprite('res/bg_rankinglist.png', cc.rect(0, 0, 504, 144), cc.rect(0, 80, 504, 20));
         this.addChild(rankListBg);
         rankListBg.setContentSize(504, 500);
