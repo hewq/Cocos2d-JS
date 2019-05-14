@@ -1,57 +1,65 @@
-2018-11-01T07:59:35.415Z - normal: Load ~/.CocosCreator/settings.json
-2018-11-01T07:59:35.417Z - normal: checking language setting...
-2018-11-01T07:59:35.417Z - normal: Language: zh
-2018-11-01T07:59:35.807Z - success: protocol editor-framework registered
-2018-11-01T07:59:35.807Z - success: protocol app registered
-2018-11-01T07:59:35.807Z - success: protocol theme registered
-2018-11-01T07:59:35.807Z - success: protocol packages registered
-2018-11-01T07:59:35.807Z - success: protocol unpack registerred
-2018-11-01T07:59:35.808Z - success: protocol disable-commonjs registerred
-2018-11-01T07:59:36.063Z - normal: connected!
-2018-11-01T07:59:36.064Z - normal: Check project /Users/hanziqian/Downloads/github/Cocos2d-JS/Carrot
-2018-11-01T07:59:36.067Z - normal: Initializing project /Users/hanziqian/Downloads/github/Cocos2d-JS/Carrot
-2018-11-01T07:59:36.091Z - normal: Initializing Cocos2d
-2018-11-01T07:59:36.603Z - normal: Initializing Asset Database
-2018-11-01T07:59:36.630Z - success: protocol uuid registerred
-2018-11-01T07:59:36.630Z - success: protocol db registerred
-2018-11-01T07:59:36.631Z - success: protocol thumbnail registerred
-2018-11-01T07:59:36.631Z - normal: Loading editor/builtin packages
-2018-11-01T07:59:36.735Z - success: assets loaded
-2018-11-01T07:59:36.738Z - success: builder loaded
-2018-11-01T07:59:36.741Z - success: cocos-analytics loaded
-2018-11-01T07:59:36.745Z - success: console loaded
-2018-11-01T07:59:36.770Z - success: fb-instant-games loaded
-2018-11-01T07:59:36.771Z - success: google-instant-games loaded
-2018-11-01T07:59:36.776Z - success: hierarchy loaded
-2018-11-01T07:59:36.779Z - success: inspector loaded
-2018-11-01T07:59:36.780Z - success: keystore loaded
-2018-11-01T07:59:36.783Z - success: node-library loaded
-2018-11-01T07:59:36.785Z - success: package-asset loaded
-2018-11-01T07:59:36.786Z - success: preferences loaded
-2018-11-01T07:59:36.788Z - success: project-exporter loaded
-2018-11-01T07:59:36.799Z - success: project-importer loaded
-2018-11-01T07:59:36.802Z - success: project-settings loaded
-2018-11-01T07:59:36.805Z - success: ui-kit loaded
-2018-11-01T07:59:36.809Z - success: scene loaded
-2018-11-01T07:59:36.810Z - success: sprite-editor loaded
-2018-11-01T07:59:36.813Z - success: store loaded
-2018-11-01T07:59:36.817Z - success: timeline loaded
-2018-11-01T07:59:36.817Z - normal: Loading builtin packages
-2018-11-01T07:59:36.841Z - success: asset-db-debugger loaded
-2018-11-01T07:59:36.843Z - success: color-picker loaded
-2018-11-01T07:59:36.898Z - success: google-play-instant loaded
-2018-11-01T07:59:36.902Z - success: jsb-adapter loaded
-2018-11-01T07:59:36.907Z - success: package-manager loaded
-2018-11-01T07:59:36.971Z - success: qqplay-adapter loaded
-2018-11-01T07:59:36.987Z - success: sdkbox loaded
-2018-11-01T07:59:36.991Z - success: tester loaded
-2018-11-01T07:59:36.995Z - success: ui-grid loaded
-2018-11-01T07:59:37.015Z - success: ui-kit-preview-extra loaded
-2018-11-01T07:59:37.019Z - success: ui-kit-preview loaded
-2018-11-01T07:59:37.022Z - success: ui-tree loaded
-2018-11-01T07:59:37.031Z - success: weapp-adapter loaded
-2018-11-01T07:59:37.697Z - normal: Loading packages
-2018-11-01T07:59:37.702Z - normal: Watching packages
-2018-11-01T07:59:37.753Z - normal: Run Application
-2018-11-01T07:59:38.126Z - success: preview server running at http://localhost:7456
-2018-11-01T07:59:46.694Z - info: shutdown preview server
+2019-05-14T16:50:07.270Z - normal: Load ~/.CocosCreator/settings.json
+2019-05-14T16:50:07.324Z - normal: Initializing Asset Database
+2019-05-14T16:50:07.327Z - normal: checking language setting...
+2019-05-14T16:50:07.327Z - normal: Language: en
+2019-05-14T16:50:08.147Z - success: preview server running at http://localhost:7456
+2019-05-14T16:50:08.172Z - success: protocol editor-framework registered
+2019-05-14T16:50:08.172Z - success: protocol app registered
+2019-05-14T16:50:08.172Z - success: protocol theme registered
+2019-05-14T16:50:08.172Z - success: protocol packages registered
+2019-05-14T16:50:08.172Z - success: protocol uuid registerred
+2019-05-14T16:50:08.172Z - success: protocol db registerred
+2019-05-14T16:50:08.173Z - success: protocol thumbnail registerred
+2019-05-14T16:50:08.173Z - success: protocol unpack registerred
+2019-05-14T16:50:08.173Z - success: protocol disable-commonjs registerred
+2019-05-14T16:50:08.351Z - normal: connected!
+2019-05-14T16:50:08.353Z - normal: Check project /Users/wenqiuhe/Documents/github/Cocos2d-JS/Carrot
+2019-05-14T16:50:08.355Z - normal: Initializing project /Users/wenqiuhe/Documents/github/Cocos2d-JS/Carrot
+2019-05-14T16:50:08.749Z - normal: Initializing Cocos2d
+2019-05-14T16:50:09.486Z - normal: Initializing engine extends
+2019-05-14T16:50:09.601Z - success: asset-db-debugger loaded
+2019-05-14T16:50:09.602Z - success: baidu-adapter loaded
+2019-05-14T16:50:09.603Z - success: color-picker loaded
+2019-05-14T16:50:09.693Z - success: fb-audience-network loaded
+2019-05-14T16:50:09.744Z - success: fb-live-stream loaded
+2019-05-14T16:50:09.748Z - success: google-play-instant loaded
+2019-05-14T16:50:09.754Z - success: huawei-runtime loaded
+2019-05-14T16:50:09.755Z - success: jsb-adapter loaded
+2019-05-14T16:50:09.760Z - success: oppo-runtime loaded
+2019-05-14T16:50:09.770Z - success: package-manager loaded
+2019-05-14T16:50:09.926Z - success: qqplay-adapter loaded
+2019-05-14T16:50:09.928Z - success: runtime-dev-tools loaded
+2019-05-14T16:50:09.939Z - success: sdkbox loaded
+2019-05-14T16:50:09.949Z - success: tester loaded
+2019-05-14T16:50:09.958Z - success: ui-grid loaded
+2019-05-14T16:50:09.967Z - success: ui-kit-preview-extra loaded
+2019-05-14T16:50:09.975Z - success: ui-kit-preview loaded
+2019-05-14T16:50:09.984Z - success: ui-kit loaded
+2019-05-14T16:50:09.997Z - success: ui-tree loaded
+2019-05-14T16:50:10.002Z - success: vivo-runtime loaded
+2019-05-14T16:50:10.002Z - success: weapp-adapter loaded
+2019-05-14T16:50:10.042Z - success: assets loaded
+2019-05-14T16:50:10.051Z - success: builder loaded
+2019-05-14T16:50:10.342Z - success: cocos-services loaded
+2019-05-14T16:50:10.353Z - success: console loaded
+2019-05-14T16:50:10.380Z - success: fb-instant-games loaded
+2019-05-14T16:50:10.383Z - success: google-instant-games loaded
+2019-05-14T16:50:10.394Z - success: hierarchy loaded
+2019-05-14T16:50:10.404Z - success: inspector loaded
+2019-05-14T16:50:10.405Z - success: keystore loaded
+2019-05-14T16:50:10.416Z - success: node-library loaded
+2019-05-14T16:50:10.417Z - success: package-asset loaded
+2019-05-14T16:50:10.418Z - success: preferences loaded
+2019-05-14T16:50:10.426Z - success: project-exporter loaded
+2019-05-14T16:50:10.438Z - success: project-importer loaded
+2019-05-14T16:50:10.447Z - success: project-settings loaded
+2019-05-14T16:50:10.456Z - success: scene loaded
+2019-05-14T16:50:10.458Z - success: simulator-debugger loaded
+2019-05-14T16:50:10.459Z - success: sprite-editor loaded
+2019-05-14T16:50:10.469Z - success: store loaded
+2019-05-14T16:50:10.481Z - success: timeline loaded
+2019-05-14T16:50:11.494Z - normal: Loading packages
+2019-05-14T16:50:11.506Z - normal: Watching packages
+2019-05-14T16:50:11.584Z - normal: Run Application
+2019-05-14T16:50:11.907Z - info: Cocos Services load base data!
+2019-05-14T16:50:38.930Z - info: shutdown preview server
