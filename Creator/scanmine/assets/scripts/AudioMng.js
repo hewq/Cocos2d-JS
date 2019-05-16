@@ -14,14 +14,14 @@ cc.Class({
             default: null,
             url: cc.AudioClip
         },
-        bgm: {
+        bgAudio: {
             default: null,
             url: cc.AudioClip
         }
     },
 
     playMusic () {
-        cc.audioEngine.playMusic(this.bgm, true);
+        cc.audioEngine.playMusic(this.bgAudio, true);
     },
 
     pauseMusic () {
