@@ -7,7 +7,19 @@ const offsetY = 46;
 let mineInfo = {
 	tileNum: 88,
 	mineNum: 14,
-	pos: []
+	pos: [],
+	type: {
+		BLANK: 0,
+		NUM_1: 1,
+		NUM_2: 2,
+		NUM_3: 3,
+		NUM_4: 4,
+		NUM_5: 5,
+		NUM_6: 6,
+		MINE: 7,
+		DOUBT: 8,
+		COVER: 9
+	}
 };
 
 let setPos = (num, x, y) => {

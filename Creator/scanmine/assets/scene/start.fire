@@ -44,8 +44,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.2795566502463054,
-      "y": 0.2795566502463054,
+      "x": 0.2801627924876847,
+      "y": 0.2801627924876847,
       "z": 1
     },
     "_quat": {
@@ -397,7 +397,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 320,
+      "width": 80,
       "height": 40
     },
     "_anchorPoint": {
@@ -443,8 +443,8 @@
     "_srcBlendFactor": 1,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "这是一个扫雷游戏",
-    "_N$string": "这是一个扫雷游戏",
+    "_string": "扫雷",
+    "_N$string": "扫雷",
     "_fontSize": 40,
     "_lineHeight": 40,
     "_enableWrapText": true,
@@ -693,9 +693,6 @@
     },
     "buttonAudio": {
       "__uuid__": "88f6ec23-0a97-4d05-a7d4-46fdeda3dd93"
-    },
-    "bgm": {
-      "__uuid__": "7ab9aad5-07d5-4b44-8c47-d98e2697fd71"
     },
     "_id": "5f6VKHnJZAVrdFGI4P2Vgm"
   },

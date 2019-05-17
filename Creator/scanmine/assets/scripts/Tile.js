@@ -10,12 +10,15 @@ cc.Class({
             default: null,
             type: cc.Prefab
         },
-        mineTile: []
+        mineTile: [],
+        tilesArr: [],
+        opend: 0
     },
 
     _init () {
         this._getMine();
         this._setTile();
+        this._setType();
     },
 
     _setTile () {
@@ -26,43 +29,50 @@ cc.Class({
             tile.parent = this.node;
             tile.x = MineInfo.pos[i].x;
             tile.y = MineInfo.pos[i].y;
-            if (self.mineTile.includes(i)) {
-                tile.type = 7;
-                cc.log(i);
-                cc.log(self._getRelation(i));
-            } else {
-                tile.type = 0;
-            }
-            (function (tile) {
-                tile.on('touchstart', function (event) {
-                    self.clickTimes++;
-                }, this);
+            tile.id = i;
 
+            // 设置雷
+            if (self.mineTile.includes(i)) {
+                tile.type = MineInfo.type.MINE;
+            } else {
+                tile.type = MineInfo.type.BLANK;
+            }
+
+            self.tilesArr.push(tile);
+            (function (tile) {
                 tile.on('touchend', function (event) {
-                    cc.log(event.target.type);
-                    setTimeout(() => {
-                        if (self.clickTimes === 1) {
-                            tile.getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[1];
-                            self.clickTimes = 0;
-                        } else if (self.clickTimes === 2) {
-                            tile.getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[0];
-                            self.clickTimes = 0;
+                    if (tile.opend) return;
+                    tile.opend = true;
+                    self.opend++;
+                    tile.getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[tile.type];
+                    if (tile.type === MineInfo.type.MINE) {
+                        alert('you lose')
+                    } else if (tile.type === MineInfo.type.BLANK){
+                        self._autoOpen(tile.id);
+                    } else {
+                        if (self.opend === (MineInfo.tileNum - MineInfo.mineNum)) {
+                            alert('you win');
                         }
-                    }, 200);
+                    }
                 }, this);
             })(tile);
         }
     },
 
     _getMine () {
-        let total = [];
+        let total = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
+                    11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 
+                    21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+                    31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+                    41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
+                    51, 52, 53, 54, 55, 56, 57, 58, 59, 60,
+                    61, 62, 63, 64, 65, 66, 67, 68, 69, 70,
+                    71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
+                    81, 82, 83, 84, 85, 86, 87
+        ];
         let random = 0;
-        let totalLength = MineInfo.tileNum;
-        for (let i = 0; i < MineInfo.tileNum; i++) {
-            total.push(i);
-        }
-        for (let i = 0; i < MineInfo.mineNum; i++) {
-            random = Math.floor(Math.random() * totalLength);
+        for (let j = 0; j < MineInfo.mineNum; j++) {
+            random = Math.floor(Math.random() * total.length);
             this.mineTile.push(total[random]);
             total.splice(random, 1);
         }
@@ -212,6 +222,33 @@ cc.Class({
                 relation.push(num - 17);
             }
             return relation;
+        }
+    },
+
+    _setType () {
+        for (let i = 0; i < this.mineTile.length; i++) {
+            let rela = this._getRelation(this.mineTile[i]);
+            for (let j = 0; j < rela.length; j++) {
+                if (this.tilesArr[rela[j]]['type'] !== MineInfo.type.MINE) {
+                    this.tilesArr[rela[j]]['type'] += 1;
+                }
+            }
+        }
+    },
+
+    _autoOpen (blankNum) {
+        let rela = this._getRelation(blankNum);
+        let tile = null;
+        for (let i = 0; i < rela.length; i++) {
+            tile = this.tilesArr[rela[i]];
+            if (tile.type !== MineInfo.type.MINE && !tile.opend) {
+                tile.getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[tile.type];
+                tile.opend = true;
+                this.opend++;
+            }
+        }
+        if (this.opend === (MineInfo.tileNum - MineInfo.mineNum)) {
+            alert('you win');
         }
     },
 
