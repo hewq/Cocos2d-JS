@@ -31,17 +31,19 @@ cc.Class({
         tilesSlice: [],
         tilesC: [],
         tilesL: [],
-        tilesR: []
+        tilesR: [],
+        tilesNoLineL: [],
+        tilesNoLineR: []
     },
 
     _init () {
-        this.topTile = [72, 54, 34, 12, 0, 23, 44, 63, 80];
+        this.topTile = [0, 12, 23, 34, 44, 54, 63, 72, 80];
         this.rightTile = [80, 81, 82, 83, 84, 85, 86, 87];
-        this.bottomTile = [79, 62, 43, 22, 11, 33, 53, 71, 87];
+        this.bottomTile = [11, 22, 33, 43, 53, 62, 71, 79, 87];
         this.leftTile = [72, 73, 74, 75, 76, 77, 78, 79];
-        this.leftBottomTile = [79, 62, 43, 22, 11];
+        this.leftBottomTile = [11, 22, 43, 62, 79];
         this.rightBottomTile = [11, 33, 53, 71, 87];
-        this.leftTopTile = [72, 54, 34, 12, 0];
+        this.leftTopTile = [0, 12, 34, 54, 72];
         this.rightTopTile = [0, 23, 44, 63, 80];
         this.tilesC = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
         this.tilesL = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 
@@ -52,6 +54,8 @@ cc.Class({
                        33, 44, 45, 46, 47, 48, 49, 50, 51, 52, 
                        53, 63, 64, 65, 66, 67, 68, 69, 70 ,71, 
                        80, 81, 82, 83, 84, 85, 86, 87];
+        this.tilesNoLineL = [11, 22, 43, 62, 72, 73, 74, 75, 76, 77, 78, 79];
+        this.tilesNoLineR = [11, 33, 53, 71, 80, 81, 82, 83, 84, 85, 86, 87];
         this._getMine();
         this._setTile();
         this._setPos(4, 12, 0);
@@ -95,6 +99,7 @@ cc.Class({
                     tile.getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[tile.$type];
 
                     self._checkTBOpen(tile);
+                    self._checkLBRTOpen(tile);
                     self._checkLTRBOpen(tile);
 
                     if (tile.$type === MineInfo.type.MINE) {
@@ -109,54 +114,95 @@ cc.Class({
                 }, this);
             })(tile);
         }
-        this._fixLineCenter();
+        this._fixLine();
     },
 
     _checkTBOpen (node) { // 判断上下是否打开
-        if (node.$id !== 87) {
+        if (!this.bottomTile.includes(node.$id)) { // 下
             if (this.tilesArr[node.$id + 1].opened) {
                 this.lineC[node.$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
             } 
         }
 
-        if (node.$id !== 0) {
+        if (!this.topTile.includes(node.$id)) { // 上
             if (this.tilesArr[node.$id - 1].opened) {
                 this.lineC[node.$id - 1].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
             } 
         }
     },
 
-    _checkLTRBOpen (node) { // 判断左下右上是否打开
+    _checkLBRTOpen (node) { // 判断左下右上是否打开
         if (node.$id === 0) {
-            if (this.tilesArr[12].opened) {
-                this.lineL[12].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+            if (this.tilesArr[0].opened) {
+                this.lineL[0].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
             } 
             return;
         }
-        if (this.tilesL.includes(node.$id) || this.tilesC.includes(node.$id)) {
-            if (this.leftBottomTile.includes(node.$id) || this.leftTile.includes(node.$id)) {
-                if (this.tilesSlice[node.$col + 1][node.$colPos].opened) {
-                    this.lineL[this.tilesSlice[node.$col + 1][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
-                }
-            } else {
-                if (this.tilesSlice[node.$col + 1][node.$colPos].opened) {
-                    this.lineL[this.tilesSlice[node.$col + 1][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
-                }
+        if (node.$id === 11) {
+            if (this.tilesArr[33].opened) {
+                this.lineL[33].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+            } 
+            return;
+        }
+        if (this.tilesL.includes(node.$id)) {
+        	if (this.tilesSlice[node.$col + 1][node.$colPos].opened) { // 右上
+                this.lineL[this.tilesSlice[node.$col + 1][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+            }
+            if (!this.leftBottomTile.includes(node.$id) && !this.leftTile.includes(node.$id)) { // 左下
                 if (this.tilesSlice[node.$col - 1][node.$colPos].opened) {
                     this.lineL[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
                 }
             }
-        } else {
-            if (this.rightTopTile.includes(node.$id) || this.rightTile.includes(node.$id)) {
-                if (this.tilesSlice[node.$col - 1][node.$colPos + 1].opened) {
-                    this.lineL[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
-                }
-            } else {
-                if (this.tilesSlice[node.$col - 1][node.$colPos + 1].opened) {
-                    this.lineL[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
-                }
+        } else if (this.tilesR.includes(node.$id)) {
+        	if (this.tilesSlice[node.$col - 1][node.$colPos + 1].opened) { // 左下
+                this.lineL[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+            }
+            if (!this.rightTopTile.includes(node.$id) && !this.rightTile.includes(node.$id)) { // 右上
                 if (this.tilesSlice[node.$col + 1][node.$colPos - 1].opened) {
                     this.lineL[this.tilesSlice[node.$col + 1][node.$colPos - 1].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                }
+            }
+        } else {
+        	if (this.tilesSlice[node.$col - 1][node.$colPos].opened) { // 左下
+                this.lineL[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+            }
+            if (!this.rightTopTile.includes(node.$id) && !this.rightTile.includes(node.$id)) { // 右上
+                if (this.tilesSlice[node.$col + 1][node.$colPos - 1].opened) {
+                    this.lineL[this.tilesSlice[node.$col + 1][node.$colPos - 1].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                }
+            }
+        }
+    },
+
+    _checkLTRBOpen (node) { // 判断左上右下是否打开
+        if (node.$id === 0) {
+            if (this.tilesArr[0].opened) {
+                this.lineR[0].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+            } 
+            return;
+        }
+        if (node.$id === 11) {
+            if (this.tilesArr[22].opened) {
+                this.lineR[22].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+            } 
+            return;
+        }
+        if (this.tilesL.includes(node.$id)) {
+        	if (this.tilesSlice[node.$col + 1][node.$colPos + 1].opened) { // 右下
+                this.lineR[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+            }
+            if (!this.leftTopTile.includes(node.$id) && !this.leftTile.includes(node.$id)) { // 左上
+                if (this.tilesSlice[node.$col - 1][node.$colPos - 1].opened) {
+                    this.lineR[this.tilesSlice[node.$col - 1][node.$colPos - 1].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                }
+            }
+        } else {
+        	if (this.tilesSlice[node.$col - 1][node.$colPos].opened) { // 左上
+                this.lineR[this.tilesSlice[node.$col - 1][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+            }
+            if (!this.rightBottomTile.includes(node.$id) && !this.rightTile.includes(node.$id)) { // 右下
+                if (this.tilesSlice[node.$col + 1][node.$colPos].opened) {
+                    this.lineR[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
                 }
             }
         }
@@ -189,25 +235,18 @@ cc.Class({
         }
     },
 
-    _fixLineCenter () {
+    _fixLine () {
+    	let noLineL = '';
         for (let i = 0; i < this.bottomTile.length; i++) {
             this.lineC.splice(this.bottomTile[i], 0, 'space');
         }
 
-        for (let i = 0; i < this.leftTile.length; i++) {
-            this.lineL.splice(this.leftTile[i], 0, 'space');
+        for (let i = 0; i < this.tilesNoLineL.length; i++) {
+            this.lineL.splice(this.tilesNoLineL[i], 0, 'space');
         }
 
-        for (let i = 0; i < this.leftBottomTile.length; i++) {
-            this.lineL.splice(this.leftBottomTile[i], 0, 'space');
-        }
-
-        for (let i = 0; i < this.rightTile.length; i++) {
-            this.lineR.splice(this.rightTile[i], 0, 'space');
-        }
-
-        for (let i = 0; i < this.rightBottomTile.length; i++) {
-            this.lineR.splice(this.rightBottomTile[i], 0, 'space');
+        for (let i = 0; i < this.tilesNoLineR.length; i++) {
+            this.lineR.splice(this.tilesNoLineR[i], 0, 'space');
         }
     },
 
@@ -416,6 +455,7 @@ cc.Class({
                 tile.opened = true;
                 this.opened++;
                 this._checkTBOpen(tile);
+                this._checkLBRTOpen(tile);
                 this._checkLTRBOpen(tile);
             }
         }
