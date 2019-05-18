@@ -467,11 +467,21 @@
     },
     "_enabled": true,
     "clickTimes": 0,
-    "tiles": {
+    "tilePrefab": {
       "__uuid__": "c7067f3e-0921-4bfb-a443-969ecdde578d"
+    },
+    "linePrefab": {
+      "__uuid__": "7bfea22e-83d4-4c68-8f1c-8064c191f503"
     },
     "mineTile": [],
     "tilesArr": [],
+    "opened": 0,
+    "topTile": [],
+    "rightTile": [],
+    "bottomTile": [],
+    "leftTile": [],
+    "leftBottomTile": [],
+    "rightBottomTile": [],
     "_id": "5182yQugZPc5WzG+UGzdYk"
   },
   {
@@ -591,6 +601,9 @@
       },
       {
         "__uuid__": "b776d93b-0bbc-4f38-8db8-77fd193e57c2"
+      },
+      {
+        "__uuid__": "47e3f760-c4ba-4393-90ae-d22c97008b22"
       }
     ],
     "_id": "3dq8Tt/7tKf6eqrrBS4Ur5"

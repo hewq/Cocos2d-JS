@@ -5,6 +5,10 @@ const mineH = 64;
 const offsetY = 46;
 
 let mineInfo = {
+	mineH: mineH,
+	mineW: mineW,
+	disV: disV,
+	disH: disH,
 	tileNum: 88,
 	mineNum: 14,
 	pos: [],
