@@ -1,5 +1,5 @@
 let Game = require('Game');
-let MineInfo = require('MineInfo').mineInfo;
+let TileInfo = require('TileInfo').tileInfo;
 
 cc.Class({
     extends: cc.Component,
@@ -37,25 +37,19 @@ cc.Class({
     },
 
     _init () {
-        this.topTile = [0, 12, 23, 34, 44, 54, 63, 72, 80];
-        this.rightTile = [80, 81, 82, 83, 84, 85, 86, 87];
-        this.bottomTile = [11, 22, 33, 43, 53, 62, 71, 79, 87];
-        this.leftTile = [72, 73, 74, 75, 76, 77, 78, 79];
-        this.leftBottomTile = [11, 22, 43, 62, 79];
-        this.rightBottomTile = [11, 33, 53, 71, 87];
-        this.leftTopTile = [0, 12, 34, 54, 72];
-        this.rightTopTile = [0, 23, 44, 63, 80];
-        this.tilesC = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-        this.tilesL = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 
-                       22, 34, ,35, 36, 37, 38, 39, 40, 41, 42, 
-                       43, 54, 55, 56, 57, 58, 59, 60, 61, 62,
-                       72, 73, 74, 75, 76, 77, 78, 79];
-        this.tilesR = [23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
-                       33, 44, 45, 46, 47, 48, 49, 50, 51, 52, 
-                       53, 63, 64, 65, 66, 67, 68, 69, 70 ,71, 
-                       80, 81, 82, 83, 84, 85, 86, 87];
-        this.tilesNoLineL = [11, 22, 43, 62, 72, 73, 74, 75, 76, 77, 78, 79];
-        this.tilesNoLineR = [11, 33, 53, 71, 80, 81, 82, 83, 84, 85, 86, 87];
+        this.topTile = TileInfo.topTile;
+        this.rightTile = TileInfo.rightTile;
+        this.bottomTile = TileInfo.bottomTile;
+        this.leftTile = TileInfo.leftTile;
+        this.leftBottomTile = TileInfo.leftBottomTile;
+        this.rightBottomTile = TileInfo.rightBottomTile;
+        this.leftTopTile = TileInfo.leftTopTile;
+        this.rightTopTile = TileInfo.rightTopTile;
+        this.tilesC = TileInfo.tilesC;
+        this.tilesL = TileInfo.tilesL;
+        this.tilesR = TileInfo.tilesR;
+        this.tilesNoLineL = TileInfo.tilesNoLineL;
+        this.tilesNoLineR = TileInfo.tilesNoLineR;
         this._getMine();
         this._setTile();
         this._setPos(4, 12, 0);
@@ -74,20 +68,20 @@ cc.Class({
     _setTile () {
         let tile = null;
         let self = this;
-        for (let i = 0; i < MineInfo.pos.length; i++) {
+        for (let i = 0; i < TileInfo.pos.length; i++) {
             tile = cc.instantiate(this.tilePrefab);
             tile.parent = this.node;
-            tile.x = MineInfo.pos[i].x;
-            tile.y = MineInfo.pos[i].y;
+            tile.x = TileInfo.pos[i].x;
+            tile.y = TileInfo.pos[i].y;
             tile.$id = i;
 
             this._drawLine(this.node, tile.$id, tile.x, tile.y);
 
             // 设置雷
             if (self.mineTile.includes(i)) {
-                tile.$type = MineInfo.type.MINE;
+                tile.$type = TileInfo.type.MINE;
             } else {
-                tile.$type = MineInfo.type.BLANK;
+                tile.$type = TileInfo.type.BLANK;
             }
 
             self.tilesArr.push(tile);
@@ -102,12 +96,12 @@ cc.Class({
                     self._checkLBRTOpen(tile);
                     self._checkLTRBOpen(tile);
 
-                    if (tile.$type === MineInfo.type.MINE) {
+                    if (tile.$type === TileInfo.type.MINE) {
                         alert('you lose')
-                    } else if (tile.$type === MineInfo.type.BLANK){
+                    } else if (tile.$type === TileInfo.type.BLANK){
                         self._autoOpen(tile.$id);
                     } else {
-                        if (self.opened === (MineInfo.tileNum - MineInfo.mineNum)) {
+                        if (self.opened === (TileInfo.tileNum - TileInfo.mineNum)) {
                             alert('you win');
                         }
                     }
@@ -196,13 +190,22 @@ cc.Class({
                     this.lineR[this.tilesSlice[node.$col - 1][node.$colPos - 1].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
                 }
             }
-        } else {
+        } else if (this.tilesR.includes(node.$id)) {
         	if (this.tilesSlice[node.$col - 1][node.$colPos].opened) { // 左上
                 this.lineR[this.tilesSlice[node.$col - 1][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
             }
             if (!this.rightBottomTile.includes(node.$id) && !this.rightTile.includes(node.$id)) { // 右下
                 if (this.tilesSlice[node.$col + 1][node.$colPos].opened) {
                     this.lineR[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                }
+            }
+        } else {
+            if (this.tilesSlice[node.$col + 1][node.$colPos].opened) { // 右下
+                this.lineR[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+            }
+            if (!this.leftTopTile.includes(node.$id) && !this.leftTile.includes(node.$id)) { // 左上
+                if (this.tilesSlice[node.$col - 1][node.$colPos - 1].opened) {
+                    this.lineR[this.tilesSlice[node.$col - 1][node.$colPos - 1].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
                 }
             }
         }
@@ -215,20 +218,20 @@ cc.Class({
                 line = cc.instantiate(this.linePrefab);
                 line.parent = parent;
                 line.x = x;
-                line.y = y - MineInfo.mineH;
+                line.y = y - TileInfo.tileH;
                 this.lineC.push(line);
             } else if (i === 1 && !this.leftTile.includes(id) && !this.leftBottomTile.includes(id)) {
                 line = cc.instantiate(this.linePrefab);
                 line.parent = parent;
-                line.x = x - MineInfo.mineW / 2;
-                line.y = y - (MineInfo.disV + (MineInfo.mineH - MineInfo.disV) / 2);
+                line.x = x - TileInfo.tileW / 2;
+                line.y = y - (TileInfo.disV + (TileInfo.tileH - TileInfo.disV) / 2);
                 line.setRotation(55);
                 this.lineL.push(line)
             } else if (i === 2 && !this.rightTile.includes(id) && !this.rightBottomTile.includes(id)) {
                 line = cc.instantiate(this.linePrefab);
                 line.parent = parent;
-                line.x = x + MineInfo.mineW / 2;
-                line.y = y - (MineInfo.disV + (MineInfo.mineH - MineInfo.disV) / 2);
+                line.x = x + TileInfo.tileW / 2;
+                line.y = y - (TileInfo.disV + (TileInfo.tileH - TileInfo.disV) / 2);
                 line.setRotation(-55);
                 this.lineR.push(line)
             }
@@ -282,7 +285,7 @@ cc.Class({
                     81, 82, 83, 84, 85, 86, 87
         ];
         let random = 0;
-        for (let j = 0; j < MineInfo.mineNum; j++) {
+        for (let j = 0; j < TileInfo.mineNum; j++) {
             random = Math.floor(Math.random() * total.length);
             this.mineTile.push(total[random]);
             total.splice(random, 1);
@@ -438,7 +441,7 @@ cc.Class({
         for (let i = 0; i < this.mineTile.length; i++) {
             let rela = this._getRelation(this.mineTile[i]);
             for (let j = 0; j < rela.length; j++) {
-                if (this.tilesArr[rela[j]]['$type'] !== MineInfo.type.MINE) {
+                if (this.tilesArr[rela[j]]['$type'] !== TileInfo.type.MINE) {
                     this.tilesArr[rela[j]]['$type'] += 1;
                 }
             }
@@ -450,7 +453,7 @@ cc.Class({
         let tile = null;
         for (let i = 0; i < rela.length; i++) {
             tile = this.tilesArr[rela[i]];
-            if (tile.$type !== MineInfo.type.MINE && !tile.opened) {
+            if (tile.$type !== TileInfo.type.MINE && !tile.opened) {
                 tile.getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[tile.$type];
                 tile.opened = true;
                 this.opened++;
@@ -459,7 +462,7 @@ cc.Class({
                 this._checkLTRBOpen(tile);
             }
         }
-        if (this.opened === (MineInfo.tileNum - MineInfo.mineNum)) {
+        if (this.opened === (TileInfo.tileNum - TileInfo.mineNum)) {
             alert('you win');
         }
     },

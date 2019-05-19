@@ -29,21 +29,21 @@
     "portrait": false,
     "upsideDown": false
   },
-  "packageName": "org.cocos2d.scanmine",
+  "packageName": "org.cocos2d.scanminechildren",
   "qqplay": {
     "REMOTE_SERVER_ROOT": "",
     "orientation": "portrait",
     "zip": false
   },
-  "startScene": "5d99c376-f140-4bfb-88cc-14aa2b94fd4c",
-  "title": "scanmine",
+  "startScene": "7df7efa7-f5c1-4462-9169-8daac07da028",
+  "title": "children",
   "webOrientation": "auto",
   "wechatgame": {
     "REMOTE_SERVER_ROOT": "",
-    "appid": "wxf0250ede95e502cf",
+    "appid": "wx6ac3f5090a6b99c5",
     "orientation": "portrait",
-    "subContext": "children"
+    "subContext": ""
   },
-  "xxteaKey": "df903302-a031-48",
+  "xxteaKey": "ffa3445d-d4bf-4d",
   "zipCompressJs": true
 }
