@@ -1,6 +1,6 @@
-const disV = 29;
-const disH = 22;
-const tileW = 56;
+const disV = 24;
+const disH = 18;
+const tileW = 60;
 const tileH = 64;
 const offsetY = 46;
 
@@ -10,7 +10,7 @@ let tileInfo = {
 	disV: disV,
 	disH: disH,
 	tileNum: 88,
-	mineNum: 14,
+	mineNum: 16,
     topTile: [0, 12, 23, 34, 44, 54, 63, 72, 80],
     rightTile: [80, 81, 82, 83, 84, 85, 86, 87],
     bottomTile: [11, 22, 33, 43, 53, 62, 71, 79, 87],

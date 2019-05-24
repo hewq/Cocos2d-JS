@@ -9,7 +9,7 @@
   "type": "Texture Packer",
   "subMetas": {
     "blackjack-BLACK JACK_1.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "bf2d109c-9dad-46c6-aacf-5d47fa4757e1",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -31,7 +31,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_10.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "fb0f7c25-89f4-404c-8d2e-cf6026d8e651",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -53,7 +53,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_11.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "d6bffc30-ac84-4223-b8b8-8fc60a248b30",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -75,7 +75,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_12.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "7924d8ae-17e1-48d1-bd66-6bbfc79cbd07",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -97,7 +97,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_13.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "bf49c8da-779b-4245-8ca4-ed312b83936b",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -119,7 +119,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_14.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "5293d61b-51c5-4c0d-ae0e-bebbbe4afd77",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -141,7 +141,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_15.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "75f26438-32fa-48f1-9cc3-011263c61467",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -163,7 +163,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_16.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "4eea4ecf-5ef7-47f3-bd8c-701d846e14ca",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -185,7 +185,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_17.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "ee4c9d01-2f46-4aa0-ab58-a8bd643f4454",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -207,7 +207,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_18.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "546a64b9-5a3b-4ed4-ad07-4ba68ecf3807",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -229,7 +229,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_19.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "0a97b204-350d-4a09-8a07-7a033a5ade94",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -251,7 +251,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_2.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "b7f24e60-240e-4d57-914c-bed4206d264e",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -273,7 +273,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_20.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "ebec71de-c3e6-4d68-b013-474f90cd0002",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -295,7 +295,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_21.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "187cdd41-a5e0-4ad7-85e7-d063bc537f2b",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -317,7 +317,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_22.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "68b75156-6d34-4163-91d8-a421b400cb09",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -339,7 +339,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_3.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "db2a8659-93eb-4e83-a944-a499ad4583e0",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -361,7 +361,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_4.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "9fde5e81-2acb-4d6c-8b3a-78d1fce06b4f",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -383,7 +383,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_5.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "401e1f0d-5e54-4359-85d8-23334a6077ca",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -405,7 +405,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_6.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "a57ee9fb-8401-422b-acfd-8bfe8afb9a64",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -427,7 +427,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_7.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "44800ac4-2864-4bc3-a789-fe3a84bf3a40",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -449,7 +449,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_8.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "eaabb13d-1d7b-47c9-8056-bfa393f4fbc0",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -471,7 +471,7 @@
       "subMetas": {}
     },
     "blackjack-BLACK JACK_9.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "0cbd2ce4-6319-4916-a81c-38d3fd9fa5e8",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -493,7 +493,7 @@
       "subMetas": {}
     },
     "bust-BUST_1.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "a409afb9-2095-4456-859f-5a1599a0250e",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -515,7 +515,7 @@
       "subMetas": {}
     },
     "bust-BUST_10.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "901afff8-2a77-48d0-8d15-ea8ccb2ee334",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -537,7 +537,7 @@
       "subMetas": {}
     },
     "bust-BUST_2.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "7544e9c8-36da-4d5c-9c37-1f2b8eb1fa91",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -559,7 +559,7 @@
       "subMetas": {}
     },
     "bust-BUST_3.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "3933a8a8-b333-48cc-984d-af37c02bcf08",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -581,7 +581,7 @@
       "subMetas": {}
     },
     "bust-BUST_4.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "ab4712a6-05fd-44fd-93cc-46bf23870b24",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -603,7 +603,7 @@
       "subMetas": {}
     },
     "bust-BUST_5.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "e995d0c6-d63e-4411-b638-fc8375544397",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -625,7 +625,7 @@
       "subMetas": {}
     },
     "bust-BUST_6.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "39a3316f-6470-457f-b697-5e0078798dbb",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -647,7 +647,7 @@
       "subMetas": {}
     },
     "bust-BUST_7.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "2e0d0b95-8420-42e3-bb57-9fa21f959bb5",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -669,7 +669,7 @@
       "subMetas": {}
     },
     "bust-BUST_8.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "3a43a210-cb5e-4466-af1a-e18ca9b6b9e5",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",
@@ -691,7 +691,7 @@
       "subMetas": {}
     },
     "bust-BUST_9.png": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "89571b70-3529-45e1-8e02-45ea8ce5bbe9",
       "rawTextureUuid": "c7021db7-fa57-4b20-8742-c76b2fad46d9",
       "trimType": "auto",

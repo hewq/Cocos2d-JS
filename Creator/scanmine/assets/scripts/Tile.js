@@ -1,11 +1,11 @@
 let Game = require('Game');
 let TileInfo = require('TileInfo').tileInfo;
+let wxGame = require('WxGameComm');
 
 cc.Class({
     extends: cc.Component,
 
     properties: {
-        clickTimes: 0,
         tilePrefab: {
             default: null,
             type: cc.Prefab
@@ -14,6 +14,15 @@ cc.Class({
             default: null,
             type: cc.Prefab
         },
+        btnFailAgain: cc.Node,
+        btnSuccessAgain: cc.Node,
+        btnShare: cc.Node,
+        btnOb: cc.Node,
+        btnOther: cc.Node,
+        btnCloseShare: cc.Node,
+        btnCloseRule: cc.Node,
+        btnRule: cc.Node,
+        btnCloseTips: cc.Node,
         mineTile: [],
         tilesArr: [],
         opened: 0,
@@ -33,7 +42,19 @@ cc.Class({
         tilesL: [],
         tilesR: [],
         tilesNoLineL: [],
-        tilesNoLineR: []
+        tilesNoLineR: [],
+        tileLine: 10,
+        mineLine: 11,
+        min: 0,
+        sec: 0,
+        useTime: 0,
+        isWin: false,
+        touchStartTime: 0
+    },
+
+    _startGame () {
+        this._initGame();
+        this._init();
     },
 
     _init () {
@@ -65,17 +86,90 @@ cc.Class({
         this._sliceTilesArr();
     },
 
+    _playAgain (showClose) {
+        if (localStorage.getItem('afterShare')) {
+            localStorage.setItem('afterShare', false);
+            Game.instance.dialogShare.active = false;
+            Game.instance.dialogFail.active = false;
+            Game.instance.dialogSuccess.active = false;
+            this._startGame();
+            Game.instance.dialogBg.active = true;
+            Game.instance.dialogTips.active = true;
+            Game.instance.dialogTips.runAction(cc.scaleTo(.5, 1));
+            return;
+        }
+        if (localStorage.getItem('playTimes') > 3) {
+            if (!showClose) {
+                this.btnCloseShare.active = false;
+            } else {
+                this.btnCloseShare.active = true;
+            }
+            Game.instance.dialogBg.active = true;
+            Game.instance.dialogShare.active = true;
+            Game.instance.dialogShare.runAction(cc.scaleTo(.5, 1));
+        } else {
+            Game.instance.dialogBg.active = true;
+            Game.instance.dialogTips.active = true;
+            Game.instance.dialogTips.runAction(cc.scaleTo(.5, 1));
+            this._startGame();
+            Game.instance.dialogShare.active = false;
+            Game.instance.dialogFail.active = false;
+            Game.instance.dialogSuccess.active = false;
+            wxGame.updatePlayTimes(false, function (res) {});
+            localStorage.setItem('playTimes', localStorage.getItem('playTimes') + 1);
+        }
+    },
+
+    _btnHandler () {
+        this.btnFailAgain.on('touchend', function (event) {
+            this._playAgain(true);
+        }, this);
+        this.btnSuccessAgain.on('touchend', function (event) {
+            this._playAgain(true);
+        }, this);
+        this.btnOb.on('touchend', function (event) {
+            cc.director.loadScene('result');
+        }, this);
+        this.btnOther.on('touchend', function (event) {
+            cc.director.loadScene('result');
+        }, this);
+        this.btnCloseShare.on('touchend', function () {
+            Game.instance.dialogShare.runAction(cc.scaleTo(.5, 0));
+            setTimeout(function () {Game.instance.dialogShare.active = false;}, 500);
+        });
+        this.btnCloseRule.on('touchend', function () {
+            Game.instance.dialogBg.active = false;
+            Game.instance.dialogRule.runAction(cc.scaleTo(.5, 0));
+            setTimeout(function () {Game.instance.dialogRule.active = false;}, 500);
+        });
+        this.btnCloseTips.on('touchend', function () {
+            Game.instance.dialogBg.active = false;
+            Game.instance.dialogTips.runAction(cc.scaleTo(.5, 0));
+            setTimeout(function () {Game.instance.dialogTips.active = false;}, 500);
+        });
+        this.btnShare.on('touchend', function () {
+            localStorage.setItem('toPlayGame', true);
+            localStorage.setItem('closeTime', new Date().getTime());
+            wxGame.shareAppMessage();
+        });
+        this.btnRule.on('touchend', function () {
+            Game.instance.dialogBg.active = true;
+            Game.instance.dialogRule.active = true;
+            Game.instance.dialogRule.runAction(cc.scaleTo(.5, 1));
+        });
+    },
+
     _setTile () {
         let tile = null;
         let self = this;
         for (let i = 0; i < TileInfo.pos.length; i++) {
             tile = cc.instantiate(this.tilePrefab);
-            tile.parent = this.node;
+            tile.parent = Game.instance.wrapMine;
             tile.x = TileInfo.pos[i].x;
             tile.y = TileInfo.pos[i].y;
             tile.$id = i;
 
-            this._drawLine(this.node, tile.$id, tile.x, tile.y);
+            this._drawLine(Game.instance.wrapMine, tile.$id, tile.x, tile.y);
 
             // 设置雷
             if (self.mineTile.includes(i)) {
@@ -86,23 +180,62 @@ cc.Class({
 
             self.tilesArr.push(tile);
             (function (tile) {
+                tile.on('touchstart', function (event) {
+                    self.touchStartTime = new Date().getTime();
+                });
+
                 tile.on('touchend', function (event) {
+                    let nowTime = new Date().getTime();
                     if (tile.opened) return;
+                    if (nowTime - self.touchStartTime > 300) { // 长按
+                        if (tile.flag) {
+                            tile.getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[9];
+                            tile.flag = false;
+                        } else {
+                            tile.getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[12];
+                            tile.flag = true;
+                        }
+                        return;
+                    }
                     tile.opened = true;
                     self.opened++;
                     tile.getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[tile.$type];
 
-                    self._checkTBOpen(tile);
-                    self._checkLBRTOpen(tile);
-                    self._checkLTRBOpen(tile);
+                    self._checkTBOpen(tile, self.tileLine);
+                    self._checkLBRTOpen(tile, self.tileLine);
+                    self._checkLTRBOpen(tile, self.tileLine);
 
                     if (tile.$type === TileInfo.type.MINE) {
-                        alert('you lose')
+                        self.unschedule(self._timeSchedule);
+                        for (let i = 0; i < self.mineTile.length; i++) {
+                            self.tilesArr[self.mineTile[i]].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[7];
+                        }
+                        tile.getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[8];
+                        self._checkTBOpen(tile, self.mineLine);
+                        self._checkLBRTOpen(tile, self.mineLine);
+                        self._checkLTRBOpen(tile, self.mineLine);
+                        Game.instance.dialogBg.opacity = 0;
+                        Game.instance.dialogBg.active = true;
+                        setTimeout(function () {
+                            Game.instance.dialogBg.opacity = 100;
+                            Game.instance.dialogFail.active = true;
+                            Game.instance.dialogFail.runAction(cc.scaleTo(.5, 1));
+                        }, 1000);
+
+                        self._setTitle({num: self.opened});
+                        self._setLevel({num: self.opened});
                     } else if (tile.$type === TileInfo.type.BLANK){
                         self._autoOpen(tile.$id);
                     } else {
                         if (self.opened === (TileInfo.tileNum - TileInfo.mineNum)) {
-                            alert('you win');
+                            Game.instance.dialogBg.active = true;
+                            Game.instance.dialogSuccess.active = true;
+                            Game.instance.dialogSuccess.runAction(cc.scaleTo(.5, 1));
+                            self.unschedule(self._timeSchedule);
+                            self._submitScore();
+                            wxGame.updateScore(self.useTime, function (res) {console.log(res)}, function (err) {console.error(err)});
+                            self._setTitle({time: self.useTime});
+                            self._setLevel({time: self.useTime});
                         }
                     }
                 }, this);
@@ -111,101 +244,148 @@ cc.Class({
         this._fixLine();
     },
 
-    _checkTBOpen (node) { // 判断上下是否打开
+    _setTitle ({num = 0, time = 0} = {}) {
+        if (num !== 0) {
+            localStorage.setItem('title', Math.floor(72 / num));
+        } else if (time !== 0) {
+            if (time <= 20) {
+                localStorage.setItem('title', 4);
+            } else if (time > 20 && time <= 220) {
+                localStorage.setItem('title', 5);
+            } else if (time > 220 && time <= 420) {
+                localStorage.setItem('title', 6);
+            } else {
+                localStorage.setItem('title', 7);
+            }
+        }
+    },
+
+    _setLevel ({num = 0, time = 0} = {}) {
+        if (num !== 0) {
+            localStorage.setItem('level', this.opened * 7);
+        } else if (time !== 0) {
+            if (time <= 20) {
+                localStorage.setItem('level', 1500);
+            } else if (time > 518) {
+                localStorage.setItem('level', 500);
+            } else {
+                localStorage.setItem('level', 1500 - (time - 20) * 2);
+            }
+        }
+    },
+
+    _submitScore () {
+        let gameScoreData = {
+            wxgame: {
+                score: this.useTime,
+                update_time: new Date().getTime()
+            },
+            cost_ms: this.useTime
+        };
+        let userKVData = {
+            key: "score",
+            value: "" + this.useTime
+            // value: JSON.stringify(gameScoreData)
+        };
+        wxGame.setUserCloudStorage(userKVData, function (res) {console.log(res)}, function (err) {console.error(err)});
+    },
+
+    _checkTBOpen (node, num) { // 判断上下是否打开
         if (!this.bottomTile.includes(node.$id)) { // 下
             if (this.tilesArr[node.$id + 1].opened) {
-                this.lineC[node.$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                this.lineC[node.$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[num];
             } 
         }
 
         if (!this.topTile.includes(node.$id)) { // 上
             if (this.tilesArr[node.$id - 1].opened) {
-                this.lineC[node.$id - 1].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                this.lineC[node.$id - 1].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[num];
             } 
         }
     },
 
-    _checkLBRTOpen (node) { // 判断左下右上是否打开
+    _checkLBRTOpen (node, num) { // 判断左下右上是否打开
         if (node.$id === 0) {
-            if (this.tilesArr[0].opened) {
-                this.lineL[0].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+            if (this.tilesArr[12].opened) {
+                this.lineL[0].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[num];
             } 
+            
             return;
         }
         if (node.$id === 11) {
             if (this.tilesArr[33].opened) {
-                this.lineL[33].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                this.lineL[33].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[num];
             } 
             return;
         }
         if (this.tilesL.includes(node.$id)) {
         	if (this.tilesSlice[node.$col + 1][node.$colPos].opened) { // 右上
-                this.lineL[this.tilesSlice[node.$col + 1][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                this.lineL[this.tilesSlice[node.$col + 1][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[num];
             }
             if (!this.leftBottomTile.includes(node.$id) && !this.leftTile.includes(node.$id)) { // 左下
                 if (this.tilesSlice[node.$col - 1][node.$colPos].opened) {
-                    this.lineL[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                    this.lineL[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[num];
                 }
             }
         } else if (this.tilesR.includes(node.$id)) {
         	if (this.tilesSlice[node.$col - 1][node.$colPos + 1].opened) { // 左下
-                this.lineL[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                this.lineL[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[num];
             }
             if (!this.rightTopTile.includes(node.$id) && !this.rightTile.includes(node.$id)) { // 右上
                 if (this.tilesSlice[node.$col + 1][node.$colPos - 1].opened) {
-                    this.lineL[this.tilesSlice[node.$col + 1][node.$colPos - 1].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                    this.lineL[this.tilesSlice[node.$col + 1][node.$colPos - 1].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[num];
                 }
             }
         } else {
         	if (this.tilesSlice[node.$col - 1][node.$colPos].opened) { // 左下
-                this.lineL[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                this.lineL[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[num];
             }
             if (!this.rightTopTile.includes(node.$id) && !this.rightTile.includes(node.$id)) { // 右上
                 if (this.tilesSlice[node.$col + 1][node.$colPos - 1].opened) {
-                    this.lineL[this.tilesSlice[node.$col + 1][node.$colPos - 1].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                    this.lineL[this.tilesSlice[node.$col + 1][node.$colPos - 1].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[num];
                 }
             }
         }
     },
 
-    _checkLTRBOpen (node) { // 判断左上右下是否打开
+    _checkLTRBOpen (node, num) { // 判断左上右下是否打开
         if (node.$id === 0) {
-            if (this.tilesArr[0].opened) {
-                this.lineR[0].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+            if (this.tilesArr[23].opened) {
+                this.lineR[0].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[num];
             } 
             return;
         }
         if (node.$id === 11) {
             if (this.tilesArr[22].opened) {
-                this.lineR[22].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                this.lineR[22].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[num];
             } 
             return;
         }
         if (this.tilesL.includes(node.$id)) {
         	if (this.tilesSlice[node.$col + 1][node.$colPos + 1].opened) { // 右下
-                this.lineR[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                this.lineR[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[num];
             }
             if (!this.leftTopTile.includes(node.$id) && !this.leftTile.includes(node.$id)) { // 左上
                 if (this.tilesSlice[node.$col - 1][node.$colPos - 1].opened) {
-                    this.lineR[this.tilesSlice[node.$col - 1][node.$colPos - 1].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                    this.lineR[this.tilesSlice[node.$col - 1][node.$colPos - 1].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[num];
                 }
             }
         } else if (this.tilesR.includes(node.$id)) {
         	if (this.tilesSlice[node.$col - 1][node.$colPos].opened) { // 左上
-                this.lineR[this.tilesSlice[node.$col - 1][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                this.lineR[this.tilesSlice[node.$col - 1][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[num];
             }
             if (!this.rightBottomTile.includes(node.$id) && !this.rightTile.includes(node.$id)) { // 右下
                 if (this.tilesSlice[node.$col + 1][node.$colPos].opened) {
-                    this.lineR[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                    this.lineR[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[num];
                 }
             }
         } else {
             if (this.tilesSlice[node.$col + 1][node.$colPos].opened) { // 右下
-                this.lineR[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                this.lineR[this.tilesSlice[node.$col][node.$colPos].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[num];
             }
             if (!this.leftTopTile.includes(node.$id) && !this.leftTile.includes(node.$id)) { // 左上
                 if (this.tilesSlice[node.$col - 1][node.$colPos - 1].opened) {
-                    this.lineR[this.tilesSlice[node.$col - 1][node.$colPos - 1].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[10];
+                    this.lineR[this.tilesSlice[node.$col - 1][node.$colPos - 1].$id].getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[num];
                 }
             }
         }
@@ -223,16 +403,16 @@ cc.Class({
             } else if (i === 1 && !this.leftTile.includes(id) && !this.leftBottomTile.includes(id)) {
                 line = cc.instantiate(this.linePrefab);
                 line.parent = parent;
-                line.x = x - TileInfo.tileW / 2;
-                line.y = y - (TileInfo.disV + (TileInfo.tileH - TileInfo.disV) / 2);
-                line.setRotation(55);
+                line.x = x - TileInfo.tileW / 2 + 2;
+                line.y = y - (TileInfo.disV + (TileInfo.tileH - TileInfo.disV) / 2) - 4;
+                line.setRotation(57);
                 this.lineL.push(line)
             } else if (i === 2 && !this.rightTile.includes(id) && !this.rightBottomTile.includes(id)) {
                 line = cc.instantiate(this.linePrefab);
                 line.parent = parent;
-                line.x = x + TileInfo.tileW / 2;
-                line.y = y - (TileInfo.disV + (TileInfo.tileH - TileInfo.disV) / 2);
-                line.setRotation(-55);
+                line.x = x + TileInfo.tileW / 2 - 2;
+                line.y = y - (TileInfo.disV + (TileInfo.tileH - TileInfo.disV) / 2) - 4;
+                line.setRotation(-57);
                 this.lineR.push(line)
             }
         }
@@ -457,17 +637,67 @@ cc.Class({
                 tile.getComponent(cc.Sprite).spriteFrame = Game.instance.sfTiles[tile.$type];
                 tile.opened = true;
                 this.opened++;
-                this._checkTBOpen(tile);
-                this._checkLBRTOpen(tile);
-                this._checkLTRBOpen(tile);
+                this._checkTBOpen(tile, this.tileLine);
+                this._checkLBRTOpen(tile, this.tileLine);
+                this._checkLTRBOpen(tile, this.tileLine);
             }
         }
         if (this.opened === (TileInfo.tileNum - TileInfo.mineNum)) {
-            alert('you win');
+            Game.instance.dialogBg.active = true;
+            Game.instance.dialogSuccess.active = true;
+            Game.instance.dialogSuccess.runAction(cc.scaleTo(.5, 1));
         }
     },
 
+    _timeSchedule () {
+        this.useTime++;
+        Game.instance.time.string = (this.min < 10 ? '0' + this.min : this.min) + ':' + (this.sec < 10 ? '0' + this.sec : this.sec);
+        if (this.sec === 59) {
+            this.sec = 0;
+            this.min++;
+        } else {
+            this.sec++;
+        }
+    },
+
+    _initGame () {
+        this.schedule(this._timeSchedule, 1);
+        Game.instance.dialogBg.active = false;
+        Game.instance.dialogFail.setScale(0);
+        Game.instance.dialogSuccess.setScale(0);
+        Game.instance.dialogShare.setScale(0);
+        Game.instance.dialogRule.setScale(0);
+        Game.instance.dialogTips.setScale(0);
+        Game.instance.dialogBg.zIndex = 1;
+        Game.instance.dialogFail.zIndex = 1;
+        Game.instance.dialogSuccess.zIndex = 1;
+        Game.instance.dialogShare.zIndex = 1;
+        Game.instance.dialogRule.zIndex = 1;
+        Game.instance.dialogTips.zIndex = 1;
+        this.isWin = false;
+        this.opened = 0;
+        this.min = 0;
+        this.sec = 0;
+        this.useTime = 0;
+        this.mineTile = [];
+        this.tilesArr = [];
+        this.lineC = [];
+        this.lineR = [];
+        this.lineL = [];
+        this.tilesSlice = [];
+        Game.instance.wrapMine.destroy();
+        let node = new cc.Node();
+        node.x = 0;
+        node.y = 526;
+        node.width = 684;
+        node.height = 1032;
+        node.parent = Game.instance.rootNode;
+        Game.instance.wrapMine = node;
+    },
+
     onLoad () {
-        this._init();
+        console.log('game scene load');
+        this._playAgain();
+        this._btnHandler();
     }
 });

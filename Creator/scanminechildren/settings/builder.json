@@ -20,7 +20,7 @@
   "includeSDKBox": false,
   "inlineSpriteFrames": true,
   "inlineSpriteFrames_native": true,
-  "md5Cache": false,
+  "md5Cache": true,
   "mergeStartScene": false,
   "optimizeHotUpdate": false,
   "orientation": {
@@ -35,7 +35,7 @@
     "orientation": "portrait",
     "zip": false
   },
-  "startScene": "7df7efa7-f5c1-4462-9169-8daac07da028",
+  "startScene": "d5387e2c-ba8c-4d3b-a639-bb28d6304247",
   "title": "children",
   "webOrientation": "auto",
   "wechatgame": {
