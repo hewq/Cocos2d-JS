@@ -1,5 +1,5 @@
 <p align="center">
-  <img width=60% src="md/cocos_creator.png">
+  <img width=30% src="md/cocos_creator.png">
 </p>
 
 # Cocos Creator Examples
