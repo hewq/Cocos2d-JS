@@ -1,3 +1,7 @@
+<p align="center">
+  <img width=60% src="md/cocos_creator.png">
+</p>
+
 # Cocos Creator Examples
 
 ## 游戏相关信息
